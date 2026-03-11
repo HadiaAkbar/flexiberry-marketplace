@@ -101,7 +101,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
-              {["Flash Sale", "Installment Deals", "New Arrivals", "Top Brands", "Jehaz Packages"].map((item) => (
+              {["Flash Sale", "Installment Deals", "New Arrivals", "Top Brands", "Jahez Packages"].map((item) => (
                 <Link
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
