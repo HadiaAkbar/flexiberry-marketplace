@@ -43,7 +43,7 @@ export const categories: ProductCategory[] = [
   { id: "appliances", name: "Appliances", slug: "appliances", icon: Wind, description: "AC, LED, Fridge & More", themeColor: "text-coral-dark", themeBg: "bg-coral-dark/10" },
   { id: "solar", name: "Solar Systems", slug: "solar", icon: Sun, description: "Complete Solar Solutions", themeColor: "text-amber", themeBg: "bg-amber/10" },
   { id: "furniture", name: "Furniture", slug: "furniture", icon: Sofa, description: "Home & Office Furniture", themeColor: "text-navy", themeBg: "bg-navy/10" },
-  { id: "jehaz", name: "Jehaz Packages", slug: "jehaz", icon: Package, description: "Bundle 4-5 Item Packages", themeColor: "text-coral", themeBg: "bg-coral/10" },
+  { id: "jahez", name: "Jahez Packages", slug: "jahez", icon: Package, description: "Bundle 4-5 Item Packages", themeColor: "text-coral", themeBg: "bg-coral/10" },
   { id: "cars", name: "Car Financing", slug: "cars", icon: Car, description: "Easy Car Installments", themeColor: "text-teal", themeBg: "bg-teal/10" },
   { id: "raw-materials", name: "Business Stock", slug: "raw-materials", icon: Boxes, description: "Raw Materials & Stock", themeColor: "text-navy-light", themeBg: "bg-navy-light/10" },
   { id: "general", name: "General Store", slug: "general", icon: ShoppingBag, description: "Everything Else", themeColor: "text-coral-light", themeBg: "bg-coral-light/10" },
