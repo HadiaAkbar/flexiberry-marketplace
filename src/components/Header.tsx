@@ -267,7 +267,7 @@ const Header = () => {
                       <path d="M 23 40 L 23 70 Q 23 76 29 76 L 79 76 Q 85 76 85 70 L 85 40 Q 85 34 79 34 L 35 34 Q 27 34 23 40 Z" fill="#2563eb" />
                     </g>
                   </svg>
-                  Shop Now · Pay in 3 Installments
+                  Shop Now · Pay in Installments
                 </span>
               </div>
             </div>
@@ -297,7 +297,7 @@ const Header = () => {
                   border: "1px solid #2563eb28",
                 }}
               >
-                🛒 Shop Now · Pay in 3 Installments
+                🛒 Shop Now · Pay in Installments
               </span>
             </div>
 
