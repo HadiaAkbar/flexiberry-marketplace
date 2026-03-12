@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Heart, ShoppingCart } from "lucide-react";
+import { Star, Heart, ShoppingCart, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Product, formatPrice, getMonthlyInstallment } from "@/data/products";
 import { motion } from "framer-motion";
@@ -10,51 +10,51 @@ interface ProductCardProps {
   index?: number;
 }
 
-// Maps product name/description keywords → a reliable Unsplash photo
-const getFallbackImage = (product: Product): string => {
-  const text = `${product.name} ${product.description}`.toLowerCase();
-
-  if (text.includes("ac") || text.includes("air condition") || text.includes("inverter ac"))
-    return "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("solar") || text.includes("panel"))
-    return "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("laptop") || text.includes("notebook"))
-    return "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("phone") || text.includes("mobile") || text.includes("smartphone"))
-    return "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("tv") || text.includes("television") || text.includes("screen"))
-    return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("fridge") || text.includes("refrigerator"))
-    return "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("washing") || text.includes("washer"))
-    return "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("bike") || text.includes("motorcycle"))
-    return "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("car") || text.includes("vehicle"))
-    return "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("camera"))
-    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("watch"))
-    return "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("headphone") || text.includes("earphone") || text.includes("audio"))
-    return "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&auto=format";
-  if (text.includes("microwave") || text.includes("oven"))
-    return "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=400&fit=crop&auto=format";
-
-  // Generic electronics
-  return "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=400&h=400&fit=crop&auto=format";
+// Category emoji map for the placeholder
+const getCategoryEmoji = (text: string): string => {
+  const t = text.toLowerCase();
+  if (t.includes("ac") || t.includes("air condition") || t.includes("cooling")) return "❄️";
+  if (t.includes("solar") || t.includes("panel") || t.includes("energy"))       return "☀️";
+  if (t.includes("laptop") || t.includes("notebook") || t.includes("computer")) return "💻";
+  if (t.includes("phone") || t.includes("mobile") || t.includes("smartphone"))  return "📱";
+  if (t.includes("tv") || t.includes("television") || t.includes("screen"))     return "📺";
+  if (t.includes("fridge") || t.includes("refrigerator"))                        return "🧊";
+  if (t.includes("washing") || t.includes("washer"))                             return "🫧";
+  if (t.includes("bike") || t.includes("motorcycle"))                            return "🏍️";
+  if (t.includes("car") || t.includes("vehicle"))                               return "🚗";
+  if (t.includes("camera"))                                                      return "📷";
+  if (t.includes("watch"))                                                       return "⌚";
+  if (t.includes("headphone") || t.includes("earphone") || t.includes("audio")) return "🎧";
+  if (t.includes("microwave") || t.includes("oven"))                             return "🍳";
+  if (t.includes("generator") || t.includes("ups"))                             return "⚡";
+  return "📦";
 };
 
-const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
-  const [imgSrc, setImgSrc] = useState(product.image);
-  const [triedFallback, setTriedFallback] = useState(false);
+// Deterministic pastel bg per product id so each card has a unique color
+const PASTEL_BGAS = [
+  "from-blue-50 to-indigo-100",
+  "from-emerald-50 to-teal-100",
+  "from-violet-50 to-purple-100",
+  "from-amber-50 to-orange-100",
+  "from-rose-50 to-pink-100",
+  "from-sky-50 to-cyan-100",
+];
+const getCardBg = (id: string | number): string =>
+  PASTEL_BGAS[String(id).charCodeAt(0) % PASTEL_BGAS.length];
 
-  const handleImgError = () => {
-    if (!triedFallback) {
-      setTriedFallback(true);
-      setImgSrc(getFallbackImage(product));
-    }
-  };
+const ImagePlaceholder = ({ product }: { product: Product }) => (
+  <div className={`w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br ${getCardBg(product.id)}`}>
+    <span className="text-6xl leading-none select-none">
+      {getCategoryEmoji(`${product.name} ${product.description}`)}
+    </span>
+    <span className="text-xs font-semibold text-slate-500 text-center px-4 leading-snug max-w-[140px]">
+      {product.name}
+    </span>
+  </div>
+);
+
+const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
+  const [imgFailed, setImgFailed] = useState(false);
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -70,14 +70,19 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         <div className="bg-card rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5">
 
           {/* Image */}
-          <div className="relative aspect-square bg-slate-100 overflow-hidden">
-            <img
-              src={imgSrc}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-              loading="lazy"
-              onError={handleImgError}
-            />
+          <div className="relative aspect-square overflow-hidden">
+            {!imgFailed && product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                loading="lazy"
+                onError={() => setImgFailed(true)}
+              />
+            ) : (
+              <ImagePlaceholder product={product} />
+            )}
+
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
             {discount > 0 && (
