@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -14,6 +15,10 @@ import VendorStorePage from "./pages/vendor/VendorStorePage";
 import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import CartPage from "./pages/CartPage";
+import WishlistPage from "@/pages/WishlistPage";
+import AccountPage  from "@/pages/AccountPage";
+
 
 const queryClient = new QueryClient();
 
@@ -31,6 +36,9 @@ const App = () => (
           <Route path="/products" element={<ShopPage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/account" element={<AccountPage />} />
 
           {/* ── Vendor store (public-facing shop) ── */}
           {/* The vendor's storefront homepage */}

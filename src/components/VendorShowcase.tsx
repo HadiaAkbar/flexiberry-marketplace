@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { shops } from "@/data/products";
 import { Star, ArrowRight, ArrowUpRight, Package } from "lucide-react";
@@ -110,7 +111,7 @@ const VendorShowcase = () => {
                 transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Link
-                  to={`/shop/${shop.id}`}
+                  to={`/store/${shop.id}`}
                   style={{ textDecoration: "none", display: "block" }}
                 >
                   <div
