@@ -112,7 +112,6 @@ const Header = () => {
                 <span className="font-black text-xl tracking-tight text-[#2563eb]">Flexi</span>
                 <span className="font-black text-xl tracking-tight text-gray-800">Berry</span>
               </div>
-              {/* "Buy Now · Pay in 3" tag badge */}
               <span
                 className="text-[9px] font-bold tracking-wide uppercase mt-0.5 px-1.5 py-0.5 rounded-full w-fit"
                 style={{
@@ -121,7 +120,6 @@ const Header = () => {
                   border: "1px solid #7c3aed30",
                 }}
               >
-                Buy Now · Pay in 3
               </span>
             </div>
           </Link>
