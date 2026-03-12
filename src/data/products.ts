@@ -64,12 +64,20 @@ export const featuredProducts: Product[] = [
   { id: "2", name: "MacBook Air M3 15\"", categoryId: "laptops", shopId: "s1", price: 429999, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop", description: "Powerful and lightweight", installmentOptions: [6, 12], rating: 4.9, reviews: 156, inStock: true },
   { id: "3", name: "Honda CD 70 2026", categoryId: "bikes", shopId: "s2", price: 155000, originalPrice: 165000, image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400&h=400&fit=crop", description: "Most reliable motorcycle", installmentOptions: [6, 12], rating: 4.5, reviews: 89, inStock: true },
   { id: "4", name: "Complete Jahez Package Gold", categoryId: "jahez", shopId: "s2", price: 850000, originalPrice: 950000, image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop", description: "Fridge + Furniture + Appliances", installmentOptions: [12], rating: 4.3, reviews: 28, inStock: true },
+<<<<<<< HEAD
   { id: "5", name: "5KW Solar Panel System", categoryId: "solar", shopId: "s3", price: 650000, image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=400&fit=crop", description: "Complete solar solution", installmentOptions: [12], rating: 4.7, reviews: 45, inStock: true },
+=======
+   { id: "5", name: "5KW Solar Panel System", categoryId: "solar", shopId: "s3", price: 650000, image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=400&fit=crop", description: "Complete solar solution", installmentOptions: [12], rating: 4.7, reviews: 45, inStock: true },
+>>>>>>> 43e3e781c5d20c2d6d6cb6b1a1ecc2e0f3c779a0
   { id: "6", name: "Royal Bedroom Set", categoryId: "furniture", shopId: "s3", price: 285000, originalPrice: 320000, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop", description: "Complete bedroom furniture", installmentOptions: [6, 12], rating: 4.4, reviews: 67, inStock: true },
   { id: "7", name: "Samsung Galaxy S24 Ultra", categoryId: "phones", shopId: "s1", price: 449999, image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&h=400&fit=crop", description: "AI-powered smartphone", installmentOptions: [6, 12], rating: 4.7, reviews: 198, inStock: true },
   { id: "8", name: "55\" Smart LED TV 4K", categoryId: "appliances", shopId: "s2", price: 95000, originalPrice: 110000, image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop", description: "Ultra HD Smart TV", installmentOptions: [6, 12], rating: 4.5, reviews: 421, inStock: true },
   { id: "9", name: "Toyota Corolla 2024", categoryId: "cars", shopId: "s3", price: 5950000, image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop", description: "Brand new sedan", installmentOptions: [12], rating: 4.9, reviews: 12, inStock: true },
+<<<<<<< HEAD
   { id: "10", name: "Gree 1.5 Ton Inverter AC", categoryId: "appliances", shopId: "s2", price: 155000, originalPrice: 180000, image: "https://selectronics.com.pk/wp-content/uploads/2024/02/Gree-Inverter-Split-AC-1.5-Ton-18FITH3W-Wifi.jpg", description: "Energy efficient cooling", installmentOptions: [6, 12], rating: 4.7, reviews: 289, inStock: true },
+=======
+  { id: "10", name: "Gree 1.5 Ton Inverter AC", categoryId: "appliances", shopId: "s2", price: 155000, originalPrice: 180000,image: "https://selectronics.com.pk/wp-content/uploads/2024/02/Gree-Inverter-Split-AC-1.5-Ton-18FITH3W-Wifi.jpg", description: "Energy efficient cooling", installmentOptions: [6, 12], rating: 4.7, reviews: 289, inStock: true },
+>>>>>>> 43e3e781c5d20c2d6d6cb6b1a1ecc2e0f3c779a0
 ];
 
 export const shops: Shop[] = [

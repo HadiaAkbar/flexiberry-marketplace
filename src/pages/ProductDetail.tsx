@@ -27,6 +27,8 @@ import {
   BadgeCheck,
   Eye,
   Clock,
+  Store,
+  MapPin,
 } from "lucide-react";
 
 /* ─── Category theme map ── */
@@ -43,6 +45,20 @@ const CATEGORY_THEMES: Record<string, { primary: string; light: string; accent: 
   general:         { primary: "#2563eb", light: "#EFF6FF", accent: "#93C5FD", dark: "#1D4ED8" },
 };
 const DEFAULT_THEME = CATEGORY_THEMES.general;
+
+/* ─── Mock vendor/shop data ── */
+const VENDOR_MAP: Record<string, { shopName: string; shopId: string; location: string; verified: boolean }> = {
+  phones:          { shopName: "TechZone Official Store",    shopId: "vendor-techzone-001",    location: "Lahore",      verified: true },
+  laptops:         { shopName: "DigiWorld Electronics",      shopId: "vendor-digiworld-002",   location: "Karachi",     verified: true },
+  bikes:           { shopName: "SpeedRiders Pk",             shopId: "vendor-speedriders-003", location: "Islamabad",   verified: true },
+  appliances:      { shopName: "HomeElite Appliances",       shopId: "vendor-homeelite-004",   location: "Rawalpindi",  verified: true },
+  solar:           { shopName: "GreenPower Solutions",       shopId: "vendor-greenpower-005",  location: "Faisalabad",  verified: true },
+  furniture:       { shopName: "CraftHouse Furniture",       shopId: "vendor-crafthouse-006",  location: "Multan",      verified: true },
+  jahez:           { shopName: "StyleHub Fashion",           shopId: "vendor-stylehub-007",    location: "Lahore",      verified: true },
+  cars:            { shopName: "AutoPrime Dealers",          shopId: "vendor-autoprime-008",   location: "Karachi",     verified: true },
+  "raw-materials": { shopName: "BuildMart Supplies",         shopId: "vendor-buildmart-009",   location: "Peshawar",    verified: true },
+  general:         { shopName: "FlexiBerry Official",        shopId: "vendor-flexiberry-000",  location: "Lahore",      verified: true },
+};
 
 /* ─── Mock recently viewed ── */
 const RECENTLY_VIEWED = [
@@ -222,6 +238,7 @@ const ProductDetail = () => {
 
   const category = categories.find((c) => c.id === product.categoryId);
   const theme = CATEGORY_THEMES[product.categoryId] || DEFAULT_THEME;
+  const vendor = VENDOR_MAP[product.categoryId] || VENDOR_MAP.general;
   const relatedProducts = featuredProducts
     .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
     .slice(0, 6);
@@ -245,6 +262,9 @@ const ProductDetail = () => {
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
+
+  // Build the vendor-aware installment/verification URL
+  const vendorCheckoutUrl = `/checkout/verify?productId=${product.id}&vendorId=${vendor.shopId}&vendor=${encodeURIComponent(vendor.shopName)}`;
 
   return (
     <div className="min-h-screen bg-white flex flex-col" style={{ fontFamily: "'Nunito Sans', 'Plus Jakarta Sans', sans-serif" }}>
@@ -349,6 +369,45 @@ const ProductDetail = () => {
             <h1 className="text-2xl font-extrabold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Nunito', 'Space Grotesk', sans-serif" }}>
               {product.name}
             </h1>
+
+            {/* ── SHOP / VENDOR BADGE ── */}
+            <Link
+              to={`/vendor/${vendor.shopId}`}
+              className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-lg border transition-all hover:shadow-sm group"
+              style={{
+                background: theme.light,
+                borderColor: theme.accent + "60",
+                textDecoration: "none",
+              }}
+            >
+              <div
+                className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
+                style={{ background: theme.primary }}
+              >
+                <Store className="w-3.5 h-3.5 text-white" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className="text-[13px] font-bold leading-none group-hover:underline"
+                  style={{ color: theme.primary }}
+                >
+                  {vendor.shopName}
+                </span>
+                {vendor.verified && (
+                  <BadgeCheck
+                    className="w-3.5 h-3.5 shrink-0"
+                    style={{ color: "#16a34a" }}
+                    title="Verified Vendor"
+                  />
+                )}
+              </div>
+              <span className="text-gray-300 text-[11px] mx-0.5">•</span>
+              <span className="flex items-center gap-0.5 text-[11px] text-gray-400">
+                <MapPin className="w-3 h-3" />
+                {vendor.location}
+              </span>
+            </Link>
+
             <p className="text-[13px] text-gray-400 mb-3">
               <span className="font-semibold text-gray-500">Reference:</span> {product.id.toUpperCase()}-001
             </p>
@@ -500,8 +559,9 @@ const ProductDetail = () => {
                 </button>
               </div>
 
-              {/* Buy on Installment */}
-              <button
+              {/* Buy on Installment — routes to vendor-scoped verification form */}
+              <Link
+                to={vendorCheckoutUrl}
                 onClick={handleAddToCart}
                 className="flex-1 h-11 flex items-center justify-center gap-2 text-white text-[13px] font-black uppercase tracking-wide rounded-lg transition-all hover:opacity-90 hover:-translate-y-px active:scale-95"
                 style={{
@@ -509,12 +569,26 @@ const ProductDetail = () => {
                     ? "linear-gradient(135deg, #16a34a, #15803d)"
                     : `linear-gradient(135deg, ${theme.primary}, ${theme.dark})`,
                   boxShadow: `0 6px 20px ${theme.primary}40`,
+                  textDecoration: "none",
                 }}
               >
                 <CreditCard className="w-4 h-4" />
-                {addedToCart ? "✓ Added!" : "Buy on Installment"}
-              </button>
+                {addedToCart ? "✓ Redirecting…" : "Buy on Installment"}
+              </Link>
             </div>
+
+            {/* Vendor routing note */}
+            <p className="text-[11px] text-gray-400 -mt-3 mb-4 flex items-center gap-1">
+              <Store className="w-3 h-3" />
+              Verification form will be sent to{" "}
+              <Link
+                to={`/vendor/${vendor.shopId}`}
+                className="font-semibold hover:underline"
+                style={{ color: theme.primary }}
+              >
+                {vendor.shopName}
+              </Link>
+            </p>
 
             {/* Wishlist + Compare */}
             <div className="flex items-center gap-5 text-[13px] text-gray-500 mb-5">
@@ -622,6 +696,8 @@ const ProductDetail = () => {
               <table className="w-full border-collapse">
                 {[
                   ["Name", product.name],
+                  ["Sold By", vendor.shopName],
+                  ["Vendor Location", vendor.location],
                   ["Category", category?.name || "Electronics"],
                   ["Reference", `${product.id.toUpperCase()}-001`],
                   ["Rating", `${product.rating} / 5 (${product.reviews} reviews)`],
@@ -637,7 +713,11 @@ const ProductDetail = () => {
                       {key}
                     </td>
                     <td className="px-5 py-3.5 text-[13px] text-gray-700" style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}>
-                      {val}
+                      {key === "Sold By" ? (
+                        <Link to={`/vendor/${vendor.shopId}`} className="font-semibold hover:underline" style={{ color: theme.primary }}>
+                          {val} {vendor.verified && <BadgeCheck className="w-3.5 h-3.5 inline text-emerald-500 ml-1" />}
+                        </Link>
+                      ) : val}
                     </td>
                   </tr>
                 ))}
