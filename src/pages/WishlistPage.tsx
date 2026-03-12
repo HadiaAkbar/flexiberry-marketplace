@@ -33,7 +33,7 @@ const initialWishlist = [
     originalPrice: 589999,
     rating: 4.9,
     reviews: 856,
-    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f4e12a?w=600&q=80",
+    image: "https://fabkart.pk/cdn/shop/files/DZ-10_1_-_1600x1062_099fc952-f5a9-4b19-9c53-7d4f4d70a34a.png?crop=center&height=1062&v=1732525036&width=1600",
     category: "TVs",
     inStock: true,
     installment: 41666,
