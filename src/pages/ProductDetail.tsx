@@ -314,6 +314,33 @@ const ProductDetail = () => {
                 </button>
               ))}
             </div>
+
+            {/* Trust badges below gallery */}
+            <div className="mt-4 rounded-xl border border-gray-100 overflow-hidden">
+              {[
+                { icon: Shield,     label: "100% Authentic",        sub: "Verified & KYC-protected" },
+                { icon: Truck,      label: "Free Home Delivery",     sub: "24–48 hrs, all major cities" },
+                { icon: RefreshCw,  label: "7-Day Easy Returns",     sub: "No questions asked" },
+                { icon: CreditCard, label: "0% Markup Installments", sub: "3, 6, 12 or 24 months" },
+              ].map(({ icon: Icon, label, sub }, i) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0"
+                  style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}
+                >
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: theme.light }}
+                  >
+                    <Icon className="w-4 h-4" style={{ color: theme.primary }} />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-gray-700 leading-tight">{label}</p>
+                    <p className="text-[11px] text-gray-400">{sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Info panel */}
