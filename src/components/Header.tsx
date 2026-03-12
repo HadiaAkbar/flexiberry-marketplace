@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Link, useLocation } from "react-router-dom";
+import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home } from "lucide-react";
 import { useState } from "react";
 import { categories } from "@/data/products";
 
@@ -59,7 +58,19 @@ const FlexiBerryLogo = ({ size = 40 }: { size?: number }) => (
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [homeOpen, setHomeOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
+  const homeDropdownLinks = [
+    { label: "All Categories", icon: "🗂️", href: "/", sub: "Browse everything" },
+    { label: "⚡ Flash Deals", icon: "⚡", href: "/flash-sale", sub: "Limited-time offers" },
+    { label: "✨ New Arrivals", icon: "✨", href: "/new-arrivals", sub: "Just landed" },
+    { label: "🏆 Best Sellers", icon: "🏆", href: "/best-sellers", sub: "Most popular picks" },
+    { label: "🎁 Bundle & Save", icon: "🎁", href: "/bundles", sub: "Jahez & combo deals" },
+    { label: "☀️ Solar Specials", icon: "☀️", href: "/category/solar", sub: "Go green, save more" },
+  ];
 
   return (
     <header className="sticky top-0 z-50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -69,7 +80,6 @@ const Header = () => {
         background: "linear-gradient(90deg, #1d1060 0%, #2563eb 40%, #7c3aed 70%, #1d1060 100%)",
         backgroundSize: "200% 100%",
       }}>
-        {/* shimmer overlay */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%)",
           backgroundSize: "200% 100%",
@@ -130,7 +140,6 @@ const Header = () => {
           {/* ── SEARCH BAR ── */}
           <div className="flex-1 max-w-2xl hidden md:flex items-center">
             <div className="relative w-full" style={{ transition: "all 0.3s ease" }}>
-              {/* Glow ring on focus */}
               <div style={{
                 position: "absolute", inset: "-2px", borderRadius: "16px",
                 background: "linear-gradient(135deg, #2563eb, #7c3aed)",
@@ -145,18 +154,12 @@ const Header = () => {
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setSearchFocused(false)}
                   style={{
-                    width: "100%",
-                    height: "46px",
-                    paddingLeft: "20px",
-                    paddingRight: "56px",
+                    width: "100%", height: "46px",
+                    paddingLeft: "20px", paddingRight: "56px",
                     borderRadius: "14px",
-                    border: searchFocused
-                      ? "1.5px solid rgba(37,99,235,0.5)"
-                      : "1.5px solid rgba(37,99,235,0.15)",
+                    border: searchFocused ? "1.5px solid rgba(37,99,235,0.5)" : "1.5px solid rgba(37,99,235,0.15)",
                     background: searchFocused ? "#fff" : "rgba(248,250,255,0.9)",
-                    fontSize: "14px",
-                    color: "#0f172a",
-                    outline: "none",
+                    fontSize: "14px", color: "#0f172a", outline: "none",
                     fontFamily: "'Plus Jakarta Sans', sans-serif",
                     fontWeight: 500,
                     boxShadow: searchFocused
@@ -167,8 +170,7 @@ const Header = () => {
                 />
                 <button style={{
                   position: "absolute", right: "5px", top: "5px",
-                  height: "36px", width: "36px",
-                  borderRadius: "10px",
+                  height: "36px", width: "36px", borderRadius: "10px",
                   background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
                   border: "none", cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -183,8 +185,6 @@ const Header = () => {
 
           {/* ── RIGHT ACTIONS ── */}
           <div className="flex items-center gap-2 ml-auto">
-
-            {/* Login */}
             <Link to="/login" className="hidden sm:flex">
               <button style={{
                 display: "flex", alignItems: "center", gap: "8px",
@@ -218,7 +218,6 @@ const Header = () => {
               </button>
             </Link>
 
-            {/* Wishlist */}
             <Link to="/wishlist">
               <button style={{
                 height: "42px", width: "42px", borderRadius: "12px",
@@ -244,7 +243,6 @@ const Header = () => {
               </button>
             </Link>
 
-            {/* Cart — 3D pill */}
             <Link to="/cart">
               <button style={{
                 position: "relative",
@@ -280,7 +278,6 @@ const Header = () => {
               </button>
             </Link>
 
-            {/* Mobile menu toggle — hidden on desktop */}
             <button
               className="md:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -301,7 +298,117 @@ const Header = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-1">
 
-              {/* All Categories — 3D pill */}
+              {/* ── HOME TAB with dropdown ── */}
+              <div
+                className="relative"
+                onMouseEnter={() => setHomeOpen(true)}
+                onMouseLeave={() => setHomeOpen(false)}
+              >
+                <Link to="/">
+                  <button style={{
+                    display: "flex", alignItems: "center", gap: "7px",
+                    padding: "10px 18px",
+                    background: isHome
+                      ? "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)"
+                      : "transparent",
+                    border: isHome ? "none" : "1.5px solid rgba(37,99,235,0.15)",
+                    cursor: "pointer",
+                    fontSize: "13px", fontWeight: 700,
+                    color: isHome ? "white" : "#374151",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    borderRadius: "0 0 14px 14px",
+                    boxShadow: isHome
+                      ? "0 4px 14px rgba(37,99,235,0.35), inset 0 1px 0 rgba(255,255,255,0.20)"
+                      : "none",
+                    letterSpacing: "-0.01em",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={e => {
+                    if (!isHome) {
+                      (e.currentTarget as HTMLButtonElement).style.background = "rgba(37,99,235,0.06)";
+                      (e.currentTarget as HTMLButtonElement).style.color = "#2563eb";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isHome) {
+                      (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                      (e.currentTarget as HTMLButtonElement).style.color = "#374151";
+                    }
+                  }}>
+                    <Home size={14} strokeWidth={2.5}/>
+                    Home
+                    <ChevronDown size={12} strokeWidth={2.5} style={{
+                      transition: "transform 0.2s ease",
+                      transform: homeOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      opacity: isHome ? 0.8 : 0.5,
+                    }}/>
+                  </button>
+                </Link>
+
+                {/* Home dropdown */}
+                {homeOpen && (
+                  <div style={{
+                    position: "absolute", top: "100%", left: 0,
+                    background: "white",
+                    borderRadius: "0 16px 16px 16px",
+                    boxShadow: "0 20px 60px rgba(37,99,235,0.15), 0 4px 16px rgba(0,0,0,0.08)",
+                    border: "1px solid rgba(37,99,235,0.10)",
+                    width: "248px", zIndex: 50, overflow: "hidden",
+                    animation: "dropIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
+                  }}>
+                    {/* Header inside dropdown */}
+                    <div style={{
+                      padding: "12px 16px 10px",
+                      borderBottom: "1px solid rgba(37,99,235,0.07)",
+                      background: "linear-gradient(135deg, #f0f7ff, #f5f3ff)",
+                    }}>
+                      <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", color: "#94a3b8" }}>
+                        Quick Navigate
+                      </p>
+                    </div>
+                    {homeDropdownLinks.map((link, i) => (
+                      <Link
+                        key={link.href + i}
+                        to={link.href}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "12px",
+                          padding: "10px 16px",
+                          fontSize: "13px", fontWeight: 600, color: "#374151",
+                          textDecoration: "none",
+                          borderBottom: i < homeDropdownLinks.length - 1 ? "1px solid rgba(0,0,0,0.04)" : "none",
+                          transition: "all 0.15s ease",
+                        }}
+                        onMouseEnter={e => {
+                          (e.currentTarget as HTMLAnchorElement).style.background = "linear-gradient(90deg, #eff6ff, #f5f3ff)";
+                          (e.currentTarget as HTMLAnchorElement).style.color = "#2563eb";
+                          (e.currentTarget as HTMLAnchorElement).style.paddingLeft = "20px";
+                        }}
+                        onMouseLeave={e => {
+                          (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                          (e.currentTarget as HTMLAnchorElement).style.color = "#374151";
+                          (e.currentTarget as HTMLAnchorElement).style.paddingLeft = "16px";
+                        }}
+                      >
+                        <div style={{
+                          height: "30px", width: "30px", borderRadius: "9px", flexShrink: 0,
+                          background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: "15px",
+                          boxShadow: "0 2px 6px rgba(37,99,235,0.10)",
+                        }}>
+                          {link.icon}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: "13px" }}>{link.label}</div>
+                          <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>{link.sub}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* All Categories pill */}
               <div className="relative"
                 onMouseEnter={() => setCatOpen(true)}
                 onMouseLeave={() => setCatOpen(false)}>
@@ -322,7 +429,6 @@ const Header = () => {
                   <ChevronDown size={13} strokeWidth={2.5} style={{ transition: "transform 0.2s ease", transform: catOpen ? "rotate(180deg)" : "rotate(0deg)" }}/>
                 </button>
 
-                {/* Dropdown */}
                 {catOpen && (
                   <div style={{
                     position: "absolute", top: "100%", left: 0,
@@ -379,7 +485,9 @@ const Header = () => {
                 <Link key={item.label} to={item.href}
                   style={{
                     padding: "10px 16px", fontSize: "13px", fontWeight: 600,
-                    color: "#475569", textDecoration: "none", borderRadius: "10px",
+                    color: location.pathname === item.href ? "#2563eb" : "#475569",
+                    textDecoration: "none", borderRadius: "10px",
+                    background: location.pathname === item.href ? "rgba(37,99,235,0.07)" : "transparent",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={e => {
@@ -387,8 +495,8 @@ const Header = () => {
                     (e.currentTarget as HTMLAnchorElement).style.background = "rgba(37,99,235,0.06)";
                   }}
                   onMouseLeave={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = "#475569";
-                    (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                    (e.currentTarget as HTMLAnchorElement).style.color = location.pathname === item.href ? "#2563eb" : "#475569";
+                    (e.currentTarget as HTMLAnchorElement).style.background = location.pathname === item.href ? "rgba(37,99,235,0.07)" : "transparent";
                   }}>
                   {item.label}
                 </Link>
@@ -444,6 +552,7 @@ const Header = () => {
                   }}>Shop Now · Pay in Installments</span>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -470,17 +579,50 @@ const Header = () => {
               <Search size={16} color="#94a3b8" style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)" }}/>
             </div>
 
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: "6px",
-              padding: "7px 14px", borderRadius: "50px",
-              background: "linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08))",
-              border: "1.5px solid rgba(37,99,235,0.18)",
-              fontSize: "12px", fontWeight: 700, color: "#2563eb",
-              marginBottom: "4px",
-            }}>
-              <Zap size={12} fill="#2563eb" strokeWidth={0}/>
-              Shop Now · Pay in Installments
-            </div>
+            {/* Mobile Home link */}
+            <Link to="/"
+              style={{
+                display: "flex", alignItems: "center", gap: "12px",
+                padding: "10px 12px", borderRadius: "12px",
+                fontSize: "13px", fontWeight: 700,
+                color: isHome ? "#2563eb" : "#374151",
+                background: isHome ? "rgba(37,99,235,0.07)" : "transparent",
+                textDecoration: "none",
+              }}>
+              <div style={{
+                height: "32px", width: "32px", borderRadius: "10px",
+                background: isHome
+                  ? "linear-gradient(135deg, #2563eb, #7c3aed)"
+                  : "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Home size={15} strokeWidth={2.5} color={isHome ? "white" : "#2563eb"}/>
+              </div>
+              Home
+            </Link>
+
+            {/* Mobile quick nav links */}
+            {homeDropdownLinks.slice(1).map((link) => (
+              <Link key={link.href} to={link.href}
+                style={{
+                  display: "flex", alignItems: "center", gap: "12px",
+                  padding: "10px 12px", borderRadius: "12px",
+                  fontSize: "13px", fontWeight: 600, color: "#374151",
+                  textDecoration: "none",
+                }}>
+                <div style={{
+                  height: "32px", width: "32px", borderRadius: "10px",
+                  background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "15px",
+                }}>
+                  {link.icon}
+                </div>
+                {link.label}
+              </Link>
+            ))}
+
+            <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "4px 0" }}/>
 
             {categories.slice(0, 6).map((cat) => (
               <Link key={cat.id} to={`/category/${cat.slug}`}
@@ -524,7 +666,6 @@ const Header = () => {
         </div>
       )}
 
-      {/* ── KEYFRAMES ── */}
       <style>{`
         @keyframes marquee {
           0%   { transform: translateX(0); }
