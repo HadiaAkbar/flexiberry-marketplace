@@ -60,6 +60,7 @@ const LoginPage = () => {
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground">Welcome to FlexiBerry</h1>
             <p className="text-muted-foreground text-sm mt-1">Login or create your account</p>
+            <p className="text-muted-foreground text-sm text-center">(Customer)</p>
           </div>
 
           <div className="bg-card rounded-2xl border border-border p-6">
@@ -109,7 +110,7 @@ const LoginPage = () => {
               <p className="text-xs text-muted-foreground mb-3">Want to sell on FlexiBerry?</p>
               <Link to="/vendor/login">
                 <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                  Register as Vendor
+                  Login as Vendor
                 </Button>
               </Link>
             </div>
