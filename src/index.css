@@ -63,6 +63,15 @@
     --amber:     43  96%  56%;
     --amber-400: 45  93%  65%;
 
+    /* ── NAVY & CORAL (Footer) ── */
+    --navy:        224 55%  14%;
+    --navy-light:  224 45%  20%;
+    --coral:       14  90%  60%;
+    --coral-light: 14  90%  72%;
+    --shadow-coral:
+      0 4px 16px hsl(14 90% 60% / 0.35),
+      0 1px  6px hsl(14 90% 60% / 0.22);
+
     /* ── RICH GRADIENT SYSTEM ── */
 
     --gradient-primary:
@@ -400,6 +409,14 @@
   .gradient-card         { background: var(--gradient-card); }
   .gradient-vendors-bg   { background: var(--gradient-vendors-bg); }
   .gradient-brands-bg    { background: var(--gradient-brands-bg); }
+
+  /* ── Navy footer ── */
+  .gradient-navy {
+    background: linear-gradient(160deg, hsl(var(--navy)) 0%, hsl(var(--navy-light)) 100%);
+  }
+  .text-coral-light { color: hsl(var(--coral-light)); }
+  .hover\:text-coral-light:hover { color: hsl(var(--coral-light)); }
+  .hover\:shadow-coral:hover { box-shadow: var(--shadow-coral); }
 
   /* ── Glassmorphism surfaces ── */
   .glass {
