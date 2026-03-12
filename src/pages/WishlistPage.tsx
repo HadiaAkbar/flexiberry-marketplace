@@ -17,7 +17,7 @@ const initialWishlist = [
     originalPrice: 349999,
     rating: 4.8,
     reviews: 1240,
-    image: "📱",
+    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80",
     category: "Smartphones",
     inStock: true,
     installment: 24999,
@@ -33,7 +33,7 @@ const initialWishlist = [
     originalPrice: 589999,
     rating: 4.9,
     reviews: 856,
-    image: "📺",
+    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f4e12a?w=600&q=80",
     category: "TVs",
     inStock: true,
     installment: 41666,
@@ -49,7 +49,7 @@ const initialWishlist = [
     originalPrice: 389999,
     rating: 4.7,
     reviews: 432,
-    image: "💻",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
     category: "Laptops",
     inStock: false,
     installment: 32499,
@@ -65,7 +65,7 @@ const initialWishlist = [
     originalPrice: 109999,
     rating: 4.9,
     reviews: 2100,
-    image: "🎧",
+    image: "https://images.unsplash.com/photo-1545127398-14699f92334b?w=600&q=80",
     category: "Audio",
     inStock: true,
     installment: 7499,
@@ -81,7 +81,7 @@ const initialWishlist = [
     originalPrice: 179999,
     rating: 4.6,
     reviews: 678,
-    image: "🌀",
+    image: "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=600&q=80",
     category: "Appliances",
     inStock: true,
     installment: 12499,
@@ -90,14 +90,14 @@ const initialWishlist = [
   },
   {
     id: "p6",
-    name: "iPad Pro M4 12.9\"",
+    name: 'iPad Pro M4 12.9"',
     shop: "TechZone Electronics",
     shopId: "shop-1",
     price: 269999,
     originalPrice: 299999,
     rating: 4.8,
     reviews: 521,
-    image: "📱",
+    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80",
     category: "Tablets",
     inStock: true,
     installment: 22499,
@@ -106,12 +106,12 @@ const initialWishlist = [
   },
 ];
 
-const formatPKR = (n: number) =>
-  "PKR " + n.toLocaleString("en-PK");
+const formatPKR = (n: number) => "PKR " + n.toLocaleString("en-PK");
 
 // ── Component ───────────────────────────────────────────────────────────────
 const WishlistPage = () => {
   const [items, setItems] = useState(initialWishlist);
+  const [failedImgs, setFailedImgs] = useState<Set<string>>(new Set());
   const [addedToCart, setAddedToCart] = useState<string[]>([]);
 
   const remove = (id: string) =>
@@ -124,11 +124,14 @@ const WishlistPage = () => {
 
   const clearAll = () => setItems([]);
 
+  const EMOJI_FALLBACK: Record<string, string> = {
+    p1: "📱", p2: "📺", p3: "💻", p4: "🎧", p5: "🌀", p6: "📱",
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero header ── */}
       <div className="relative overflow-hidden gradient-primary py-12 px-4">
-        {/* Decorative blobs */}
         <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-10"
           style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
         <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10"
@@ -218,8 +221,8 @@ const WishlistPage = () => {
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
 
-                  {/* Product image area */}
-                  <div className="relative h-44 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                  {/* ── Product image ── */}
+                  <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
                     {!item.inStock && (
                       <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center z-10">
                         <span className="bg-destructive text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
@@ -227,7 +230,26 @@ const WishlistPage = () => {
                         </span>
                       </div>
                     )}
-                    <span className="text-6xl">{item.image}</span>
+
+                    {failedImgs.has(item.id) ? (
+                      /* Emoji fallback */
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-7xl">{EMOJI_FALLBACK[item.id] ?? "📦"}</span>
+                      </div>
+                    ) : (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={() =>
+                          setFailedImgs((prev) => new Set(prev).add(item.id))
+                        }
+                      />
+                    )}
+
+                    {/* Subtle gradient overlay at bottom for legibility */}
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                   </div>
 
                   {/* Content */}
