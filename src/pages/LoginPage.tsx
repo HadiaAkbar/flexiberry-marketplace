@@ -5,48 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
-
-/* ── Inline SVG: FlexiBerry Tagged-Cart Logo ── */
-const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="lg-bg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="#2563eb"/>
-        <stop offset="100%" stopColor="#7c3aed"/>
-      </linearGradient>
-      <linearGradient id="lg-sh" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stopColor="white" stopOpacity="0.18"/>
-        <stop offset="100%" stopColor="white" stopOpacity="0"/>
-      </linearGradient>
-    </defs>
-    <rect width="100" height="100" rx="28" fill="url(#lg-bg)"/>
-    <rect width="100" height="100" rx="28" fill="url(#lg-sh)"/>
-    <g transform="rotate(-14, 50, 52)">
-      <path d="M 8 20 L 17 20 L 23 40" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-      <path d="M 23 40 L 23 70 Q 23 76 29 76 L 79 76 Q 85 76 85 70 L 85 40 Q 85 34 79 34 L 35 34 Q 27 34 23 40 Z" fill="white"/>
-      {/* FB initials inside cart */}
-      <circle cx="32" cy="39" r="4.5" fill="url(#lg-bg)"/>
-      <rect x="30" y="45" width="5" height="21" rx="2.5" fill="url(#lg-bg)"/>
-      <rect x="30" y="45" width="13" height="4.5" rx="2.25" fill="url(#lg-bg)"/>
-      <rect x="30" y="53.5" width="10" height="4" rx="2" fill="url(#lg-bg)"/>
-      <rect x="48" y="45" width="5" height="21" rx="2.5" fill="url(#lg-bg)"/>
-      <path d="M 53 45 Q 65 45 65 51.5 Q 65 57.5 53 57.5" stroke="url(#lg-bg)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
-      <path d="M 53 57.8 Q 67 57.8 67 64.5 Q 67 71 53 71" stroke="url(#lg-bg)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
-      {/* Wheels */}
-      <circle cx="35" cy="86" r="7.5" fill="white"/>
-      <circle cx="35" cy="86" r="3.8" fill="url(#lg-bg)"/>
-      <circle cx="35" cy="86" r="1.5" fill="white"/>
-      <circle cx="70" cy="86" r="7.5" fill="#10b981"/>
-      <circle cx="70" cy="86" r="3.8" fill="white"/>
-      <circle cx="70" cy="86" r="1.5" fill="#10b981"/>
-      {/* Installment dots */}
-      <circle cx="43" cy="91" r="2.5" fill="white" opacity="0.7"/>
-      <circle cx="52" cy="91" r="2.5" fill="white" opacity="0.4"/>
-      <circle cx="61" cy="91" r="2.5" fill="white" opacity="0.18"/>
-    </g>
-    <rect width="100" height="100" rx="28" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.1"/>
-  </svg>
-);
+import logoImg from "@/assets/flexiberry-logo-clean.png";
 
 const LoginPage = () => {
   return (
@@ -55,9 +14,7 @@ const LoginPage = () => {
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <FlexiBerryLogo size={64} />
-            </div>
+            <img src={logoImg} alt="FlexiBerry" className="h-16 w-16 mx-auto mb-4" />
             <h1 className="font-display text-2xl font-bold text-foreground">Welcome to FlexiBerry</h1>
             <p className="text-muted-foreground text-sm mt-1">Login or create your account</p>
           </div>
