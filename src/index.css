@@ -1,776 +1,607 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FlexiBerry — Redesigned Components</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@layer base {
   :root {
-    --blue:   #2563eb;
-    --purple: #7c3aed;
-    --green:  #10b981;
-    --amber:  #f59e0b;
-    --grad:   linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-    --font-body:    'Plus Jakarta Sans', sans-serif;
-    --font-display: 'Syne', sans-serif;
+    /* ── CORE SEMANTICS ── */
+    --background: 0 0% 100%;
+    --foreground: 222 25% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 25% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 25% 9%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 263 72% 58%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 44%;
+
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input:  220 14% 96%;
+    --ring:   221 83% 53%;
+    --radius: 0.75rem;
+
+    /* ── BRAND COLOR SCALE ── */
+    --blue-50:  221 100% 97%;
+    --blue-100: 221 96%  93%;
+    --blue-400: 217 91%  67%;
+    --blue:     221 83%  53%;
+    --blue-600: 224 76%  48%;
+    --blue-700: 226 71%  40%;
+
+    --purple-50:  263 100% 97%;
+    --purple-100: 263 87%  93%;
+    --purple-400: 263 70%  65%;
+    --purple:     263 72%  58%;
+    --purple-600: 263 80%  48%;
+    --purple-700: 263 85%  40%;
+
+    --green-50:  160 100% 95%;
+    --green-100: 160 84%  88%;
+    --green-400: 160 75%  50%;
+    --green:     160 84%  39%;
+    --green-600: 160 84%  32%;
+
+    --teal:      174 72%  40%;
+    --teal-400:  174 72%  50%;
+
+    --amber:     43  96%  56%;
+    --amber-400: 45  93%  65%;
+
+    /* ── RICH GRADIENT SYSTEM ── */
+
+    /* Core brand */
+    --gradient-primary:
+      linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(263 72% 58%) 100%);
+    --gradient-primary-soft:
+      linear-gradient(135deg, hsl(221 83% 53% / 0.12) 0%, hsl(263 72% 58% / 0.12) 100%);
+    --gradient-primary-glow:
+      linear-gradient(135deg, hsl(221 83% 53% / 0.4) 0%, hsl(263 72% 58% / 0.4) 100%);
+
+    /* Hero — three-stop depth */
+    --gradient-hero:
+      linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(250 75% 56%) 50%, hsl(263 72% 58%) 100%);
+    --gradient-hero-r:
+      linear-gradient(225deg, hsl(263 72% 58%) 0%, hsl(250 75% 56%) 50%, hsl(221 83% 53%) 100%);
+
+    /* Mesh / aurora — for large section backgrounds */
+    --gradient-aurora:
+      radial-gradient(ellipse at 20% 50%, hsl(221 83% 53% / 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, hsl(263 72% 58% / 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 60% 80%, hsl(160 84% 39% / 0.12) 0%, transparent 50%);
+
+    --gradient-mesh:
+      radial-gradient(at 40% 20%, hsl(221 83% 60%) 0px, transparent 50%),
+      radial-gradient(at 80% 0%,  hsl(263 72% 65%) 0px, transparent 50%),
+      radial-gradient(at 0%  50%, hsl(160 84% 45%) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsl(43  96% 60%) 0px, transparent 50%),
+      radial-gradient(at 0%  100%,hsl(221 83% 53%) 0px, transparent 50%);
+
+    /* Accent gradients */
+    --gradient-green:
+      linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(174 72% 40%) 100%);
+    --gradient-teal:
+      linear-gradient(135deg, hsl(174 72% 40%) 0%, hsl(221 83% 53%) 100%);
+    --gradient-warm:
+      linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(43 96% 56%) 100%);
+    --gradient-sunset:
+      linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(263 72% 58%) 50%, hsl(160 84% 39%) 100%);
+    --gradient-ocean:
+      linear-gradient(135deg, hsl(174 72% 40%) 0%, hsl(221 83% 53%) 50%, hsl(263 72% 58%) 100%);
+
+    /* Glassmorphism surfaces */
+    --gradient-glass:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.75) 0%, hsl(0 0% 100% / 0.45) 100%);
+    --gradient-glass-strong:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.90) 0%, hsl(0 0% 100% / 0.70) 100%);
+    --gradient-glass-blue:
+      linear-gradient(135deg, hsl(221 83% 53% / 0.15) 0%, hsl(263 72% 58% / 0.10) 100%);
+    --gradient-glass-subtle:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.50) 0%, hsl(0 0% 100% / 0.25) 100%);
+
+    /* Card surfaces */
+    --gradient-card:
+      linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 14% 98%) 100%);
+    --gradient-card-hover:
+      linear-gradient(145deg, hsl(221 100% 98%) 0%, hsl(263 100% 98%) 100%);
+
+    /* ── DEEP SHADOW SYSTEM ── */
+
+    --shadow-xs:  0 1px 2px hsl(222 25% 9% / 0.04);
+    --shadow-sm:  0 1px 3px hsl(222 25% 9% / 0.06), 0 1px 2px hsl(222 25% 9% / 0.04);
+    --shadow-md:  0 4px 6px hsl(222 25% 9% / 0.05), 0 2px 4px hsl(222 25% 9% / 0.04);
+    --shadow-lg:  0 10px 25px hsl(222 25% 9% / 0.08), 0 4px 10px hsl(222 25% 9% / 0.04);
+    --shadow-xl:  0 20px 50px hsl(222 25% 9% / 0.10), 0 8px 20px hsl(222 25% 9% / 0.06);
+    --shadow-2xl: 0 32px 80px hsl(222 25% 9% / 0.14), 0 12px 30px hsl(222 25% 9% / 0.08);
+
+    --shadow-primary:
+      0 4px 16px hsl(221 83% 53% / 0.22),
+      0 1px  4px hsl(221 83% 53% / 0.14);
+    --shadow-primary-lg:
+      0 8px 32px hsl(221 83% 53% / 0.30),
+      0 2px  8px hsl(221 83% 53% / 0.18);
+    --shadow-purple:
+      0 4px 16px hsl(263 72% 58% / 0.22),
+      0 1px  4px hsl(263 72% 58% / 0.14);
+    --shadow-purple-lg:
+      0 8px 32px hsl(263 72% 58% / 0.30),
+      0 2px  8px hsl(263 72% 58% / 0.18);
+    --shadow-green:
+      0 4px 16px hsl(160 84% 39% / 0.22),
+      0 1px  4px hsl(160 84% 39% / 0.12);
+    --shadow-green-lg:
+      0 8px 32px hsl(160 84% 39% / 0.28),
+      0 2px  8px hsl(160 84% 39% / 0.16);
+    --shadow-hero:
+      0 12px 48px hsl(221 83% 53% / 0.28),
+      0 24px 80px hsl(263 72% 58% / 0.20),
+      0  4px 16px hsl(221 83% 53% / 0.16);
+
+    --shadow-inner-blue:   inset 0 1px 3px hsl(221 83% 53% / 0.20);
+    --shadow-inner-purple: inset 0 1px 3px hsl(263 72% 58% / 0.20);
+
+    /* ── TYPOGRAPHY TOKENS ── */
+    --font-sans:    'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+    --leading-tight:   1.15;
+    --leading-snug:    1.3;
+    --leading-normal:  1.55;
+    --leading-relaxed: 1.75;
+
+    --tracking-tight:   -0.03em;
+    --tracking-snug:    -0.015em;
+    --tracking-normal:   0em;
+    --tracking-wide:     0.04em;
+    --tracking-widest:   0.12em;
+
+    /* ── SIDEBAR ── */
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 94%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 221 83% 53%;
+
+    font-family: var(--font-sans);
+    line-height: var(--leading-normal);
   }
 
-  body { font-family: var(--font-body); background: #f4f6fb; }
+  /* ══════════════════════════════════════
+     DARK MODE — deep blue-tinted surfaces
+  ══════════════════════════════════════ */
+  .dark {
+    --background:  224 30% 7%;
+    --foreground:  216 32% 95%;
 
-  /* ── SECTION LABELS ── */
-  .section-label {
-    background: #e8eaf0;
-    padding: 8px 32px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #9ca3af;
+    --card:            224 28% 10%;
+    --card-foreground: 216 32% 95%;
+
+    --popover:            224 28% 10%;
+    --popover-foreground: 216 32% 95%;
+
+    /* Primary dark: #3b82f6 */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary dark: #a78bfa */
+    --secondary: 263 70% 68%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted:            224 20% 15%;
+    --muted-foreground: 218 18% 58%;
+
+    /* Accent dark: #34d399 */
+    --accent: 160 75% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 224 22% 18%;
+    --input:  224 22% 14%;
+    --ring:   217 91% 60%;
+
+    --chart-1: 217 91% 62%;
+    --chart-2: 263 70% 68%;
+    --chart-3: 160 75% 54%;
+    --chart-4: 174 72% 52%;
+    --chart-5: 45  93% 62%;
+
+    /* Dark gradients — more vivid to pop on dark bg */
+    --gradient-primary:
+      linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(263 70% 68%) 100%);
+    --gradient-primary-soft:
+      linear-gradient(135deg, hsl(217 91% 60% / 0.18) 0%, hsl(263 70% 68% / 0.18) 100%);
+    --gradient-primary-glow:
+      linear-gradient(135deg, hsl(217 91% 60% / 0.5) 0%, hsl(263 70% 68% / 0.5) 100%);
+
+    --gradient-hero:
+      linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(250 78% 64%) 50%, hsl(263 70% 68%) 100%);
+
+    --gradient-aurora:
+      radial-gradient(ellipse at 20% 50%, hsl(217 91% 60% / 0.20) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, hsl(263 70% 68% / 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 60% 80%, hsl(160 75% 52% / 0.16) 0%, transparent 50%);
+
+    --gradient-mesh:
+      radial-gradient(at 40% 20%, hsl(217 91% 60%) 0px, transparent 50%),
+      radial-gradient(at 80% 0%,  hsl(263 70% 65%) 0px, transparent 50%),
+      radial-gradient(at 0%  50%, hsl(160 75% 50%) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, hsl(43  93% 60%) 0px, transparent 50%),
+      radial-gradient(at 0%  100%,hsl(217 91% 60%) 0px, transparent 50%);
+
+    --gradient-green:
+      linear-gradient(135deg, hsl(160 75% 52%) 0%, hsl(174 72% 50%) 100%);
+    --gradient-teal:
+      linear-gradient(135deg, hsl(174 72% 50%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-warm:
+      linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(45 93% 62%) 100%);
+    --gradient-sunset:
+      linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(263 70% 68%) 50%, hsl(160 75% 52%) 100%);
+    --gradient-ocean:
+      linear-gradient(135deg, hsl(174 72% 50%) 0%, hsl(217 91% 60%) 50%, hsl(263 70% 68%) 100%);
+
+    /* Dark glass — lighter overlays on deep bg */
+    --gradient-glass:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.09) 0%, hsl(0 0% 100% / 0.05) 100%);
+    --gradient-glass-strong:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.16) 0%, hsl(0 0% 100% / 0.10) 100%);
+    --gradient-glass-blue:
+      linear-gradient(135deg, hsl(217 91% 60% / 0.20) 0%, hsl(263 70% 68% / 0.14) 100%);
+    --gradient-glass-subtle:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.06) 0%, hsl(0 0% 100% / 0.03) 100%);
+
+    --gradient-card:
+      linear-gradient(145deg, hsl(224 28% 11%) 0%, hsl(224 28% 13%) 100%);
+    --gradient-card-hover:
+      linear-gradient(145deg, hsl(221 40% 14%) 0%, hsl(263 35% 15%) 100%);
+
+    /* Dark shadows — colored glows pop more */
+    --shadow-xs:  0 1px 2px  hsl(0 0% 0% / 0.25);
+    --shadow-sm:  0 1px 3px  hsl(0 0% 0% / 0.35), 0 1px 2px hsl(0 0% 0% / 0.25);
+    --shadow-md:  0 4px 8px  hsl(0 0% 0% / 0.35), 0 2px 4px hsl(0 0% 0% / 0.25);
+    --shadow-lg:  0 10px 30px hsl(0 0% 0% / 0.40), 0 4px 12px hsl(0 0% 0% / 0.28);
+    --shadow-xl:  0 20px 50px hsl(0 0% 0% / 0.45), 0 8px 20px hsl(0 0% 0% / 0.30);
+    --shadow-2xl: 0 32px 80px hsl(0 0% 0% / 0.50), 0 12px 30px hsl(0 0% 0% / 0.35);
+
+    --shadow-primary:
+      0 4px 20px hsl(217 91% 60% / 0.35),
+      0 1px  6px hsl(217 91% 60% / 0.22);
+    --shadow-primary-lg:
+      0 8px 40px hsl(217 91% 60% / 0.45),
+      0 2px 12px hsl(217 91% 60% / 0.28);
+    --shadow-purple:
+      0 4px 20px hsl(263 70% 68% / 0.35),
+      0 1px  6px hsl(263 70% 68% / 0.22);
+    --shadow-purple-lg:
+      0 8px 40px hsl(263 70% 68% / 0.45),
+      0 2px 12px hsl(263 70% 68% / 0.28);
+    --shadow-green:
+      0 4px 20px hsl(160 75% 52% / 0.30),
+      0 1px  6px hsl(160 75% 52% / 0.18);
+    --shadow-green-lg:
+      0 8px 40px hsl(160 75% 52% / 0.38),
+      0 2px 12px hsl(160 75% 52% / 0.22);
+    --shadow-hero:
+      0 12px 60px  hsl(217 91% 60% / 0.40),
+      0 24px 100px hsl(263 70% 68% / 0.28),
+      0  4px 20px  hsl(217 91% 60% / 0.22);
+
+    --shadow-inner-blue:   inset 0 1px 4px hsl(217 91% 60% / 0.30);
+    --shadow-inner-purple: inset 0 1px 4px hsl(263 70% 68% / 0.30);
+
+    --sidebar-background: 224 30% 8%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 22% 14%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 224 22% 16%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+/* ══════════════════════════════════════
+   BASE LAYER
+══════════════════════════════════════ */
+@layer base {
+  * {
+    @apply border-border;
   }
 
-  /* ═══════════════════════════════════════
-     1. TAB SWITCHER
-  ═══════════════════════════════════════ */
-  .tabs-section {
-    padding: 56px 40px;
-    background: var(--grad);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
-  .tabs-section h4 {
-    color: rgba(255,255,255,0.5);
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    font-family: var(--font-body);
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    line-height: var(--leading-normal);
   }
-  .tab-pill {
-    display: inline-flex;
-    padding: 5px;
-    border-radius: 20px;
-    gap: 3px;
-    /* 3-D glass shell */
-    background: linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%);
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+  }
+
+  p {
+    line-height: var(--leading-relaxed);
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--primary));
+  }
+}
+
+/* ══════════════════════════════════════
+   COMPONENT LAYER
+══════════════════════════════════════ */
+@layer components {
+
+  /* ── Gradient utilities ── */
+  .gradient-primary      { background: var(--gradient-primary); }
+  .gradient-primary-soft { background: var(--gradient-primary-soft); }
+  .gradient-hero         { background: var(--gradient-hero); }
+  .gradient-aurora       { background: var(--gradient-aurora); }
+  .gradient-mesh         { background: var(--gradient-mesh); }
+  .gradient-green        { background: var(--gradient-green); }
+  .gradient-teal         { background: var(--gradient-teal); }
+  .gradient-warm         { background: var(--gradient-warm); }
+  .gradient-sunset       { background: var(--gradient-sunset); }
+  .gradient-ocean        { background: var(--gradient-ocean); }
+  .gradient-card         { background: var(--gradient-card); }
+
+  /* ── Glassmorphism surfaces ── */
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(16px) saturate(1.8);
+    -webkit-backdrop-filter: blur(16px) saturate(1.8);
+    border: 1px solid hsl(0 0% 100% / 0.18);
+  }
+  .glass-strong {
+    background: var(--gradient-glass-strong);
     backdrop-filter: blur(24px) saturate(2);
     -webkit-backdrop-filter: blur(24px) saturate(2);
-    border: 1px solid rgba(255,255,255,0.30);
-    box-shadow:
-      0 8px 32px rgba(0,0,0,0.18),
-      0 2px 8px rgba(0,0,0,0.12),
-      inset 0 1px 0 rgba(255,255,255,0.45),
-      inset 0 -1px 0 rgba(0,0,0,0.10);
+    border: 1px solid hsl(0 0% 100% / 0.28);
   }
-  .tab-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 24px;
-    border-radius: 15px;
-    border: none;
-    background: transparent;
-    color: rgba(255,255,255,0.58);
-    font-size: 14px;
-    font-weight: 600;
-    font-family: var(--font-body);
-    cursor: pointer;
-    letter-spacing: -0.01em;
-    transition: all 0.22s cubic-bezier(0.22,1,0.36,1);
-    user-select: none;
+  .glass-blue {
+    background: var(--gradient-glass-blue);
+    backdrop-filter: blur(16px) saturate(1.6);
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    border: 1px solid hsl(221 83% 53% / 0.20);
   }
-  .tab-btn .icon { font-size: 15px; }
-  .tab-btn:hover:not(.active) {
-    color: rgba(255,255,255,0.85);
-    background: rgba(255,255,255,0.10);
+  .glass-subtle {
+    background: var(--gradient-glass-subtle);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsl(0 0% 100% / 0.10);
   }
-  .tab-btn.active {
-    color: #fff;
-    font-weight: 800;
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-    box-shadow:
-      0 6px 20px rgba(37,99,235,0.55),
-      0 2px 6px rgba(124,58,237,0.40),
-      inset 0 1px 0 rgba(255,255,255,0.30),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
-    transform: translateY(-1px);
+  .glass-card {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px) saturate(1.9);
+    -webkit-backdrop-filter: blur(20px) saturate(1.9);
+    border: 1px solid hsl(0 0% 100% / 0.22);
+    box-shadow: var(--shadow-lg);
   }
 
-  /* ═══════════════════════════════════════
-     2. HOW IT WORKS
-  ═══════════════════════════════════════ */
-  .how-section {
-    padding: 88px 48px 96px;
-    background: #fff;
-    position: relative;
-    overflow: hidden;
+  /* ── Shadow utilities ── */
+  .shadow-primary    { box-shadow: var(--shadow-primary); }
+  .shadow-primary-lg { box-shadow: var(--shadow-primary-lg); }
+  .shadow-purple     { box-shadow: var(--shadow-purple); }
+  .shadow-purple-lg  { box-shadow: var(--shadow-purple-lg); }
+  .shadow-green      { box-shadow: var(--shadow-green); }
+  .shadow-green-lg   { box-shadow: var(--shadow-green-lg); }
+  .shadow-hero       { box-shadow: var(--shadow-hero); }
+
+  /* ── Text gradient utilities ── */
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .how-section::before {
-    content: '';
-    position: absolute;
-    top: -120px; left: 50%;
-    transform: translateX(-50%);
-    width: 900px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(37,99,235,0.06) 0%, transparent 70%);
-    pointer-events: none;
+  .text-gradient-hero {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .how-header { text-align: center; margin-bottom: 64px; }
-  .eyebrow {
-    display: inline-block;
-    font-size: 11px;
+  .text-gradient-sunset {
+    background: var(--gradient-sunset);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-warm {
+    background: var(--gradient-warm);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-ocean {
+    background: var(--gradient-ocean);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Typography helpers ── */
+  .font-display  { font-family: var(--font-display); }
+  .font-sans     { font-family: var(--font-sans); }
+  .text-balance  { text-wrap: balance; }
+  .text-pretty   { text-wrap: pretty; }
+
+  .heading-hero {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
     font-weight: 800;
-    letter-spacing: 5px;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+  .heading-section {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-snug);
+    line-height: var(--leading-snug);
+    text-wrap: balance;
+  }
+  .label-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: 14px;
-    font-family: var(--font-body);
-  }
-  .how-header h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-    margin-bottom: 14px;
-  }
-  .how-header p {
-    font-size: 19px;
-    color: #64748b;
-    font-weight: 400;
-  }
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
-    max-width: 1080px;
-    margin: 0 auto;
-    position: relative;
-  }
-  /* connector */
-  .steps-grid::before {
-    content: '';
-    position: absolute;
-    top: 56px;
-    left: calc(12.5% + 24px);
-    right: calc(12.5% + 24px);
-    height: 2px;
-    background: linear-gradient(90deg, rgba(37,99,235,0.18), rgba(124,58,237,0.22), rgba(16,185,129,0.18));
-    border-radius: 2px;
-  }
-  .step-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-  .step-icon-wrap {
-    width: 112px;
-    height: 112px;
-    border-radius: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 42px;
-    margin-bottom: 24px;
-    position: relative;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .step-icon-wrap:hover {
-    transform: translateY(-5px);
-  }
-  .step-icon-wrap.blue   { background: #eff6ff; box-shadow: 0 10px 30px rgba(37,99,235,0.15); }
-  .step-icon-wrap.purple { background: #f5f3ff; box-shadow: 0 10px 30px rgba(124,58,237,0.15); }
-  .step-icon-wrap.green  { background: #ecfdf5; box-shadow: 0 10px 30px rgba(16,185,129,0.15); }
-  .step-icon-wrap.amber  { background: #fffbeb; box-shadow: 0 10px 30px rgba(245,158,11,0.15); }
-  .step-badge {
-    position: absolute;
-    top: -10px; right: -10px;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  }
-  .step-badge.blue   { background: var(--blue); }
-  .step-badge.purple { background: var(--purple); }
-  .step-badge.green  { background: var(--green); }
-  .step-badge.amber  { background: var(--amber); }
-  .step-card h3 {
-    font-family: var(--font-display);
-    font-size: 21px;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.03em;
-    margin-bottom: 10px;
-  }
-  .step-card p {
-    font-size: 15.5px;
-    color: #64748b;
-    line-height: 1.65;
-    max-width: 190px;
+    color: hsl(var(--primary));
   }
 
-  /* ═══════════════════════════════════════
-     3. TOP VENDORS
-  ═══════════════════════════════════════ */
-  .vendors-section {
-    padding: 80px 48px 88px;
-    background: linear-gradient(160deg, #f8faff 0%, #f3f0ff 60%, #f0fff8 100%);
+  /* ── Depth card ── */
+  .card-depth {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-md);
+    border: 1px solid hsl(var(--border));
+    transition: box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
   }
-  .vendors-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    max-width: 1100px;
-    margin: 0 auto 44px;
-  }
-  .vendors-header h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-    margin-bottom: 8px;
-  }
-  .vendors-header p { font-size: 17px; color: #64748b; }
-  .view-all-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--blue);
-    text-decoration: none;
-    padding: 11px 22px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(37,99,235,0.09) 0%, rgba(124,58,237,0.09) 100%);
-    border: 1.5px solid rgba(37,99,235,0.15);
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-  .view-all-btn:hover {
-    background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(124,58,237,0.15) 100%);
-    box-shadow: 0 4px 16px rgba(37,99,235,0.12);
-    transform: translateY(-1px);
-  }
-  .vendors-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .vendor-card {
-    background: #fff;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 22px;
-    padding: 30px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.045);
-  }
-  .vendor-card:hover {
-    border-color: rgba(37,99,235,0.30);
-    box-shadow: 0 10px 36px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.04);
-    transform: translateY(-3px);
-  }
-  .vendor-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .vendor-info { display: flex; align-items: center; gap: 14px; }
-  .vendor-emoji {
-    width: 54px; height: 54px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(124,58,237,0.08) 100%);
-    border: 1.5px solid rgba(37,99,235,0.12);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-  }
-  .vendor-name {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--blue);
-    font-family: var(--font-display);
-    letter-spacing: -0.02em;
-    margin-bottom: 3px;
-  }
-  .vendor-cat { font-size: 13px; color: #9ca3af; font-weight: 500; }
-  .vendor-arrow { color: #d1d5db; font-size: 20px; }
-  .vendor-divider { height: 1px; background: #f1f5f9; margin: 0 0 18px; }
-  .vendor-desc { font-size: 15.5px; color: #64748b; line-height: 1.55; margin-bottom: 20px; }
-  .vendor-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .vendor-rating, .vendor-products {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 15px; color: #374151; font-weight: 600;
-  }
-  .vendor-products { color: #6b7280; font-weight: 500; }
-
-  /* ═══════════════════════════════════════
-     4. FAQ
-  ═══════════════════════════════════════ */
-  .faq-section {
-    padding: 88px 48px 96px;
-    background: #fff;
-    position: relative;
-    overflow: hidden;
-  }
-  .faq-section::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 700px; height: 300px;
-    background: radial-gradient(ellipse, rgba(37,99,235,0.05) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .faq-header { text-align: center; margin-bottom: 60px; }
-  .faq-header h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-    margin-bottom: 14px;
-  }
-  .faq-header p { font-size: 19px; color: #64748b; }
-  .faq-list {
-    max-width: 820px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .faq-item {
-    background: #fff;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 18px;
-    overflow: hidden;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  }
-  .faq-item.open {
-    border-color: rgba(37,99,235,0.28);
-    box-shadow: 0 6px 24px rgba(37,99,235,0.10), 0 1px 4px rgba(0,0,0,0.04);
-  }
-  .faq-q {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 28px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    gap: 16px;
-    text-align: left;
-  }
-  .faq-q-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
-    font-family: var(--font-display);
-    letter-spacing: -0.02em;
-    line-height: 1.35;
-    transition: color 0.2s ease;
-  }
-  .faq-item.open .faq-q-text { color: var(--blue); }
-  .faq-chevron-wrap {
-    flex-shrink: 0;
-    width: 36px; height: 36px;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    background: #f1f5f9;
-    transition: all 0.22s ease;
-    font-size: 17px;
-    color: #9ca3af;
-  }
-  .faq-item.open .faq-chevron-wrap {
-    background: var(--grad);
-    color: #fff;
-    transform: rotate(180deg);
-    box-shadow: 0 4px 12px rgba(37,99,235,0.28);
-  }
-  .faq-a {
-    display: none;
-    padding: 0 28px 24px;
-    border-top: 1px solid #f1f5f9;
-  }
-  .faq-item.open .faq-a { display: block; }
-  .faq-a p {
-    font-size: 16.5px;
-    color: #64748b;
-    line-height: 1.72;
-    padding-top: 18px;
+  .card-depth:hover {
+    background: var(--gradient-card-hover);
+    box-shadow: var(--shadow-hero);
+    transform: translateY(-2px);
   }
 
-  /* ═══════════════════════════════════════
-     5. TOP BRANDS
-  ═══════════════════════════════════════ */
-  .brands-section {
-    padding: 80px 48px 88px;
-    background: linear-gradient(160deg, #f8faff 0%, #f3f0ff 100%);
+  /* ══════════════════════════════════════
+     ANIMATION SYSTEM
+  ══════════════════════════════════════ */
+
+  /* Marquee — ticker bar */
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
-  .brands-header { text-align: center; margin-bottom: 52px; }
-  .brands-header h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.04em;
-    line-height: 1.05;
-    margin-bottom: 10px;
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+    will-change: transform;
   }
-  .brands-header p { font-size: 17px; color: #64748b; }
-  .brands-grid {
-    display: flex;
-    gap: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap;
-    justify-content: center;
+  .animate-marquee:hover { animation-play-state: paused; }
+
+  /* Brand scroll */
+  @keyframes brand-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
-  .brand-card {
-    width: 160px;
-    height: 120px;
-    background: #fff;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-  }
-  .brand-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(37,99,235,0.04) 0%, rgba(124,58,237,0.04) 100%);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  .brand-card:hover {
-    border-color: rgba(37,99,235,0.30);
-    box-shadow: 0 10px 32px rgba(37,99,235,0.13), 0 2px 8px rgba(0,0,0,0.04);
-    transform: translateY(-4px);
-  }
-  .brand-card:hover::before { opacity: 1; }
-  .brand-logo-text {
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    font-family: var(--font-display);
-    position: relative;
-  }
-  .brand-label {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: #9ca3af;
-    letter-spacing: 0.5px;
-    position: relative;
+  .animate-brand-scroll {
+    animation: brand-scroll 25s linear infinite;
+    will-change: transform;
   }
 
-  /* ── animations ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+  /* Fade up — staggered entrance */
+  @keyframes fade-up {
+    0%   { opacity: 0; transform: translateY(22px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
-  .step-card { animation: fadeUp 0.5s ease both; }
-  .step-card:nth-child(1) { animation-delay: 0.05s; }
-  .step-card:nth-child(2) { animation-delay: 0.15s; }
-  .step-card:nth-child(3) { animation-delay: 0.25s; }
-  .step-card:nth-child(4) { animation-delay: 0.35s; }
-</style>
-</head>
-<body>
+  .animate-fade-up            { animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .animate-fade-up-delay-1    { animation-delay: 0.10s; }
+  .animate-fade-up-delay-2    { animation-delay: 0.20s; }
+  .animate-fade-up-delay-3    { animation-delay: 0.32s; }
+  .animate-fade-up-delay-4    { animation-delay: 0.46s; }
 
-<!-- ── SECTION LABEL 1 ── -->
-<div class="section-label">Component 1 — Tab Switcher</div>
-
-<!-- ═══════════ 1. TAB SWITCHER ═══════════ -->
-<div class="tabs-section">
-  <h4>Product Filters</h4>
-  <div class="tab-pill">
-    <button class="tab-btn active" onclick="switchTab(this)">
-      <span class="icon">🔥</span> Featured Products
-    </button>
-    <button class="tab-btn" onclick="switchTab(this)">
-      <span class="icon">📈</span> Trending
-    </button>
-    <button class="tab-btn" onclick="switchTab(this)">
-      <span class="icon">✨</span> New
-    </button>
-  </div>
-</div>
-
-<!-- ── SECTION LABEL 2 ── -->
-<div class="section-label">Component 2 — How It Works</div>
-
-<!-- ═══════════ 2. HOW IT WORKS ═══════════ -->
-<section class="how-section">
-  <div class="how-header">
-    <span class="eyebrow">Simple Process</span>
-    <h2>How FlexiBerry Works</h2>
-    <p>Get started in 4 simple steps</p>
-  </div>
-
-  <div class="steps-grid">
-    <div class="step-card">
-      <div class="step-icon-wrap blue">
-        <span>👤</span>
-        <div class="step-badge blue">1</div>
-      </div>
-      <h3>Create Account</h3>
-      <p>Sign up in minutes with your basic details</p>
-    </div>
-    <div class="step-card">
-      <div class="step-icon-wrap purple">
-        <span>📄</span>
-        <div class="step-badge purple">2</div>
-      </div>
-      <h3>Upload Documents</h3>
-      <p>Submit CNIC, selfie & salary slip for verification</p>
-    </div>
-    <div class="step-card">
-      <div class="step-icon-wrap green">
-        <span>✅</span>
-        <div class="step-badge green">3</div>
-      </div>
-      <h3>Get Approved</h3>
-      <p>Admin reviews and approves your application</p>
-    </div>
-    <div class="step-card">
-      <div class="step-icon-wrap amber">
-        <span>🛍️</span>
-        <div class="step-badge amber">4</div>
-      </div>
-      <h3>Shop on Installments</h3>
-      <p>Purchase products with flexible monthly plans</p>
-    </div>
-  </div>
-</section>
-
-<!-- ── SECTION LABEL 3 ── -->
-<div class="section-label">Component 3 — Top Vendors</div>
-
-<!-- ═══════════ 3. TOP VENDORS ═══════════ -->
-<section class="vendors-section">
-  <div class="vendors-header">
-    <div>
-      <span class="eyebrow">Marketplace</span>
-      <h2>Top Vendors</h2>
-      <p>Trusted sellers with verified products</p>
-    </div>
-    <a href="#" class="view-all-btn">View All Shops →</a>
-  </div>
-
-  <div class="vendors-grid">
-    <div class="vendor-card">
-      <div class="vendor-top">
-        <div class="vendor-info">
-          <div class="vendor-emoji">🔌</div>
-          <div>
-            <div class="vendor-name">TechZone Electronics</div>
-            <div class="vendor-cat">Electronics</div>
-          </div>
-        </div>
-        <span class="vendor-arrow">›</span>
-      </div>
-      <div class="vendor-divider"></div>
-      <p class="vendor-desc">Premium electronics & gadgets</p>
-      <div class="vendor-meta">
-        <div class="vendor-rating">⭐ 4.8 <span style="font-weight:400;color:#9ca3af;font-size:14px">rating</span></div>
-        <div class="vendor-products">🏪 156 Products</div>
-      </div>
-    </div>
-
-    <div class="vendor-card">
-      <div class="vendor-top">
-        <div class="vendor-info">
-          <div class="vendor-emoji">🏠</div>
-          <div>
-            <div class="vendor-name">HomeKart Pakistan</div>
-            <div class="vendor-cat">Home & Living</div>
-          </div>
-        </div>
-        <span class="vendor-arrow">›</span>
-      </div>
-      <div class="vendor-divider"></div>
-      <p class="vendor-desc">Appliances, furniture & packages</p>
-      <div class="vendor-meta">
-        <div class="vendor-rating">⭐ 4.6 <span style="font-weight:400;color:#9ca3af;font-size:14px">rating</span></div>
-        <div class="vendor-products">🏪 243 Products</div>
-      </div>
-    </div>
-
-    <div class="vendor-card">
-      <div class="vendor-top">
-        <div class="vendor-info">
-          <div class="vendor-emoji">🚗</div>
-          <div>
-            <div class="vendor-name">MegaDeal Motors</div>
-            <div class="vendor-cat">Motors & Energy</div>
-          </div>
-        </div>
-        <span class="vendor-arrow">›</span>
-      </div>
-      <div class="vendor-divider"></div>
-      <p class="vendor-desc">Vehicles, solar & heavy items</p>
-      <div class="vendor-meta">
-        <div class="vendor-rating">⭐ 4.7 <span style="font-weight:400;color:#9ca3af;font-size:14px">rating</span></div>
-        <div class="vendor-products">🏪 89 Products</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── SECTION LABEL 4 ── -->
-<div class="section-label">Component 4 — FAQ</div>
-
-<!-- ═══════════ 4. FAQ ═══════════ -->
-<section class="faq-section">
-  <div class="faq-header">
-    <span class="eyebrow">Support</span>
-    <h2>Frequently Asked Questions</h2>
-    <p>Everything you need to know about FlexiBerry</p>
-  </div>
-
-  <div class="faq-list">
-    <div class="faq-item open">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">How do installment plans work on FlexiBerry?</span>
-        <div class="faq-chevron-wrap">∨</div>
-      </button>
-      <div class="faq-a">
-        <p>FlexiBerry lets you split your purchase into 3–12 equal monthly installments with 0% markup on select products. Once approved, your credit limit is assigned and you can shop immediately.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">What documents are needed for KYC verification?</span>
-        <div class="faq-chevron-wrap">∨</div>
-      </button>
-      <div class="faq-a">
-        <p>You'll need a valid CNIC (front & back), a recent selfie, and your latest salary slip or bank statement. The verification process takes 24–48 hours.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">Is there any interest on installment plans?</span>
-        <div class="faq-chevron-wrap">∨</div>
-      </button>
-      <div class="faq-a">
-        <p>Most products on FlexiBerry are available at 0% interest. Some premium categories may have a small markup, which is always clearly disclosed before checkout.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span class="faq-q-text">How can I become a vendor on FlexiBerry?</span>
-        <div class="faq-chevron-wrap">∨</div>
-      </button>
-      <div class="faq-a">
-        <p>Register through our Vendor Portal, submit your business documents, and our team will review your application within 2–3 business days. There's 0% commission for the first 90 days!</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── SECTION LABEL 5 ── -->
-<div class="section-label">Component 5 — Top Brands</div>
-
-<!-- ═══════════ 5. TOP BRANDS ═══════════ -->
-<section class="brands-section">
-  <div class="brands-header">
-    <span class="eyebrow">Brands</span>
-    <h2>Top Brands</h2>
-    <p>Shop from Pakistan's most trusted brands</p>
-  </div>
-
-  <div class="brands-grid">
-    <a href="#" class="brand-card">
-      <span class="brand-logo-text" style="color:#cc0000;font-size:28px;letter-spacing:1px">Haier</span>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="80" height="32" viewBox="0 0 120 36" fill="none">
-        <text x="60" y="28" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="28" fill="#cc0000">Honda</text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="80" height="32" viewBox="0 0 120 36" fill="none">
-        <text x="60" y="28" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="24" fill="#eb0a1e">Toyota</text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="66" height="40" viewBox="0 0 66 40">
-        <text x="33" y="32" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="36" fill="#a50034">LG</text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="90" height="32" viewBox="0 0 90 32">
-        <text x="45" y="25" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="26" fill="#000" letter-spacing="3">SONY</text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="100" height="32" viewBox="0 0 100 32">
-        <text x="50" y="25" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="22" fill="#0073bb">Dawlance</text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-    <a href="#" class="brand-card">
-      <svg width="100" height="32" viewBox="0 0 100 32">
-        <text x="50" y="25" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="900" font-size="22" fill="#1428a0">Samsung</span></text>
-      </svg>
-      <span class="brand-label">Official Store</span>
-    </a>
-  </div>
-</section>
-
-<script>
-  function switchTab(btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  /* Fade in */
+  @keyframes fade-in {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
   }
-  function toggleFaq(btn) {
-    const item = btn.closest('.faq-item');
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+  .animate-fade-in { animation: fade-in 0.4s ease both; }
+
+  /* Scale in — pop feel */
+  @keyframes scale-in {
+    0%   { opacity: 0; transform: scale(0.92); }
+    100% { opacity: 1; transform: scale(1); }
   }
-</script>
-</body>
-</html>
+  .animate-scale-in {
+    animation: scale-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Slide in from right */
+  @keyframes slide-in-right {
+    0%   { opacity: 0; transform: translateX(24px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  .animate-slide-in-right {
+    animation: slide-in-right 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Shimmer — skeleton loader */
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Pulse glow — CTA buttons */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: var(--shadow-primary); }
+    50%       { box-shadow: var(--shadow-primary-lg); }
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 2.4s ease-in-out infinite;
+  }
+
+  /* Float — hero illustrations / icons */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+  .animate-float      { animation: float 4s ease-in-out infinite; }
+  .animate-float-slow { animation: float 6s ease-in-out infinite; }
+
+  /* Spin slow — decorative rings */
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .animate-spin-slow { animation: spin-slow 12s linear infinite; }
+
+  /* Aurora background drift */
+  @keyframes aurora-drift {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+  }
+  .animate-aurora {
+    background-size: 300% 300%;
+    animation: aurora-drift 12s ease infinite;
+  }
+}
