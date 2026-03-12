@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import CartPage from "./pages/CartPage";
 import WishlistPage from "@/pages/WishlistPage";
 import AccountPage  from "@/pages/AccountPage";
+import FlashSalePage from "./pages/FlashSalePage";
 
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/cart" element={<CartPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/flash-sale" element={<FlashSalePage />} />
 
           {/* ── Vendor store (public-facing shop) ── */}
           <Route path="/store/:vendorId" element={<VendorStorePage />} />
