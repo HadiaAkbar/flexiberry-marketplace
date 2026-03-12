@@ -1,10 +1,19 @@
 import { Link } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Sparkles } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, ChevronDown, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { categories } from "@/data/products";
 import logoImg from "@/assets/flexiberry-logo-clean.png";
+
+const marqueeItems = [
+  "🔥 0% Commission for first 90 days!",
+  "📱 iPhone 15 Pro — Starting PKR 45,833/mo",
+  "🏍️ Honda CD 70 on Easy Installments",
+  "🎉 Jahez Packages — Bundle & Save 50%",
+  "☀️ Solar Systems — Go Green Today",
+  "🚚 Free Nationwide Delivery",
+];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -12,15 +21,15 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Top bar */}
-      <div className="gradient-sunset">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between text-primary-foreground text-xs">
-          <span className="flex items-center gap-1.5 font-medium">
-            <Sparkles className="h-3 w-3" /> 0% Commission for first 90 days — Sell on FlexiBerry!
-          </span>
-          <div className="hidden md:flex items-center gap-4 font-medium">
-            <Link to="/vendor/register" className="hover:underline">Become a Vendor</Link>
-            <Link to="/help" className="hover:underline">Help & Support</Link>
+      {/* Marquee top bar */}
+      <div className="gradient-coral overflow-hidden">
+        <div className="py-2">
+          <div className="flex animate-marquee whitespace-nowrap">
+            {[...marqueeItems, ...marqueeItems].map((item, i) => (
+              <span key={i} className="text-primary-foreground text-xs font-medium mx-8">
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </div>
