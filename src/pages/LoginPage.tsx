@@ -9,9 +9,9 @@ import logoImg from "@/assets/flexiberry-logo-clean.png";
 
 const LoginPage = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-12">
+      <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <img src={logoImg} alt="FlexiBerry" className="h-16 w-16 mx-auto mb-4" />

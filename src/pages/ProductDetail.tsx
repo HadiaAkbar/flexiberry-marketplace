@@ -5,7 +5,6 @@ import { featuredProducts, categories, formatPrice, getMonthlyInstallment } from
 import { useParams, Link } from "react-router-dom";
 import { Star, Heart, ShoppingCart, CreditCard, Shield, Truck, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -13,9 +12,9 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-20 text-center">
+        <div className="flex-1 container mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-bold text-foreground">Product not found</h1>
           <Link to="/" className="text-primary hover:underline mt-4 inline-block">Go back home</Link>
         </div>
@@ -29,9 +28,9 @@ const ProductDetail = () => {
   const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-6">
+      <main className="flex-1 container mx-auto px-4 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link to="/" className="hover:text-primary">Home</Link>

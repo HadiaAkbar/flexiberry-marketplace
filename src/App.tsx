@@ -6,10 +6,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
-import CategoryPage from "./pages/CategoryPage";
+import ShopPage from "./pages/ShopPage";
 import LoginPage from "./pages/LoginPage";
 import VendorLayout from "./pages/vendor/VendorLayout";
 import VendorDashboard from "./pages/vendor/VendorDashboard";
+import VendorStorePage from "./pages/vendor/VendorStorePage";
+import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
@@ -22,13 +24,23 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* ── Public ── */}
           <Route path="/" element={<Index />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/products" element={<CategoryPage />} />
+          <Route path="/category/:slug" element={<ShopPage />} />
+          <Route path="/products" element={<ShopPage />} />
+          <Route path="/shop" element={<ShopPage />} />
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Vendor (Admin) Portal */}
+          {/* ── Vendor store (public-facing shop) ── */}
+          {/* The vendor's storefront homepage */}
+          <Route path="/store/:vendorId" element={<VendorStorePage />} />
+          {/* Default store (e.g. the main shop page link from header) */}
+          <Route path="/store" element={<VendorStorePage />} />
+          {/* Single product page within a vendor store */}
+          <Route path="/vendor/product/:id" element={<VendorProductDetail />} />
+
+          {/* ── Vendor (Admin) Portal ── */}
           <Route path="/vendor" element={<VendorLayout />}>
             <Route index element={<VendorDashboard />} />
             <Route path="shop" element={<VendorDashboard />} />
@@ -39,7 +51,7 @@ const App = () => (
             <Route path="settings" element={<VendorDashboard />} />
           </Route>
 
-          {/* Super Admin Portal */}
+          {/* ── Super Admin Portal ── */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="vendors" element={<AdminDashboard />} />
