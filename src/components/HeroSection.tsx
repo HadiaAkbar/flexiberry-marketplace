@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import carousel1 from "@/assets/carousel-1.jpg";
@@ -24,9 +23,7 @@ const slides = [
     cta: "Shop Smartphones",
     link: "/category/smartphones",
     accent: "#FF6B6B",
-    accentLight: "#FFE0E0",
-    bgFrom: "hsl(217,91%,20%)",
-    bgTo: "hsl(230,60%,12%)",
+    bg: "#1a0a0a",
     tag: "SMARTPHONES",
   },
   {
@@ -39,9 +36,7 @@ const slides = [
     cta: "Shop Laptops",
     link: "/category/laptops",
     accent: "#A78BFA",
-    accentLight: "#EDE9FE",
-    bgFrom: "hsl(263,70%,18%)",
-    bgTo: "hsl(270,50%,10%)",
+    bg: "#0f0a1e",
     tag: "LAPTOPS",
   },
   {
@@ -54,9 +49,7 @@ const slides = [
     cta: "Shop Motorcycles",
     link: "/category/bikes",
     accent: "#FB923C",
-    accentLight: "#FFEDD5",
-    bgFrom: "hsl(25,90%,18%)",
-    bgTo: "hsl(20,70%,10%)",
+    bg: "#1a0d04",
     tag: "BIKES",
   },
   {
@@ -69,9 +62,7 @@ const slides = [
     cta: "Shop Appliances",
     link: "/category/appliances",
     accent: "#F87171",
-    accentLight: "#FEE2E2",
-    bgFrom: "hsl(0,72%,18%)",
-    bgTo: "hsl(5,60%,10%)",
+    bg: "#1a0808",
     tag: "APPLIANCES",
   },
   {
@@ -84,9 +75,7 @@ const slides = [
     cta: "Shop Solar",
     link: "/category/solar",
     accent: "#FBBF24",
-    accentLight: "#FEF3C7",
-    bgFrom: "hsl(45,80%,15%)",
-    bgTo: "hsl(40,70%,8%)",
+    bg: "#141004",
     tag: "SOLAR",
   },
   {
@@ -99,9 +88,7 @@ const slides = [
     cta: "Shop Bundles",
     link: "/category/jahez",
     accent: "#F472B6",
-    accentLight: "#FCE7F3",
-    bgFrom: "hsl(340,78%,18%)",
-    bgTo: "hsl(330,60%,10%)",
+    bg: "#1a0812",
     tag: "JAHEZ",
   },
   {
@@ -114,9 +101,7 @@ const slides = [
     cta: "Shop Furniture",
     link: "/category/furniture",
     accent: "#34D399",
-    accentLight: "#D1FAE5",
-    bgFrom: "hsl(160,60%,12%)",
-    bgTo: "hsl(165,50%,8%)",
+    bg: "#041410",
     tag: "FURNITURE",
   },
   {
@@ -129,9 +114,7 @@ const slides = [
     cta: "Shop Cars",
     link: "/category/cars",
     accent: "#38BDF8",
-    accentLight: "#E0F2FE",
-    bgFrom: "hsl(200,80%,15%)",
-    bgTo: "hsl(210,70%,8%)",
+    bg: "#041018",
     tag: "CARS",
   },
   {
@@ -144,9 +127,7 @@ const slides = [
     cta: "Shop B2B",
     link: "/category/raw-materials",
     accent: "#A3E635",
-    accentLight: "#ECFCCB",
-    bgFrom: "hsl(80,60%,12%)",
-    bgTo: "hsl(90,50%,8%)",
+    bg: "#0a1204",
     tag: "B2B",
   },
 ];
@@ -172,324 +153,245 @@ const HeroSection = () => {
 
   const slide = slides[current];
 
-  const textVariants = {
-    enter: { opacity: 0, x: direction * -40, y: 0 },
-    center: { opacity: 1, x: 0, y: 0 },
-    exit: { opacity: 0, x: direction * 40, y: 0 },
-  };
-
-  const imageVariants = {
-    enter: { opacity: 0, scale: 1.08, x: direction * 60 },
-    center: { opacity: 1, scale: 1, x: 0 },
-    exit: { opacity: 0, scale: 0.95, x: direction * -60 },
-  };
-
   return (
     <section
       className="relative overflow-hidden"
       style={{
-        height: "clamp(420px, 56vw, 580px)",
-        background: `linear-gradient(135deg, ${slide.bgFrom} 0%, ${slide.bgTo} 100%)`,
-        transition: "background 0.8s ease",
+        height: "clamp(400px, 52vw, 560px)",
+        backgroundColor: slide.bg,
+        transition: "background-color 0.9s ease",
       }}
     >
-      {/* Animated background glow blobs */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ transition: "opacity 0.8s" }}
-      >
-        <div
-          className="absolute rounded-full blur-[120px] opacity-20"
-          style={{
-            width: "45%",
-            height: "70%",
-            top: "-10%",
-            left: "-5%",
-            background: slide.accent,
-            transition: "background 0.8s ease",
-          }}
-        />
-        <div
-          className="absolute rounded-full blur-[80px] opacity-10"
-          style={{
-            width: "30%",
-            height: "50%",
-            bottom: "-10%",
-            left: "20%",
-            background: slide.accent,
-            transition: "background 0.8s ease",
-          }}
-        />
-      </div>
+      {/* ── FULL BLEED IMAGE on right, fading into background colour ── */}
+      <AnimatePresence>
+        <motion.div
+          key={current + "-bg"}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="absolute inset-0"
+          style={{ zIndex: 1 }}
+        >
+          {/* Image occupies right 60% of the banner */}
+          <div className="absolute top-0 right-0 h-full" style={{ width: "62%" }}>
+            <img
+              src={slide.image}
+              alt=""
+              className="w-full h-full object-cover"
+              style={{ objectPosition: "center center" }}
+            />
+          </div>
 
-      {/* Subtle grid pattern overlay */}
+          {/* Left-to-right gradient: solid bg colour → transparent */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(
+                to right,
+                ${slide.bg} 0%,
+                ${slide.bg} 36%,
+                ${slide.bg}f0 45%,
+                ${slide.bg}bb 52%,
+                ${slide.bg}66 60%,
+                ${slide.bg}22 72%,
+                transparent 85%
+              )`,
+            }}
+          />
+
+          {/* Top vignette */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, ${slide.bg}88 0%, transparent 18%, transparent 78%, ${slide.bg}dd 100%)`,
+            }}
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* ── ACCENT GLOW blob top-left ── */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute rounded-full blur-[160px] pointer-events-none"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
-          backgroundSize: "40px 40px",
+          zIndex: 2,
+          width: "40%",
+          aspectRatio: "1",
+          top: "-25%",
+          left: "-8%",
+          background: slide.accent,
+          opacity: 0.13,
+          transition: "background 0.7s ease",
         }}
       />
 
-      <div className="relative z-10 h-full grid grid-cols-1 lg:grid-cols-2">
-        {/* LEFT: Content */}
-        <div className="flex flex-col justify-center px-8 md:px-12 lg:px-16 py-8 lg:py-0">
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={current}
-              custom={direction}
-              variants={textVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="space-y-5"
-            >
-              {/* Tag + Badge */}
-              <div className="flex items-center gap-3">
-                <span
-                  className="text-[10px] font-black tracking-[0.2em] px-3 py-1.5 rounded-full"
-                  style={{
-                    background: "rgba(255,255,255,0.1)",
-                    color: "rgba(255,255,255,0.6)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  {slide.tag}
-                </span>
-                <span
-                  className="text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5"
-                  style={{
-                    background: slide.accent,
-                    color: "#fff",
-                    boxShadow: `0 4px 20px ${slide.accent}60`,
-                  }}
-                >
-                  <span>{slide.badgeIcon}</span>
-                  {slide.badge}
-                </span>
-              </div>
+      {/* ── SUBTLE GRID OVERLAY ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          zIndex: 2,
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)`,
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-              {/* Title */}
-              <div>
-                <h1 className="font-black leading-none text-white" style={{ fontSize: "clamp(2.2rem, 5vw, 4.5rem)" }}>
-                  {slide.titleLine1}
-                </h1>
-                <h1
-                  className="font-black leading-none"
-                  style={{
-                    fontSize: "clamp(2.2rem, 5vw, 4.5rem)",
-                    color: slide.accent,
-                    textShadow: `0 0 40px ${slide.accent}80`,
-                    transition: "color 0.6s ease, text-shadow 0.6s ease",
-                  }}
-                >
-                  {slide.titleLine2}
-                </h1>
-              </div>
-
-              {/* Description */}
-              <p
-                className="text-sm md:text-base leading-relaxed max-w-sm"
-                style={{ color: "rgba(255,255,255,0.65)" }}
+      {/* ── LEFT TEXT CONTENT ── */}
+      <div className="relative h-full flex items-center" style={{ zIndex: 10 }}>
+        <div className="container mx-auto px-6 md:px-12 lg:px-16">
+          <div style={{ maxWidth: 500 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, x: direction * -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction * 30 }}
+                transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="space-y-5"
               >
-                {slide.description}
-              </p>
-
-              {/* CTA */}
-              <div className="flex items-center gap-4 pt-1">
-                <Link to={slide.link}>
-                  <button
-                    className="group flex items-center gap-2 font-bold text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 hover:gap-3"
+                {/* Badge row */}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span
+                    className="text-[10px] font-black tracking-[0.18em] px-3 py-1.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.07)",
+                      color: "rgba(255,255,255,0.45)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                    }}
+                  >
+                    {slide.tag}
+                  </span>
+                  <span
+                    className="text-[11px] font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5"
                     style={{
                       background: slide.accent,
                       color: "#fff",
-                      boxShadow: `0 8px 30px ${slide.accent}50`,
+                      boxShadow: `0 4px 18px ${slide.accent}55`,
+                      transition: "background 0.5s, box-shadow 0.5s",
                     }}
                   >
-                    {slide.cta}
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
+                    {slide.badgeIcon} {slide.badge}
+                  </span>
+                </div>
 
-                {/* Installment pill */}
-                <div
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl"
+                {/* Headline */}
+                <div>
+                  <h1
+                    className="font-black text-white"
+                    style={{ fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)", lineHeight: 1.04 }}
+                  >
+                    {slide.titleLine1}
+                  </h1>
+                  <h1
+                    className="font-black"
+                    style={{
+                      fontSize: "clamp(2.2rem, 5.2vw, 4.8rem)",
+                      lineHeight: 1.04,
+                      color: slide.accent,
+                      textShadow: `0 0 48px ${slide.accent}55`,
+                      transition: "color 0.5s, text-shadow 0.5s",
+                    }}
+                  >
+                    {slide.titleLine2}
+                  </h1>
+                </div>
+
+                {/* Description */}
+                <p
                   style={{
-                    background: "rgba(255,255,255,0.07)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    backdropFilter: "blur(8px)",
+                    color: "rgba(255,255,255,0.58)",
+                    fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                    lineHeight: 1.7,
+                    maxWidth: 390,
                   }}
                 >
-                  <span className="text-lg">💳</span>
-                  <div>
-                    <p className="text-[10px] text-white/50 leading-none">Starting from</p>
-                    <p className="text-xs font-bold text-white leading-tight">0% Installments</p>
+                  {slide.description}
+                </p>
+
+                {/* CTA + pill */}
+                <div className="flex items-center gap-3 pt-1 flex-wrap">
+                  <Link to={slide.link}>
+                    <button
+                      className="group flex items-center gap-2 font-bold text-sm px-7 py-3.5 rounded-2xl hover:scale-[1.03] transition-transform"
+                      style={{
+                        background: slide.accent,
+                        color: "#fff",
+                        boxShadow: `0 8px 28px ${slide.accent}45`,
+                        transition: "background 0.4s, box-shadow 0.4s",
+                      }}
+                    >
+                      {slide.cta}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </Link>
+
+                  <div
+                    className="flex items-center gap-2.5 px-4 py-3 rounded-2xl"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                  >
+                    <span className="text-lg">💳</span>
+                    <div>
+                      <p className="text-[10px] leading-none" style={{ color: "rgba(255,255,255,0.38)" }}>
+                        Starting from
+                      </p>
+                      <p className="text-xs font-bold text-white leading-tight">0% Installments</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* RIGHT: Image */}
-        <div className="hidden lg:flex items-center justify-center relative overflow-hidden">
-          {/* Decorative ring */}
-          <div
-            className="absolute rounded-full"
-            style={{
-              width: "70%",
-              aspectRatio: "1",
-              border: `1px solid ${slide.accent}25`,
-              transition: "border-color 0.6s ease",
-            }}
-          />
-          <div
-            className="absolute rounded-full"
-            style={{
-              width: "55%",
-              aspectRatio: "1",
-              border: `1px solid ${slide.accent}15`,
-              transition: "border-color 0.6s ease",
-            }}
-          />
-
-          {/* Glow behind image */}
-          <div
-            className="absolute rounded-full blur-[60px] opacity-30"
-            style={{
-              width: "50%",
-              aspectRatio: "1",
-              background: slide.accent,
-              transition: "background 0.6s ease",
-            }}
-          />
-
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={current}
-              custom={direction}
-              variants={imageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="relative z-10"
-              style={{ width: "82%", maxWidth: 480 }}
-            >
-              <img
-                src={slide.image}
-                alt={slide.titleLine1}
-                className="w-full h-full object-cover"
-                style={{
-                  borderRadius: "24px 24px 60px 24px",
-                  boxShadow: `0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px ${slide.accent}20`,
-                  aspectRatio: "4/3",
-                }}
-                loading="eager"
-              />
-
-              {/* Floating price card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
-                className="absolute -bottom-4 -left-6 px-4 py-3 rounded-2xl"
-                style={{
-                  background: "rgba(255,255,255,0.95)",
-                  backdropFilter: "blur(20px)",
-                  boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
-                }}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "#999" }}>Monthly from</p>
-                <p className="text-lg font-black leading-tight" style={{ color: slide.accent }}>
-                  PKR 10,000
-                </p>
-                <p className="text-[10px]" style={{ color: "#aaa" }}>12 easy installments</p>
               </motion.div>
-
-              {/* Floating rating card */}
-              <motion.div
-                initial={{ opacity: 0, y: -20, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.45, duration: 0.4 }}
-                className="absolute -top-3 -right-4 px-3 py-2.5 rounded-2xl flex items-center gap-2"
-                style={{
-                  background: "rgba(255,255,255,0.95)",
-                  backdropFilter: "blur(20px)",
-                  boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
-                }}
-              >
-                <span className="text-base">⭐</span>
-                <div>
-                  <p className="text-xs font-black leading-none" style={{ color: "#1a1a2e" }}>4.9 / 5.0</p>
-                  <p className="text-[10px] leading-tight" style={{ color: "#aaa" }}>200+ reviews</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
-      {/* Mobile: image strip at bottom */}
-      <div
-        className="lg:hidden absolute inset-0 pointer-events-none"
-        style={{ opacity: 0.15 }}
-      >
-        <img src={slide.image} alt="" className="w-full h-full object-cover" />
-      </div>
+      {/* ── PREV / NEXT ARROWS ── */}
+      {[{ fn: prev, Icon: ChevronLeft, side: "left-4" }, { fn: next, Icon: ChevronRight, side: "right-4" }].map(
+        ({ fn, Icon, side }) => (
+          <button
+            key={side}
+            onClick={fn}
+            className={`absolute ${side} top-1/2 -translate-y-1/2 h-9 w-9 rounded-full flex items-center justify-center transition-all hover:scale-110`}
+            style={{
+              zIndex: 20,
+              background: "rgba(255,255,255,0.07)",
+              border: "1px solid rgba(255,255,255,0.13)",
+              backdropFilter: "blur(10px)",
+              color: "#fff",
+            }}
+          >
+            <Icon className="h-4 w-4" />
+          </button>
+        )
+      )}
 
-      {/* Navigation arrows */}
-      <button
-        onClick={prev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 h-9 w-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-        style={{
-          background: "rgba(255,255,255,0.1)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          backdropFilter: "blur(10px)",
-          color: "#fff",
-        }}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <button
-        onClick={next}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 h-9 w-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-        style={{
-          background: "rgba(255,255,255,0.1)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          backdropFilter: "blur(10px)",
-          color: "#fff",
-        }}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-
-      {/* Slide indicators */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex gap-2 items-center">
-        {slides.map((s, i) => (
+      {/* ── DOTS ── */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 items-center" style={{ zIndex: 20 }}>
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => {
               setDirection(i > current ? 1 : -1);
               setCurrent(i);
             }}
-            className="rounded-full transition-all duration-400"
+            className="rounded-full transition-all duration-300"
             style={{
-              height: 6,
-              width: i === current ? 28 : 6,
-              background: i === current ? slide.accent : "rgba(255,255,255,0.3)",
-              boxShadow: i === current ? `0 0 10px ${slide.accent}80` : "none",
+              height: 5,
+              width: i === current ? 26 : 5,
+              background: i === current ? slide.accent : "rgba(255,255,255,0.22)",
+              boxShadow: i === current ? `0 0 8px ${slide.accent}80` : "none",
             }}
           />
         ))}
       </div>
 
-      {/* Slide counter */}
+      {/* ── SLIDE COUNTER ── */}
       <div
-        className="absolute bottom-5 right-6 z-30 text-xs font-bold tabular-nums"
-        style={{ color: "rgba(255,255,255,0.35)" }}
+        className="absolute bottom-5 right-6 text-xs font-bold tabular-nums"
+        style={{ zIndex: 20, color: "rgba(255,255,255,0.28)" }}
       >
         {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
       </div>
