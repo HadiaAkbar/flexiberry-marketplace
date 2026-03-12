@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, ChevronDown, Heart } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -112,7 +112,7 @@ const Header = () => {
                   </div>
                 )}
               </div>
-              {["Flash Sale", "Installment Deals", "New Arrivals", "Top Brands", "Jahez Packages"].map((item) => (
+              {["Flash Sale", "New Arrivals"].map((item) => (
                 <Link
                   key={item}
                   to={`/${item.toLowerCase().replace(/\s+/g, '-')}`}
@@ -121,6 +121,13 @@ const Header = () => {
                   {item}
                 </Link>
               ))}
+              <Link
+                to="/vendor/register"
+                className="px-3.5 py-2.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5"
+              >
+                <Store className="h-3.5 w-3.5" />
+                Sell as Vendor
+              </Link>
             </div>
           </div>
         </div>
@@ -140,6 +147,10 @@ const Header = () => {
                 {cat.name}
               </Link>
             ))}
+            <Link to="/vendor/register" className="flex items-center gap-2 px-3 py-2.5 text-sm text-primary font-semibold">
+              <Store className="h-4 w-4" />
+              Sell as Vendor
+            </Link>
             <Link to="/login" className="block px-3 py-2.5 text-sm text-primary font-semibold">Login / Register</Link>
           </div>
         </div>
