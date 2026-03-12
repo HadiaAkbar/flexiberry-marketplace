@@ -15,11 +15,8 @@ import carousel9 from "@/assets/carousel-9.jpg";
 const slides = [
   {
     image: carousel1,
-    badge: "UP TO 40% OFF",
-    badgeIcon: "🔥",
-    titleLine1: "Buy Smart,",
     titleLine2: "Pay Easy",
-    description: "Latest iPhones & Samsung Galaxy with 6–12 month installment plans. No credit card needed.",
+    description: "Latest iPhones & Samsung Galaxy with 6–12 month installment plans. ",
     cta: "Shop Smartphones",
     link: "/category/smartphones",
     accent: "#FF6B6B",
@@ -28,7 +25,6 @@ const slides = [
   },
   {
     image: carousel2,
-    badge: "SAVE BIG",
     badgeIcon: "💻",
     titleLine1: "Power Up",
     titleLine2: "Your Work",
@@ -41,8 +37,6 @@ const slides = [
   },
   {
     image: carousel3,
-    badge: "FLEXIBLE EMI",
-    badgeIcon: "🏍️",
     titleLine1: "Ride Your",
     titleLine2: "Dream Bike",
     description: "Premium Scotty Motorcycles & Bikes with easy EMI available for all models.",
@@ -54,8 +48,6 @@ const slides = [
   },
   {
     image: carousel4,
-    badge: "MEGA DEALS",
-    badgeIcon: "🏠",
     titleLine1: "Home",
     titleLine2: "Essentials",
     description: "AC, LED TV, Fridge, Washing Machine & Oven — complete home solutions on installments.",
@@ -67,8 +59,6 @@ const slides = [
   },
   {
     image: carousel5,
-    badge: "GO GREEN",
-    badgeIcon: "☀️",
     titleLine1: "Go",
     titleLine2: "Solar",
     description: "Complete Solar Panel Systems — save on electricity bills with easy installments.",
@@ -80,8 +70,6 @@ const slides = [
   },
   {
     image: carousel6,
-    badge: "SAVE 50%",
-    badgeIcon: "🎁",
     titleLine1: "Complete",
     titleLine2: "Jahez Package",
     description: "Fridge + Furniture + Appliances + More — complete home bundle solutions.",
@@ -93,8 +81,6 @@ const slides = [
   },
   {
     image: carousel7,
-    badge: "PREMIUM",
-    badgeIcon: "🛋️",
     titleLine1: "Furnish Your",
     titleLine2: "Dream Home",
     description: "Luxury Furniture — complete bedroom, living room & dining sets on easy plans.",
@@ -106,8 +92,6 @@ const slides = [
   },
   {
     image: carousel8,
-    badge: "EASY EMI",
-    badgeIcon: "🚗",
     titleLine1: "Drive Your",
     titleLine2: "Dream Car",
     description: "Toyota, Honda, Suzuki & More — flexible car financing options available now.",
@@ -119,8 +103,6 @@ const slides = [
   },
   {
     image: carousel9,
-    badge: "BULK DISCOUNTS",
-    badgeIcon: "📦",
     titleLine1: "Grow Your",
     titleLine2: "Business",
     description: "Business Raw Materials & Stock — B2B wholesale pricing with bulk discounts.",
