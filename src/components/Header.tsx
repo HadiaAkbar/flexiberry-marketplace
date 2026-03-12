@@ -69,6 +69,8 @@ const Header = () => {
   const [password, setPassword] = useState("");
   const [category, setCategory] = useState("");
   const vendorRef = useRef<HTMLDivElement>(null);
+  const vendorBtnRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -82,6 +84,25 @@ const Header = () => {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  useEffect(() => {
+    const updatePos = () => {
+      if (vendorBtnRef.current && vendorOpen) {
+        const rect = vendorBtnRef.current.getBoundingClientRect();
+        setDropdownPos({
+          top: rect.bottom + 10,
+          right: window.innerWidth - rect.right,
+        });
+      }
+    };
+    updatePos();
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos);
+    return () => {
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos);
+    };
+  }, [vendorOpen]);
 
 
   return (
@@ -408,6 +429,7 @@ const Header = () => {
               {/* ── SELL AS VENDOR DROPDOWN ── */}
               <div className="relative" ref={vendorRef}>
                 <button
+                  ref={vendorBtnRef}
                   onClick={() => setVendorOpen(!vendorOpen)}
                   style={{
                     display: "flex", alignItems: "center", gap: "6px",
@@ -426,7 +448,7 @@ const Header = () => {
 
                 {vendorOpen && (
                   <div style={{
-                    position: "absolute", top: "calc(100% + 10px)", right: 0,
+                    position: "fixed", top: dropdownPos.top, right: dropdownPos.right,
                     width: "520px", background: "white", borderRadius: "20px",
                     boxShadow: "0 24px 64px rgba(37,99,235,0.18), 0 4px 16px rgba(0,0,0,0.08)",
                     border: "1px solid rgba(37,99,235,0.12)",
