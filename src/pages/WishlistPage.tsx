@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart, ShoppingCart, Trash2, Star, ArrowLeft, Share2,
-  Tag, Clock, TrendingDown, Store, ChevronRight, Package
+  Heart, ShoppingCart, Trash2, Star, Share2,
+  Tag, Clock, TrendingDown, Store, ChevronRight, Package, ShoppingBag
 } from "lucide-react";
 
 // ── Mock wishlist data ──────────────────────────────────────────────────────
@@ -131,19 +131,27 @@ const WishlistPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero header ── */}
-      <div className="relative overflow-hidden gradient-primary py-12 px-4">
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", transform: "translate(-30%, 30%)" }} />
+      <div className="relative overflow-hidden gradient-primary py-10 px-4">
+        <div
+          className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-10 pointer-events-none"
+          style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", transform: "translate(30%, -30%)" }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10 pointer-events-none"
+          style={{ background: "radial-gradient(circle, white 0%, transparent 70%)", transform: "translate(-30%, 30%)" }}
+        />
 
         <div className="container mx-auto max-w-6xl relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm mb-6 transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Link>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-white/60 text-sm mb-5">
+            <Link to="/" className="hover:text-white transition-colors">Home</Link>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-white font-medium">Wishlist</span>
+          </div>
+
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3 mb-1">
                 <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
                   <Heart className="h-5 w-5 text-white fill-white" />
                 </div>
@@ -151,18 +159,29 @@ const WishlistPage = () => {
                   My Wishlist
                 </h1>
               </div>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/70 text-sm pl-1">
                 {items.length} saved item{items.length !== 1 ? "s" : ""} · Easy installment on all
               </p>
             </div>
-            {items.length > 0 && (
-              <button
-                onClick={clearAll}
-                className="text-white/60 hover:text-white text-sm flex items-center gap-1.5 transition-colors"
-              >
-                <Trash2 className="h-4 w-4" /> Clear all
-              </button>
-            )}
+
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <>
+                  <Link
+                    to="/cart"
+                    className="flex items-center gap-2 text-sm font-semibold text-white bg-white/20 backdrop-blur hover:bg-white/30 border border-white/30 px-4 py-2 rounded-xl transition-all"
+                  >
+                    <ShoppingBag className="h-4 w-4" /> Go to Cart
+                  </Link>
+                  <button
+                    onClick={clearAll}
+                    className="flex items-center gap-1.5 text-white/60 hover:text-white text-sm transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" /> Clear all
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
