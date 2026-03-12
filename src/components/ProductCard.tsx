@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Heart, ShoppingCart, ImageOff } from "lucide-react";
+import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Product, formatPrice, getMonthlyInstallment } from "@/data/products";
 import { motion } from "framer-motion";
@@ -10,8 +10,51 @@ interface ProductCardProps {
   index?: number;
 }
 
+// Maps product name/description keywords → a reliable Unsplash photo
+const getFallbackImage = (product: Product): string => {
+  const text = `${product.name} ${product.description}`.toLowerCase();
+
+  if (text.includes("ac") || text.includes("air condition") || text.includes("inverter ac"))
+    return "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("solar") || text.includes("panel"))
+    return "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("laptop") || text.includes("notebook"))
+    return "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("phone") || text.includes("mobile") || text.includes("smartphone"))
+    return "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("tv") || text.includes("television") || text.includes("screen"))
+    return "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("fridge") || text.includes("refrigerator"))
+    return "https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("washing") || text.includes("washer"))
+    return "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("bike") || text.includes("motorcycle"))
+    return "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("car") || text.includes("vehicle"))
+    return "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("camera"))
+    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("watch"))
+    return "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("headphone") || text.includes("earphone") || text.includes("audio"))
+    return "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop&auto=format";
+  if (text.includes("microwave") || text.includes("oven"))
+    return "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=400&fit=crop&auto=format";
+
+  // Generic electronics
+  return "https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=400&h=400&fit=crop&auto=format";
+};
+
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
-  const [imgError, setImgError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(product.image);
+  const [triedFallback, setTriedFallback] = useState(false);
+
+  const handleImgError = () => {
+    if (!triedFallback) {
+      setTriedFallback(true);
+      setImgSrc(getFallbackImage(product));
+    }
+  };
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -28,24 +71,13 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
           {/* Image */}
           <div className="relative aspect-square bg-slate-100 overflow-hidden">
-            {!imgError ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                loading="lazy"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              /* Fallback placeholder — never shows purple */
-              <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-slate-100">
-                <ImageOff className="h-10 w-10 text-slate-300" />
-                <span className="text-xs text-slate-400 text-center px-4 leading-snug">
-                  {product.name}
-                </span>
-              </div>
-            )}
-
+            <img
+              src={imgSrc}
+              alt={product.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              loading="lazy"
+              onError={handleImgError}
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
             {discount > 0 && (
