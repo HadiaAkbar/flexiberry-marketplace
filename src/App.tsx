@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -13,6 +12,7 @@ import VendorLayout from "./pages/vendor/VendorLayout";
 import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorStorePage from "./pages/vendor/VendorStorePage";
 import VendorProductDetail from "./pages/vendor/VendorProductDetail";
+import VendorLoginPage from "./pages/vendor/VendorLoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CartPage from "./pages/CartPage";
@@ -41,12 +41,12 @@ const App = () => (
           <Route path="/account" element={<AccountPage />} />
 
           {/* ── Vendor store (public-facing shop) ── */}
-          {/* The vendor's storefront homepage */}
           <Route path="/store/:vendorId" element={<VendorStorePage />} />
-          {/* Default store (e.g. the main shop page link from header) */}
           <Route path="/store" element={<VendorStorePage />} />
-          {/* Single product page within a vendor store */}
           <Route path="/vendor/product/:id" element={<VendorProductDetail />} />
+
+          {/* ── Vendor Login / Register (standalone, no sidebar) ── */}
+          <Route path="/vendor/login" element={<VendorLoginPage />} />
 
           {/* ── Vendor (Admin) Portal ── */}
           <Route path="/vendor" element={<VendorLayout />}>
