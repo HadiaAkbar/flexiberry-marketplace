@@ -107,7 +107,7 @@ const LoginPage = () => {
 
             <div className="mt-6 pt-4 border-t border-border text-center">
               <p className="text-xs text-muted-foreground mb-3">Want to sell on FlexiBerry?</p>
-              <Link to="/vendor/register">
+              <Link to="/vendor/login">
                 <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                   Register as Vendor
                 </Button>
