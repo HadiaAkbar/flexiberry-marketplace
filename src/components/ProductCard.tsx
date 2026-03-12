@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, Heart, ShoppingCart, Package } from "lucide-react";
+import { Star, Heart, ShoppingCart, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Product, formatPrice, getMonthlyInstallment } from "@/data/products";
 import { motion } from "framer-motion";
@@ -9,6 +9,20 @@ interface ProductCardProps {
   product: Product;
   index?: number;
 }
+
+// Mock vendor map — matches categoryId to a shop name
+const VENDOR_NAMES: Record<string, string> = {
+  phones:          "TechZone Official Store",
+  laptops:         "DigiWorld Electronics",
+  bikes:           "SpeedRiders Pk",
+  appliances:      "HomeElite Appliances",
+  solar:           "GreenPower Solutions",
+  furniture:       "CraftHouse Furniture",
+  jahez:           "StyleHub Fashion",
+  cars:            "AutoPrime Dealers",
+  "raw-materials": "BuildMart Supplies",
+  general:         "FlexiBerry Official",
+};
 
 // Category emoji map for the placeholder
 const getCategoryEmoji = (text: string): string => {
@@ -60,6 +74,8 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
+  const shopName = VENDOR_NAMES[product.categoryId] ?? "FlexiBerry Official";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -98,9 +114,13 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
           {/* Info */}
           <div className="p-3.5">
-            <p className="text-[11px] text-muted-foreground mb-1 truncate uppercase tracking-wide">
-              {product.description}
-            </p>
+
+            {/* Shop name */}
+            <div className="flex items-center gap-1 mb-1.5">
+              <Store className="h-3 w-3 text-primary shrink-0" />
+              <span className="text-[11px] text-primary font-semibold truncate">{shopName}</span>
+            </div>
+
             <h3 className="font-semibold text-sm text-foreground line-clamp-2 min-h-[2.5rem] mb-2 leading-snug">
               {product.name}
             </h3>
