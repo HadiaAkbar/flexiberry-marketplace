@@ -15,17 +15,16 @@ import carousel9 from "@/assets/carousel-9.jpg";
 const slides = [
   {
     image: carousel1,
+    titleLine1: "Buy Smart,",
     titleLine2: "Pay Easy",
-    description: "Latest iPhones & Samsung Galaxy with 6–12 month installment plans. ",
+    description: "Latest iPhones & Samsung Galaxy with 6–12 month installment plans. No credit card needed.",
     cta: "Shop Smartphones",
     link: "/category/smartphones",
     accent: "#FF6B6B",
     bg: "#1a0a0a",
-    tag: "SMARTPHONES",
   },
   {
     image: carousel2,
-    badgeIcon: "💻",
     titleLine1: "Power Up",
     titleLine2: "Your Work",
     description: "MacBooks, Gaming Laptops & more on easy installment plans for every budget.",
@@ -33,7 +32,6 @@ const slides = [
     link: "/category/laptops",
     accent: "#A78BFA",
     bg: "#0f0a1e",
-    tag: "LAPTOPS",
   },
   {
     image: carousel3,
@@ -44,7 +42,6 @@ const slides = [
     link: "/category/bikes",
     accent: "#FB923C",
     bg: "#1a0d04",
-    tag: "BIKES",
   },
   {
     image: carousel4,
@@ -55,7 +52,6 @@ const slides = [
     link: "/category/appliances",
     accent: "#F87171",
     bg: "#1a0808",
-    tag: "APPLIANCES",
   },
   {
     image: carousel5,
@@ -66,7 +62,6 @@ const slides = [
     link: "/category/solar",
     accent: "#FBBF24",
     bg: "#141004",
-    tag: "SOLAR",
   },
   {
     image: carousel6,
@@ -77,7 +72,6 @@ const slides = [
     link: "/category/jahez",
     accent: "#F472B6",
     bg: "#1a0812",
-    tag: "JAHEZ",
   },
   {
     image: carousel7,
@@ -88,7 +82,6 @@ const slides = [
     link: "/category/furniture",
     accent: "#34D399",
     bg: "#041410",
-    tag: "FURNITURE",
   },
   {
     image: carousel8,
@@ -99,7 +92,6 @@ const slides = [
     link: "/category/cars",
     accent: "#38BDF8",
     bg: "#041018",
-    tag: "CARS",
   },
   {
     image: carousel9,
@@ -110,7 +102,6 @@ const slides = [
     link: "/category/raw-materials",
     accent: "#A3E635",
     bg: "#0a1204",
-    tag: "B2B",
   },
 ];
 
@@ -231,31 +222,6 @@ const HeroSection = () => {
                 transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
                 className="space-y-5"
               >
-                {/* Badge row */}
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <span
-                    className="text-[10px] font-black tracking-[0.18em] px-3 py-1.5 rounded-full"
-                    style={{
-                      background: "rgba(255,255,255,0.07)",
-                      color: "rgba(255,255,255,0.45)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                    }}
-                  >
-                    {slide.tag}
-                  </span>
-                  <span
-                    className="text-[11px] font-bold px-3.5 py-1.5 rounded-full flex items-center gap-1.5"
-                    style={{
-                      background: slide.accent,
-                      color: "#fff",
-                      boxShadow: `0 4px 18px ${slide.accent}55`,
-                      transition: "background 0.5s, box-shadow 0.5s",
-                    }}
-                  >
-                    {slide.badgeIcon} {slide.badge}
-                  </span>
-                </div>
-
                 {/* Headline */}
                 <div>
                   <h1
@@ -307,22 +273,7 @@ const HeroSection = () => {
                     </button>
                   </Link>
 
-                  <div
-                    className="flex items-center gap-2.5 px-4 py-3 rounded-2xl"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      backdropFilter: "blur(12px)",
-                    }}
-                  >
-                    <span className="text-lg">💳</span>
-                    <div>
-                      <p className="text-[10px] leading-none" style={{ color: "rgba(255,255,255,0.38)" }}>
-                        Starting from
-                      </p>
-                      <p className="text-xs font-bold text-white leading-tight">0% Installments</p>
-                    </div>
-                  </div>
+
                 </div>
               </motion.div>
             </AnimatePresence>
