@@ -33,7 +33,7 @@ const initialWishlist = [
     originalPrice: 589999,
     rating: 4.9,
     reviews: 856,
-    image: "https://fabkart.pk/cdn/shop/files/DZ-10_1_-_1600x1062_099fc952-f5a9-4b19-9c53-7d4f4d70a34a.png?crop=center&height=1062&v=1732525036&width=1600",
+    image: "https://media.us.lg.com/m/49f791ebcb48b9d3/webimage-TV_OLED_C3_2023_83-55_Design-1-Ultra-Slim-Design_features_900x600.png",
     category: "TVs",
     inStock: true,
     installment: 41666,
