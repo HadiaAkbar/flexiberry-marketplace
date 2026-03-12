@@ -19,8 +19,10 @@
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 263 72% 58%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 215 20% 93%;       /* neutral slate-100 — safe image fallback bg */
+    --secondary-foreground: 222 25% 20%;
+    --secondary-brand: 263 72% 58%; /* original purple — use this for brand accents */
+    --secondary-brand-foreground: 0 0% 100%;
 
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 44%;
@@ -451,17 +453,59 @@
     box-shadow: var(--shadow-lg);
   }
 
-  /* ── Tab pill (FlexiBerry) ── */
+  /* ── Tab pill (FlexiBerry) — 3-D glass ── */
   .tab-pill {
-    background: var(--gradient-tab-bg);
-    backdrop-filter: blur(24px) saturate(2);
-    -webkit-backdrop-filter: blur(24px) saturate(2);
-    border: 1px solid rgba(255,255,255,0.30);
-    box-shadow: var(--shadow-tab-pill);
+    display: inline-flex;
+    padding: 5px;
+    border-radius: 20px;
+    gap: 3px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.12) 100%);
+    backdrop-filter: blur(28px) saturate(2.2);
+    -webkit-backdrop-filter: blur(28px) saturate(2.2);
+    border: 1px solid rgba(255,255,255,0.40);
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.22),
+      0 2px 8px rgba(0,0,0,0.14),
+      inset 0 1.5px 0 rgba(255,255,255,0.55),
+      inset 0 -1px 0 rgba(0,0,0,0.12);
   }
+  .tab-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    border-radius: 15px;
+    border: none;
+    background: transparent;
+    /* High-contrast white for inactive — legible on any gradient bg */
+    color: rgba(255,255,255,0.90);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: all 0.22s cubic-bezier(0.22,1,0.36,1);
+    user-select: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+  }
+  .tab-btn:hover:not(.active) {
+    color: #fff;
+    background: rgba(255,255,255,0.18);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .tab-btn.active,
   .tab-btn-active {
-    background: var(--gradient-tab-active);
-    box-shadow: var(--shadow-tab-active);
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    box-shadow:
+      0 6px 20px rgba(37,99,235,0.60),
+      0 2px 6px rgba(124,58,237,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.35),
+      inset 0 -1px 0 rgba(0,0,0,0.18);
+    transform: translateY(-1px);
+    text-shadow: none;
   }
 
   /* ── Shadow utilities ── */
@@ -528,18 +572,76 @@
   }
   .heading-section {
     font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-    font-weight: 700;
-    letter-spacing: var(--tracking-snug);
-    line-height: var(--leading-snug);
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
     text-wrap: balance;
   }
+  .heading-section-sub {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    color: #64748b;
+    font-weight: 400;
+    margin-top: 10px;
+  }
   .label-eyebrow {
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: var(--tracking-widest);
     text-transform: uppercase;
     color: hsl(var(--primary));
+  }
+
+  /* ── Step card typography ── */
+  .step-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+  .step-desc {
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    color: #64748b;
+    line-height: 1.65;
+  }
+
+  /* ── Vendor card typography ── */
+  .vendor-name-text {
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    font-weight: 800;
+    color: hsl(var(--primary));
+    letter-spacing: -0.02em;
+  }
+  .vendor-cat-text {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+  .vendor-desc-text {
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    color: #64748b;
+    line-height: 1.55;
+  }
+  .vendor-meta-text {
+    font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+    font-weight: 600;
+    color: #374151;
+  }
+
+  /* ── FAQ typography ── */
+  .faq-question-text {
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+  .faq-answer-text {
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    color: #64748b;
+    line-height: 1.72;
   }
 
   /* ── Depth card ── */
@@ -581,18 +683,60 @@
     box-shadow: var(--shadow-faq-open);
   }
 
-  /* ── Brand card ── */
+  /* ── Brand card — transparent bg, logo visible ── */
   .brand-card {
-    background: #fff;
-    border: 1.5px solid hsl(var(--border));
+    width: 180px;
+    height: 110px;
+    background: rgba(255,255,255,0.70);
+    backdrop-filter: blur(12px) saturate(1.6);
+    -webkit-backdrop-filter: blur(12px) saturate(1.6);
+    border: 1.5px solid rgba(255,255,255,0.85);
     border-radius: 20px;
-    box-shadow: var(--shadow-sm);
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow:
+      0 4px 16px rgba(0,0,0,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.90);
+    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
   }
   .brand-card:hover {
+    background: rgba(255,255,255,0.92);
     border-color: rgba(37,99,235,0.30);
-    box-shadow: var(--shadow-brand-hover);
-    transform: translateY(-4px);
+    box-shadow:
+      0 12px 36px rgba(37,99,235,0.14),
+      0 3px 10px rgba(0,0,0,0.06),
+      inset 0 1px 0 rgba(255,255,255,1);
+    transform: translateY(-5px) scale(1.02);
+  }
+  .brand-logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    width: 100%;
+    padding: 0 16px;
+  }
+  .brand-logo-wrap img,
+  .brand-logo-wrap svg {
+    max-height: 44px;
+    max-width: 130px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: none;
+  }
+  .brand-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.5px;
   }
 
   /* ══════════════════════════════════════
