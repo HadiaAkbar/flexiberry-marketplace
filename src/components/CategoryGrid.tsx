@@ -3,17 +3,17 @@ import { categories } from "@/data/products";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-const categoryColors: Record<string, { bg: string; iconColor: string }> = {
-  phones: { bg: "bg-blue-50", iconColor: "text-blue-500" },
-  laptops: { bg: "bg-purple-50", iconColor: "text-purple-500" },
-  bikes: { bg: "bg-amber-50", iconColor: "text-amber-500" },
-  appliances: { bg: "bg-rose-50", iconColor: "text-rose-500" },
-  solar: { bg: "bg-yellow-50", iconColor: "text-yellow-500" },
-  furniture: { bg: "bg-emerald-50", iconColor: "text-emerald-500" },
-  jahez: { bg: "bg-pink-50", iconColor: "text-pink-500" },
-  cars: { bg: "bg-cyan-50", iconColor: "text-cyan-500" },
-  "raw-materials": { bg: "bg-indigo-50", iconColor: "text-indigo-500" },
-  general: { bg: "bg-orange-50", iconColor: "text-orange-500" },
+const categoryColors: Record<string, string> = {
+  phones: "bg-[hsl(217,91%,55%)]",
+  laptops: "bg-[hsl(263,70%,55%)]",
+  bikes: "bg-[hsl(25,90%,55%)]",
+  appliances: "bg-[hsl(0,72%,51%)]",
+  solar: "bg-[hsl(45,93%,50%)]",
+  furniture: "bg-[hsl(160,60%,42%)]",
+  jahez: "bg-[hsl(340,78%,52%)]",
+  cars: "bg-[hsl(174,72%,40%)]",
+  "raw-materials": "bg-[hsl(230,45%,30%)]",
+  general: "bg-[hsl(15,90%,55%)]",
 };
 
 const CategoryGrid = () => {
@@ -31,7 +31,7 @@ const CategoryGrid = () => {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {categories.map((cat, i) => {
-            const colors = categoryColors[cat.id] || { bg: "bg-muted", iconColor: "text-primary" };
+            const bgColor = categoryColors[cat.id] || "bg-primary";
             return (
               <motion.div
                 key={cat.id}
@@ -41,14 +41,14 @@ const CategoryGrid = () => {
               >
                 <Link
                   to={`/category/${cat.slug}`}
-                  className="group relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+                  className={`group relative flex flex-col items-center gap-3 p-5 rounded-2xl ${bgColor} hover:shadow-lg hover:scale-[1.03] transition-all duration-300`}
                 >
-                  <div className={`h-14 w-14 rounded-2xl flex items-center justify-center ${colors.bg} group-hover:scale-110 transition-transform duration-300`}>
-                    <cat.icon className={`h-7 w-7 ${colors.iconColor}`} />
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-white/20 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300">
+                    <cat.icon className="h-7 w-7 text-white" />
                   </div>
                   <div className="text-center">
-                    <span className="text-sm font-semibold text-foreground block">{cat.name}</span>
-                    <span className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{cat.description}</span>
+                    <span className="text-sm font-semibold text-white block">{cat.name}</span>
+                    <span className="text-xs text-white/70 line-clamp-1 mt-0.5">{cat.description}</span>
                   </div>
                 </Link>
               </motion.div>
