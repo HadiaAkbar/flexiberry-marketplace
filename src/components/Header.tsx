@@ -280,7 +280,7 @@ const Header = () => {
               </button>
             </Link>
 
-            {/* Mobile menu toggle */}
+            {/* Mobile menu toggle — hidden on desktop */}
             <button
               className="md:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -288,7 +288,6 @@ const Header = () => {
                 height: "42px", width: "42px", borderRadius: "12px",
                 background: menuOpen ? "rgba(37,99,235,0.08)" : "transparent",
                 border: "1.5px solid rgba(37,99,235,0.12)",
-                display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", color: "#64748b",
                 transition: "all 0.2s ease",
               }}>
