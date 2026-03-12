@@ -112,15 +112,6 @@ const Header = () => {
                 <span className="font-black text-xl tracking-tight text-[#2563eb]">Flexi</span>
                 <span className="font-black text-xl tracking-tight text-gray-800">Berry</span>
               </div>
-              <span
-                className="text-[9px] font-bold tracking-wide uppercase mt-0.5 px-1.5 py-0.5 rounded-full w-fit"
-                style={{
-                  background: "linear-gradient(90deg, #2563eb14, #7c3aed14)",
-                  color: "#7c3aed",
-                  border: "1px solid #7c3aed30",
-                }}
-              >
-              </span>
             </div>
           </Link>
 
