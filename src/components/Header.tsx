@@ -431,6 +431,7 @@ const Header = () => {
                     boxShadow: "0 24px 64px rgba(37,99,235,0.18), 0 4px 16px rgba(0,0,0,0.08)",
                     border: "1px solid rgba(37,99,235,0.12)",
                     zIndex: 100, overflow: "hidden",
+                    maxHeight: "80vh",
                     animation: "dropIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                   }}>
                     {/* Header strip */}
@@ -471,6 +472,10 @@ const Header = () => {
                     </div>
 
                     {/* Perks row */}
+                    <div style={{
+                      overflowY: "auto",
+                      maxHeight: "calc(80vh - 68px)",
+                    }}>
                     <div style={{
                       display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
                       gap: "0", borderBottom: "1px solid rgba(37,99,235,0.08)",
@@ -608,6 +613,7 @@ const Header = () => {
                         By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
                       </p>
                     </div>
+                    </div>{/* end scrollable */}
                   </div>
                 )}
               </div>
