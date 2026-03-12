@@ -289,43 +289,6 @@ const Header = () => {
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-1">
 
-              {/* ── HOME TAB ── */}
-              <Link to="/">
-                <button style={{
-                  display: "flex", alignItems: "center", gap: "7px",
-                  padding: "10px 18px",
-                  background: isHome
-                    ? "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)"
-                    : "transparent",
-                  border: isHome ? "none" : "1.5px solid rgba(37,99,235,0.15)",
-                  cursor: "pointer",
-                  fontSize: "13px", fontWeight: 700,
-                  color: isHome ? "white" : "#374151",
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  borderRadius: "0 0 14px 14px",
-                  boxShadow: isHome
-                    ? "0 4px 14px rgba(37,99,235,0.35), inset 0 1px 0 rgba(255,255,255,0.20)"
-                    : "none",
-                  letterSpacing: "-0.01em",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={e => {
-                  if (!isHome) {
-                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(37,99,235,0.06)";
-                    (e.currentTarget as HTMLButtonElement).style.color = "#2563eb";
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isHome) {
-                    (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-                    (e.currentTarget as HTMLButtonElement).style.color = "#374151";
-                  }
-                }}>
-                  <Home size={14} strokeWidth={2.5}/>
-                  Home
-                </button>
-              </Link>
-
               {/* All Categories pill */}
               <div className="relative"
                 onMouseEnter={() => setCatOpen(true)}
@@ -397,6 +360,7 @@ const Header = () => {
 
               {/* Nav links */}
               {[
+                { label: "🏠 Home", href: "/" },
                 { label: "⚡ Flash Sale", href: "/flash-sale" },
                 { label: "✨ New Arrivals", href: "/new-arrivals" },
               ].map((item) => (
