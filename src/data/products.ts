@@ -59,7 +59,7 @@ export const featuredProducts: Product[] = [
   { id: "7", name: "Samsung Galaxy S24 Ultra", categoryId: "phones", shopId: "s1", price: 449999, image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&h=400&fit=crop", description: "AI-powered smartphone", installmentOptions: [6, 12], rating: 4.7, reviews: 198, inStock: true },
   { id: "8", name: "55\" Smart LED TV 4K", categoryId: "appliances", shopId: "s2", price: 95000, originalPrice: 110000, image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop", description: "Ultra HD Smart TV", installmentOptions: [6, 12], rating: 4.5, reviews: 421, inStock: true },
   { id: "9", name: "Toyota Corolla 2024", categoryId: "cars", shopId: "s3", price: 5950000, image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop", description: "Brand new sedan", installmentOptions: [12], rating: 4.9, reviews: 12, inStock: true },
-  { id: "10", name: "Gree 1.5 Ton Inverter AC", categoryId: "appliances", shopId: "s2", price: 155000, originalPrice: 180000, image: "https://www.gree.com.pk/wp-content/uploads/2022/01/GS-18CITH11W.png", description: "Energy efficient cooling", installmentOptions: [6, 12], rating: 4.7, reviews: 289, inStock: true },
+  { id: "10", name: "Gree 1.5 Ton Inverter AC", categoryId: "appliances", shopId: "s2", price: 155000, originalPrice: 180000,image: "https://selectronics.com.pk/wp-content/uploads/2024/02/Gree-Inverter-Split-AC-1.5-Ton-18FITH3W-Wifi.jpg", description: "Energy efficient cooling", installmentOptions: [6, 12], rating: 4.7, reviews: 289, inStock: true },
 ];
 
 export const shops: Shop[] = [
