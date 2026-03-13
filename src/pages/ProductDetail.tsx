@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,11 +30,6 @@ import {
   Clock,
   Store,
   MapPin,
-  ZoomIn,
-  ZoomOut,
-  X,
-  ChevronLeft,
-  Maximize2,
 } from "lucide-react";
 
 /* ─── Category theme map ── */
@@ -130,264 +125,6 @@ function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
   );
 }
 
-/* ─── Image Zoom Lightbox ── */
-function ZoomLightbox({
-  images,
-  activeIndex,
-  onClose,
-  onChangeIndex,
-  theme,
-}: {
-  images: string[];
-  activeIndex: number;
-  onClose: () => void;
-  onChangeIndex: (i: number) => void;
-  theme: typeof DEFAULT_THEME;
-}) {
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStart = useRef({ x: 0, y: 0 });
-  const positionRef = useRef({ x: 0, y: 0 });
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  // Reset zoom when image changes
-  useEffect(() => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-    positionRef.current = { x: 0, y: 0 };
-  }, [activeIndex]);
-
-  // Close on Escape, navigate on arrow keys
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") onChangeIndex((activeIndex + 1) % images.length);
-      if (e.key === "ArrowLeft") onChangeIndex((activeIndex - 1 + images.length) % images.length);
-      if (e.key === "+" || e.key === "=") setScale((s) => Math.min(s + 0.5, 4));
-      if (e.key === "-") setScale((s) => Math.max(s - 0.5, 1));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [activeIndex, images.length, onClose, onChangeIndex]);
-
-  // Scroll wheel zoom
-  const onWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.2 : 0.2;
-    setScale((s) => Math.min(Math.max(s + delta, 1), 4));
-    if (scale + delta <= 1) {
-      setPosition({ x: 0, y: 0 });
-      positionRef.current = { x: 0, y: 0 };
-    }
-  };
-
-  // Mouse drag to pan when zoomed
-  const onMouseDown = (e: React.MouseEvent) => {
-    if (scale <= 1) return;
-    setIsDragging(true);
-    dragStart.current = { x: e.clientX - positionRef.current.x, y: e.clientY - positionRef.current.y };
-  };
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    const newPos = { x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y };
-    positionRef.current = newPos;
-    setPosition(newPos);
-  };
-  const onMouseUp = () => setIsDragging(false);
-
-  return (
-    <>
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        style={{
-          position: "fixed", inset: 0,
-          background: "rgba(0,0,0,0.92)",
-          backdropFilter: "blur(8px)",
-          zIndex: 9998,
-          animation: "zlFadeIn 0.2s ease",
-        }}
-      />
-
-      {/* Lightbox container */}
-      <div
-        style={{
-          position: "fixed", inset: 0, zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          pointerEvents: "none",
-        }}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: "fixed", top: "16px", right: "16px",
-            width: "42px", height: "42px", borderRadius: "50%",
-            background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
-            cursor: "pointer", color: "white",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            pointerEvents: "all", transition: "background 0.2s",
-            zIndex: 10000,
-          }}
-          onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
-          onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-        >
-          <X size={20} />
-        </button>
-
-        {/* Zoom controls */}
-        <div style={{
-          position: "fixed", top: "16px", left: "50%", transform: "translateX(-50%)",
-          display: "flex", alignItems: "center", gap: "8px",
-          background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.12)",
-          borderRadius: "50px", padding: "6px 14px",
-          pointerEvents: "all", zIndex: 10000,
-        }}>
-          <button
-            onClick={() => { setScale((s) => Math.max(s - 0.5, 1)); if (scale - 0.5 <= 1) { setPosition({ x: 0, y: 0 }); positionRef.current = { x: 0, y: 0 }; } }}
-            style={{ background: "none", border: "none", color: "white", cursor: "pointer", display: "flex", alignItems: "center", padding: "2px 4px", opacity: scale <= 1 ? 0.4 : 1 }}
-          >
-            <ZoomOut size={18} />
-          </button>
-          <span style={{ color: "white", fontSize: "13px", fontWeight: 700, minWidth: "40px", textAlign: "center", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-            {Math.round(scale * 100)}%
-          </span>
-          <button
-            onClick={() => setScale((s) => Math.min(s + 0.5, 4))}
-            style={{ background: "none", border: "none", color: "white", cursor: "pointer", display: "flex", alignItems: "center", padding: "2px 4px", opacity: scale >= 4 ? 0.4 : 1 }}
-          >
-            <ZoomIn size={18} />
-          </button>
-          <div style={{ width: "1px", height: "18px", background: "rgba(255,255,255,0.2)", margin: "0 4px" }} />
-          <button
-            onClick={() => { setScale(1); setPosition({ x: 0, y: 0 }); positionRef.current = { x: 0, y: 0 }; }}
-            style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "11px", fontWeight: 600, fontFamily: "'Plus Jakarta Sans', sans-serif", opacity: scale === 1 ? 0.4 : 1, padding: "2px 4px" }}
-          >
-            Reset
-          </button>
-        </div>
-
-        {/* Prev button */}
-        {images.length > 1 && (
-          <button
-            onClick={() => onChangeIndex((activeIndex - 1 + images.length) % images.length)}
-            style={{
-              position: "fixed", left: "16px", top: "50%", transform: "translateY(-50%)",
-              width: "44px", height: "44px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
-              cursor: "pointer", color: "white",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              pointerEvents: "all", transition: "background 0.2s", zIndex: 10000,
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-          >
-            <ChevronLeft size={22} />
-          </button>
-        )}
-
-        {/* Next button */}
-        {images.length > 1 && (
-          <button
-            onClick={() => onChangeIndex((activeIndex + 1) % images.length)}
-            style={{
-              position: "fixed", right: "16px", top: "50%", transform: "translateY(-50%)",
-              width: "44px", height: "44px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
-              cursor: "pointer", color: "white",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              pointerEvents: "all", transition: "background 0.2s", zIndex: 10000,
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.25)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-          >
-            <ChevronRight size={22} />
-          </button>
-        )}
-
-        {/* Main zoomed image */}
-        <div
-          onWheel={onWheel}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseUp}
-          style={{
-            pointerEvents: "all",
-            cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            width: "min(90vw, 800px)", height: "min(80vh, 800px)",
-            overflow: "hidden",
-            userSelect: "none",
-          }}
-          onClick={(e) => { if (scale === 1) setScale(2); else { setScale(1); setPosition({ x: 0, y: 0 }); positionRef.current = { x: 0, y: 0 }; } e.stopPropagation(); }}
-        >
-          <img
-            ref={imgRef}
-            src={images[activeIndex]}
-            alt="Zoomed product"
-            draggable={false}
-            style={{
-              maxWidth: "none",
-              width: `${scale * 100}%`,
-              maxHeight: `${scale * 100}%`,
-              objectFit: "contain",
-              transform: `translate(${position.x}px, ${position.y}px)`,
-              transition: isDragging ? "none" : "transform 0.15s ease, width 0.2s ease",
-              borderRadius: scale === 1 ? "16px" : "0",
-              boxShadow: scale === 1 ? "0 32px 80px rgba(0,0,0,0.6)" : "none",
-              animation: "zlSlideIn 0.25s cubic-bezier(0.34,1.56,0.64,1)",
-            }}
-          />
-        </div>
-
-        {/* Thumbnail strip at bottom */}
-        {images.length > 1 && (
-          <div style={{
-            position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
-            display: "flex", gap: "8px", pointerEvents: "all", zIndex: 10000,
-          }}>
-            {images.map((img, i) => (
-              <button
-                key={i}
-                onClick={() => onChangeIndex(i)}
-                style={{
-                  width: "52px", height: "52px", borderRadius: "10px",
-                  overflow: "hidden", padding: "3px",
-                  border: `2px solid ${i === activeIndex ? theme.primary : "rgba(255,255,255,0.25)"}`,
-                  background: "rgba(255,255,255,0.08)",
-                  cursor: "pointer", transition: "border-color 0.2s",
-                  flexShrink: 0,
-                }}
-              >
-                <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "6px" }} />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Hint text */}
-        <div style={{
-          position: "fixed", bottom: images.length > 1 ? "86px" : "20px", left: "50%", transform: "translateX(-50%)",
-          color: "rgba(255,255,255,0.4)", fontSize: "11px",
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          pointerEvents: "none", whiteSpace: "nowrap",
-          zIndex: 10000,
-        }}>
-          Scroll to zoom · Click to toggle zoom · Drag to pan when zoomed
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes zlFadeIn  { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes zlSlideIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
-      `}</style>
-    </>
-  );
-}
-
 /* ─── Mini product card (same category / recently viewed) ── */
 function MiniCard({
   image, brand, name, price, originalPrice, rating, isNew,
@@ -401,21 +138,35 @@ function MiniCard({
   const disc = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
   return (
-    <div className="group relative rounded-xl overflow-hidden bg-white border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col">
-      <div className="absolute top-2.5 left-2.5 z-10 text-white text-[10px] font-bold px-2 py-0.5 rounded"
-        style={{ background: disc > 0 ? "#ef4444" : theme.primary }}>
+    <div
+      className="group relative rounded-xl overflow-hidden bg-white border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col"
+    >
+      {/* Badge */}
+      <div
+        className="absolute top-2.5 left-2.5 z-10 text-white text-[10px] font-bold px-2 py-0.5 rounded"
+        style={{ background: disc > 0 ? "#ef4444" : theme.primary }}
+      >
         {disc > 0 ? `-${disc}%` : "New"}
       </div>
+
+      {/* Image */}
       <div className="relative aspect-square overflow-hidden" style={{ background: "#f9fafb", padding: 14 }}>
-        <img src={image} alt={name}
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110" />
+        <img
+          src={image} alt={name}
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+        />
         <button
           onClick={(e) => { e.preventDefault(); setWish(!wish); }}
-          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 shadow flex items-center justify-center transition-transform hover:scale-110">
-          <Heart className="w-3.5 h-3.5"
-            style={{ fill: wish ? "#ef4444" : "none", color: wish ? "#ef4444" : "#ccc" }} />
+          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 shadow flex items-center justify-center transition-transform hover:scale-110"
+        >
+          <Heart
+            className="w-3.5 h-3.5"
+            style={{ fill: wish ? "#ef4444" : "none", color: wish ? "#ef4444" : "#ccc" }}
+          />
         </button>
       </div>
+
+      {/* Body */}
       <div className="p-3 flex-1 flex flex-col gap-1">
         <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: theme.primary }}>{brand}</p>
         <p className="text-[13px] font-semibold text-gray-800 line-clamp-2 leading-snug">{name}</p>
@@ -425,20 +176,29 @@ function MiniCard({
             PKR {price.toLocaleString()}
           </span>
           {originalPrice && (
-            <span className="text-[11px] text-gray-400 line-through">{originalPrice.toLocaleString()}</span>
+            <span className="text-[11px] text-gray-400 line-through">
+              {originalPrice.toLocaleString()}
+            </span>
           )}
         </div>
       </div>
+
+      {/* Actions */}
       <div className="flex gap-1.5 px-3 pb-3">
         <button
           className="flex-1 py-1.5 text-white text-[12px] font-bold rounded-md transition-opacity hover:opacity-85 flex items-center justify-center gap-1"
-          style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}>
+          style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}
+        >
           <ShoppingCart className="w-3 h-3" /> Add to Cart
         </button>
         <button
           onClick={() => setWish(!wish)}
           className="w-8 h-8 border rounded-md flex items-center justify-center transition-colors"
-          style={{ borderColor: wish ? "#ef4444" : "#e5e7eb", color: wish ? "#ef4444" : "#bbb" }}>
+          style={{
+            borderColor: wish ? "#ef4444" : "#e5e7eb",
+            color: wish ? "#ef4444" : "#bbb",
+          }}
+        >
           <Heart className="w-3.5 h-3.5" style={{ fill: wish ? "#ef4444" : "none" }} />
         </button>
       </div>
@@ -461,20 +221,6 @@ const ProductDetail = () => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [hoverStar, setHoverStar] = useState(0);
   const [reviewStar, setReviewStar] = useState(5);
-
-  // ── ZOOM STATE ──
-  const [zoomOpen, setZoomOpen] = useState(false);
-  const [zoomIndex, setZoomIndex] = useState(0);
-
-  // Prevent body scroll when lightbox is open
-  useEffect(() => {
-    if (zoomOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [zoomOpen]);
 
   if (!product) {
     return (
@@ -502,48 +248,38 @@ const ProductDetail = () => {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
+  // Mock multi-image thumbnails from same image
   const images = [product.image, product.image, product.image, product.image];
 
   const COLORS = ["Natural Titanium", "Black Titanium", "White Titanium", "Blue Titanium"];
   const COLOR_HEX: Record<string, string> = {
     "Natural Titanium": "#c9bfaf",
-    "Black Titanium":   "#2d2d2d",
-    "White Titanium":   "#f0ebe4",
-    "Blue Titanium":    "#4d7fa6",
+    "Black Titanium": "#2d2d2d",
+    "White Titanium": "#f0ebe4",
+    "Blue Titanium": "#4d7fa6",
   };
   const STORAGES = ["128GB", "256GB", "512GB", "1TB"];
 
   const handleAddToCart = () => {
     addToCart({
-      id: product.id, name: product.name, price: product.price,
-      originalPrice: product.originalPrice, image: product.image,
-      shopId: vendor.shopId, shopName: vendor.shopName,
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      shopId: vendor.shopId,
+      shopName: vendor.shopName,
     });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
 
-  const openZoom = (index: number) => {
-    setZoomIndex(index);
-    setZoomOpen(true);
-  };
-
+  // Build the vendor-aware installment/verification URL
   const vendorCheckoutUrl = `/checkout/verify?productId=${product.id}&vendorId=${vendor.shopId}&vendor=${encodeURIComponent(vendor.shopName)}`;
 
   return (
     <div className="min-h-screen bg-white flex flex-col" style={{ fontFamily: "'Nunito Sans', 'Plus Jakarta Sans', sans-serif" }}>
       <Header />
-
-      {/* ── ZOOM LIGHTBOX ── */}
-      {zoomOpen && (
-        <ZoomLightbox
-          images={images}
-          activeIndex={zoomIndex}
-          onClose={() => setZoomOpen(false)}
-          onChangeIndex={setZoomIndex}
-          theme={theme}
-        />
-      )}
 
       {/* ── BREADCRUMB ── */}
       <div className="bg-gray-50 border-b border-gray-100">
@@ -570,11 +306,10 @@ const ProductDetail = () => {
 
           {/* Gallery */}
           <div className="w-full md:w-[480px] shrink-0">
-            {/* Main image — click opens zoom */}
+            {/* Main image */}
             <div
-              className="border border-gray-200 rounded-xl overflow-hidden relative group"
-              style={{ background: "#f9fafb", cursor: "zoom-in" }}
-              onClick={() => openZoom(mainImg)}
+              className="border border-gray-200 rounded-xl overflow-hidden relative cursor-zoom-in group"
+              style={{ background: "#f9fafb" }}
             >
               <img
                 src={images[mainImg]}
@@ -582,23 +317,16 @@ const ProductDetail = () => {
                 className="w-full aspect-square object-contain p-8 transition-transform duration-500 group-hover:scale-105"
               />
               {discount > 0 && (
-                <div className="absolute top-3.5 left-3.5 text-white text-xs font-extrabold px-2.5 py-1 rounded"
-                  style={{ background: "#ef4444" }}>
+                <div
+                  className="absolute top-3.5 left-3.5 text-white text-xs font-extrabold px-2.5 py-1 rounded"
+                  style={{ background: "#ef4444" }}
+                >
                   -{discount}% OFF
                 </div>
               )}
-              {/* Zoom button — now functional */}
-              <button
-                onClick={(e) => { e.stopPropagation(); openZoom(mainImg); }}
-                className="absolute bottom-3 right-3 flex items-center gap-1.5 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: "rgba(0,0,0,0.55)",
-                  backdropFilter: "blur(6px)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}
-              >
-                <Maximize2 className="w-3.5 h-3.5" /> Zoom
-              </button>
+              <div className="absolute bottom-3 right-3 bg-black/45 text-white text-[11px] px-2.5 py-1 rounded-full flex items-center gap-1">
+                <Eye className="w-3 h-3" /> Zoom
+              </div>
             </div>
 
             {/* Thumbnails */}
@@ -607,7 +335,6 @@ const ProductDetail = () => {
                 <button
                   key={i}
                   onClick={() => setMainImg(i)}
-                  onDoubleClick={() => openZoom(i)}
                   className="flex-1 aspect-square rounded-lg overflow-hidden border-2 transition-all p-2 flex items-center justify-center"
                   style={{
                     borderColor: mainImg === i ? theme.primary : "#e5e7eb",
@@ -619,7 +346,7 @@ const ProductDetail = () => {
               ))}
             </div>
 
-            {/* Trust badges */}
+            {/* Trust badges below gallery */}
             <div className="mt-4 rounded-xl border border-gray-100 overflow-hidden">
               {[
                 { icon: Shield,     label: "100% Authentic",        sub: "Verified & KYC-protected" },
@@ -632,7 +359,10 @@ const ProductDetail = () => {
                   className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0"
                   style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}
                 >
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: theme.light }}>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: theme.light }}
+                  >
                     <Icon className="w-4 h-4" style={{ color: theme.primary }} />
                   </div>
                   <div>
@@ -646,28 +376,46 @@ const ProductDetail = () => {
 
           {/* Info panel */}
           <div className="flex-1 pt-1">
+            {/* Name */}
             <h1 className="text-2xl font-extrabold text-gray-900 leading-tight mb-2" style={{ fontFamily: "'Nunito', 'Space Grotesk', sans-serif" }}>
               {product.name}
             </h1>
 
-            {/* Vendor badge */}
+            {/* ── SHOP / VENDOR BADGE ── */}
             <Link
               to={`/vendor/${vendor.shopId}`}
               className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-lg border transition-all hover:shadow-sm group"
-              style={{ background: theme.light, borderColor: theme.accent + "60", textDecoration: "none" }}
+              style={{
+                background: theme.light,
+                borderColor: theme.accent + "60",
+                textDecoration: "none",
+              }}
             >
-              <div className="w-6 h-6 rounded-md flex items-center justify-center shrink-0" style={{ background: theme.primary }}>
+              <div
+                className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
+                style={{ background: theme.primary }}
+              >
                 <Store className="w-3.5 h-3.5 text-white" />
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[13px] font-bold leading-none group-hover:underline" style={{ color: theme.primary }}>
+                <span
+                  className="text-[13px] font-bold leading-none group-hover:underline"
+                  style={{ color: theme.primary }}
+                >
                   {vendor.shopName}
                 </span>
-                {vendor.verified && <BadgeCheck className="w-3.5 h-3.5 shrink-0" style={{ color: "#16a34a" }} title="Verified Vendor" />}
+                {vendor.verified && (
+                  <BadgeCheck
+                    className="w-3.5 h-3.5 shrink-0"
+                    style={{ color: "#16a34a" }}
+                    title="Verified Vendor"
+                  />
+                )}
               </div>
               <span className="text-gray-300 text-[11px] mx-0.5">•</span>
               <span className="flex items-center gap-0.5 text-[11px] text-gray-400">
-                <MapPin className="w-3 h-3" />{vendor.location}
+                <MapPin className="w-3 h-3" />
+                {vendor.location}
               </span>
             </Link>
 
@@ -678,9 +426,14 @@ const ProductDetail = () => {
             {/* Rating */}
             <div className="flex items-center gap-2.5 mb-5">
               <Stars rating={product.rating} size={16} />
-              <a href="#reviews" onClick={() => setActiveTab("reviews")}
-                className="text-[13px] flex items-center gap-1 hover:underline" style={{ color: theme.primary }}>
-                <MessageSquare className="w-3.5 h-3.5" /> Read reviews ({product.reviews})
+              <a
+                href="#reviews"
+                onClick={() => setActiveTab("reviews")}
+                className="text-[13px] flex items-center gap-1 hover:underline"
+                style={{ color: theme.primary }}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                Read reviews ({product.reviews})
               </a>
             </div>
 
@@ -691,10 +444,14 @@ const ProductDetail = () => {
                   {formatPrice(product.price)}
                 </span>
                 {product.originalPrice && (
-                  <span className="text-lg text-gray-400 line-through font-medium">{formatPrice(product.originalPrice)}</span>
+                  <span className="text-lg text-gray-400 line-through font-medium">
+                    {formatPrice(product.originalPrice)}
+                  </span>
                 )}
                 {discount > 0 && (
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-red-500 text-white">-{discount}%</span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-red-500 text-white">
+                    -{discount}%
+                  </span>
                 )}
               </div>
               <p className="text-[13px] font-semibold mt-1.5 flex items-center gap-1.5" style={{ color: "#16a34a" }}>
@@ -728,7 +485,10 @@ const ProductDetail = () => {
               </p>
               <div className="flex gap-2">
                 {COLORS.map((color) => (
-                  <button key={color} title={color} onClick={() => setSelectedColor(color)}
+                  <button
+                    key={color}
+                    title={color}
+                    onClick={() => setSelectedColor(color)}
                     className="w-7 h-7 rounded-full border-2 transition-all"
                     style={{
                       background: COLOR_HEX[color],
@@ -746,21 +506,27 @@ const ProductDetail = () => {
               <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-2">Storage</p>
               <div className="flex gap-2 flex-wrap">
                 {STORAGES.map((s) => (
-                  <button key={s} onClick={() => setSelectedStorage(s)}
+                  <button
+                    key={s}
+                    onClick={() => setSelectedStorage(s)}
                     className="px-3.5 py-1.5 border-[1.5px] rounded-md text-[13px] font-semibold transition-all"
                     style={{
                       borderColor: selectedStorage === s ? theme.primary : "#e5e7eb",
                       color: selectedStorage === s ? theme.primary : "#555",
                       background: selectedStorage === s ? theme.light : "#fff",
-                    }}>
+                    }}
+                  >
                     {s}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Installment Plans */}
-            <div className="rounded-xl p-4 mb-5 border" style={{ background: theme.light, borderColor: theme.accent + "60" }}>
+            {/* ── INSTALLMENT PLANS ── */}
+            <div
+              className="rounded-xl p-4 mb-5 border"
+              style={{ background: theme.light, borderColor: theme.accent + "60" }}
+            >
               <div className="flex items-center gap-2 mb-3">
                 <CreditCard className="w-4 h-4" style={{ color: theme.primary }} />
                 <span className="text-[13px] font-bold" style={{ color: theme.primary }}>Installment Plans</span>
@@ -768,59 +534,84 @@ const ProductDetail = () => {
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 {(product.installmentOptions || [3, 6, 12, 24]).map((months) => (
-                  <div key={months} className="bg-white rounded-lg p-3 text-center border" style={{ borderColor: theme.accent + "40" }}>
+                  <div
+                    key={months}
+                    className="bg-white rounded-lg p-3 text-center border"
+                    style={{ borderColor: theme.accent + "40" }}
+                  >
                     <p className="text-[11px] text-gray-400 mb-1">{months} Months</p>
-                    <p className="text-base font-black" style={{ color: theme.primary }}>{getMonthlyInstallment(product.price, months)}</p>
+                    <p className="text-base font-black" style={{ color: theme.primary }}>
+                      {getMonthlyInstallment(product.price, months)}
+                    </p>
                     <p className="text-[10px] text-gray-400">per month</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Qty + Buy */}
+            {/* Qty + Add to Cart */}
             <div className="flex items-center gap-3.5 mb-5">
+              {/* Qty */}
               <div className="flex items-center border-[1.5px] border-gray-200 rounded-lg overflow-hidden">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))}
-                  className="w-9 h-11 flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                <button
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="w-9 h-11 flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                >
                   <Minus className="w-4 h-4" />
                 </button>
                 <span className="w-12 text-center text-[15px] font-bold text-gray-800 border-l border-r border-gray-200 h-11 flex items-center justify-center">
                   {qty}
                 </span>
-                <button onClick={() => setQty((q) => q + 1)}
-                  className="w-9 h-11 flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                <button
+                  onClick={() => setQty((q) => q + 1)}
+                  className="w-9 h-11 flex items-center justify-center bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
 
+              {/* Buy on Installment — routes to vendor-scoped verification form */}
               <Link
                 to={vendorCheckoutUrl}
                 onClick={handleAddToCart}
                 className="flex-1 h-11 flex items-center justify-center gap-2 text-white text-[13px] font-black uppercase tracking-wide rounded-lg transition-all hover:opacity-90 hover:-translate-y-px active:scale-95"
                 style={{
-                  background: addedToCart ? "linear-gradient(135deg, #16a34a, #15803d)" : `linear-gradient(135deg, ${theme.primary}, ${theme.dark})`,
+                  background: addedToCart
+                    ? "linear-gradient(135deg, #16a34a, #15803d)"
+                    : `linear-gradient(135deg, ${theme.primary}, ${theme.dark})`,
                   boxShadow: `0 6px 20px ${theme.primary}40`,
                   textDecoration: "none",
-                }}>
+                }}
+              >
                 <CreditCard className="w-4 h-4" />
                 {addedToCart ? "✓ Redirecting…" : "Buy on Installment"}
               </Link>
             </div>
 
+            {/* Vendor routing note */}
             <p className="text-[11px] text-gray-400 -mt-3 mb-4 flex items-center gap-1">
               <Store className="w-3 h-3" />
               Verification form will be sent to{" "}
-              <Link to={`/vendor/${vendor.shopId}`} className="font-semibold hover:underline" style={{ color: theme.primary }}>
+              <Link
+                to={`/vendor/${vendor.shopId}`}
+                className="font-semibold hover:underline"
+                style={{ color: theme.primary }}
+              >
                 {vendor.shopName}
               </Link>
             </p>
 
             {/* Wishlist + Compare */}
             <div className="flex items-center gap-5 text-[13px] text-gray-500 mb-5">
-              <button onClick={() => setWishlist(!wishlist)}
+              <button
+                onClick={() => setWishlist(!wishlist)}
                 className="flex items-center gap-1.5 transition-colors hover:text-red-500"
-                style={{ color: wishlist ? "#ef4444" : undefined }}>
-                <Heart className="w-4 h-4" style={{ fill: wishlist ? "#ef4444" : "none", color: wishlist ? "#ef4444" : undefined }} />
+                style={{ color: wishlist ? "#ef4444" : undefined }}
+              >
+                <Heart
+                  className="w-4 h-4"
+                  style={{ fill: wishlist ? "#ef4444" : "none", color: wishlist ? "#ef4444" : undefined }}
+                />
                 {wishlist ? "In Wishlist" : "Add to wishlist"}
               </button>
               <span className="text-gray-200">|</span>
@@ -832,10 +623,16 @@ const ProductDetail = () => {
             {/* Share */}
             <div className="flex items-center gap-3 pb-5 border-b border-gray-100 mb-5">
               <span className="text-[13px] font-semibold text-gray-400">Share:</span>
-              {[{ Icon: Facebook, bg: "#1877f2" }, { Icon: Twitter, bg: "#1da1f2" }, { Icon: Share2, bg: "#ea4335" }].map(({ Icon, bg }, i) => (
-                <a key={i} href="#"
+              {[
+                { Icon: Facebook, bg: "#1877f2" },
+                { Icon: Twitter, bg: "#1da1f2" },
+                { Icon: Share2, bg: "#ea4335" },
+              ].map(({ Icon, bg }, i) => (
+                <a
+                  key={i} href="#"
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  style={{ background: bg }}>
+                  style={{ background: bg }}
+                >
                   <Icon className="w-3.5 h-3.5" />
                 </a>
               ))}
@@ -844,11 +641,14 @@ const ProductDetail = () => {
             {/* Policies */}
             <div className="flex flex-col gap-2.5">
               {[
-                { icon: Shield,    text: "Secure Payment & 100% Authentic Products", sub: "Guaranteed by FlexiBerry" },
-                { icon: Truck,     text: "Free Home Delivery within 24–48 hours",    sub: "All major cities covered" },
-                { icon: RefreshCw, text: "7-Day Easy Returns",                       sub: "No questions asked" },
+                { icon: Shield, text: "Secure Payment & 100% Authentic Products", sub: "Guaranteed by FlexiBerry" },
+                { icon: Truck,  text: "Free Home Delivery within 24–48 hours",    sub: "All major cities covered" },
+                { icon: RefreshCw, text: "7-Day Easy Returns",                    sub: "No questions asked" },
               ].map(({ icon: Icon, text, sub }) => (
-                <div key={text} className="flex items-center gap-3 text-[13px] text-gray-500 px-3.5 py-2.5 rounded-lg border border-gray-100 bg-gray-50">
+                <div
+                  key={text}
+                  className="flex items-center gap-3 text-[13px] text-gray-500 px-3.5 py-2.5 rounded-lg border border-gray-100 bg-gray-50"
+                >
                   <Icon className="w-[18px] h-[18px] shrink-0 text-gray-400" />
                   <span>{text} — <span className="text-gray-400">{sub}</span></span>
                 </div>
@@ -861,27 +661,47 @@ const ProductDetail = () => {
       {/* ── TABS ── */}
       <div className="border-t border-gray-100 py-8">
         <div className="max-w-[1240px] mx-auto px-5">
+
+          {/* Tab nav */}
           <div className="flex border-b-2 border-gray-200 mb-7 gap-0">
             {(["desc", "details", "reviews"] as const).map((tab, i) => {
               const labels = ["Description", "Product Details", `Reviews (${product.reviews})`];
               return (
-                <button key={tab} onClick={() => setActiveTab(tab)}
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
                   className="px-7 py-3 text-[15px] font-semibold transition-colors relative border-b-[3px] -mb-[2px]"
-                  style={{ color: activeTab === tab ? theme.primary : "#888", borderBottomColor: activeTab === tab ? theme.primary : "transparent" }}>
+                  style={{
+                    color: activeTab === tab ? theme.primary : "#888",
+                    borderBottomColor: activeTab === tab ? theme.primary : "transparent",
+                  }}
+                >
                   {labels[i]}
                 </button>
               );
             })}
           </div>
 
+          {/* Description */}
           {activeTab === "desc" && (
             <div className="max-w-3xl text-[14px] text-gray-500 leading-7 space-y-3">
-              <p>The {product.name} is an outstanding product available exclusively at FlexiBerry. This product features top-grade build quality, manufacturer warranty, and is fully tested before dispatch. Available exclusively on easy installments through FlexiBerry's 0% markup plan.</p>
-              <p>Pay in 3, 6, 12, or 24 monthly installments with zero interest. Apply in-store or online — approval within 24 hours. Fast nationwide delivery included free of charge on all orders over PKR 5,000.</p>
-              <p>All products sold by FlexiBerry-verified vendors undergo strict quality checks. KYC-verified purchase process ensures complete security for every transaction.</p>
+              <p>
+                The {product.name} is an outstanding product available exclusively at FlexiBerry. 
+                This product features top-grade build quality, manufacturer warranty, and is fully tested before dispatch.
+                Available exclusively on easy installments through FlexiBerry's 0% markup plan.
+              </p>
+              <p>
+                Pay in 3, 6, 12, or 24 monthly installments with zero interest. Apply in-store or online — approval within 24 hours.
+                Fast nationwide delivery included free of charge on all orders over PKR 5,000.
+              </p>
+              <p>
+                All products sold by FlexiBerry-verified vendors undergo strict quality checks. 
+                KYC-verified purchase process ensures complete security for every transaction.
+              </p>
             </div>
           )}
 
+          {/* Details / Specs */}
           {activeTab === "details" && (
             <div className="overflow-hidden rounded-xl border border-gray-100">
               <table className="w-full border-collapse">
@@ -900,7 +720,9 @@ const ProductDetail = () => {
                   ["Authenticity", "100% Verified — KYC Protected"],
                 ].map(([key, val], i) => (
                   <tr key={key} className="border-b border-gray-50 last:border-0">
-                    <td className="px-5 py-3.5 text-[13px] font-semibold text-gray-500 w-48" style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}>{key}</td>
+                    <td className="px-5 py-3.5 text-[13px] font-semibold text-gray-500 w-48" style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}>
+                      {key}
+                    </td>
                     <td className="px-5 py-3.5 text-[13px] text-gray-700" style={{ background: i % 2 === 0 ? "#fafafa" : "#fff" }}>
                       {key === "Sold By" ? (
                         <Link to={`/vendor/${vendor.shopId}`} className="font-semibold hover:underline" style={{ color: theme.primary }}>
@@ -914,12 +736,17 @@ const ProductDetail = () => {
             </div>
           )}
 
+          {/* Reviews */}
           {activeTab === "reviews" && (
             <div id="reviews" className="grid md:grid-cols-5 gap-10">
+              {/* Reviews list */}
               <div className="md:col-span-3">
+                {/* Summary */}
                 <div className="flex items-start gap-8 mb-6 pb-6 border-b border-gray-100">
                   <div className="text-center shrink-0">
-                    <div className="text-5xl font-black leading-none mb-1" style={{ color: theme.primary, fontFamily: "'Nunito', sans-serif" }}>{product.rating}</div>
+                    <div className="text-5xl font-black leading-none mb-1" style={{ color: theme.primary, fontFamily: "'Nunito', sans-serif" }}>
+                      {product.rating}
+                    </div>
                     <Stars rating={product.rating} size={18} />
                     <p className="text-[11px] text-gray-400 mt-1">{product.reviews} Reviews</p>
                   </div>
@@ -935,11 +762,15 @@ const ProductDetail = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Review items */}
                 <div className="flex flex-col gap-5">
                   {MOCK_REVIEWS.map((r, i) => (
                     <div key={i} className="flex gap-4 pb-5 border-b border-gray-100 last:border-0">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-                        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}>
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}
+                      >
                         {r.initials}
                       </div>
                       <div>
@@ -955,6 +786,8 @@ const ProductDetail = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Write a review */}
               <div className="md:col-span-2">
                 <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                   <h3 className="font-bold text-gray-800 mb-1 text-[15px]">Write a Review</h3>
@@ -962,21 +795,42 @@ const ProductDetail = () => {
                     <span className="text-[12px] text-gray-400">Your rating:</span>
                     <div className="flex gap-0.5">
                       {[1,2,3,4,5].map((s) => (
-                        <button key={s} onMouseEnter={() => setHoverStar(s)} onMouseLeave={() => setHoverStar(0)} onClick={() => setReviewStar(s)}>
-                          <Star className="w-5 h-5 transition-colors"
-                            style={{ fill: s <= (hoverStar || reviewStar) ? "#f59e0b" : "#e5e7eb", color: s <= (hoverStar || reviewStar) ? "#f59e0b" : "#e5e7eb" }} />
+                        <button
+                          key={s}
+                          onMouseEnter={() => setHoverStar(s)}
+                          onMouseLeave={() => setHoverStar(0)}
+                          onClick={() => setReviewStar(s)}
+                        >
+                          <Star
+                            className="w-5 h-5 transition-colors"
+                            style={{
+                              fill: s <= (hoverStar || reviewStar) ? "#f59e0b" : "#e5e7eb",
+                              color: s <= (hoverStar || reviewStar) ? "#f59e0b" : "#e5e7eb",
+                            }}
+                          />
                         </button>
                       ))}
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2.5 mb-3">
-                    <input className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400" placeholder="Your Name" />
-                    <input className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400" placeholder="Your Email" />
+                    <input
+                      className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400"
+                      placeholder="Your Name"
+                    />
+                    <input
+                      className="border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400"
+                      placeholder="Your Email"
+                    />
                   </div>
-                  <textarea rows={4} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400 resize-none mb-3"
-                    placeholder="Share your experience with this product..." />
-                  <button className="w-full py-3 rounded-xl text-white text-[13px] font-bold tracking-wide transition-all hover:opacity-90 hover:-translate-y-px active:scale-95"
-                    style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}>
+                  <textarea
+                    rows={4}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] bg-white outline-none focus:border-blue-400 resize-none mb-3"
+                    placeholder="Share your experience with this product..."
+                  />
+                  <button
+                    className="w-full py-3 rounded-xl text-white text-[13px] font-bold tracking-wide transition-all hover:opacity-90 hover:-translate-y-px active:scale-95"
+                    style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}
+                  >
                     SUBMIT REVIEW
                   </button>
                 </div>
@@ -1000,8 +854,15 @@ const ProductDetail = () => {
                 const cat = categories.find((c) => c.id === p.categoryId);
                 return (
                   <Link key={p.id} to={`/product/${p.id}`}>
-                    <MiniCard image={p.image} brand={cat?.name || "FlexiBerry"} name={p.name}
-                      price={p.price} originalPrice={p.originalPrice} rating={p.rating} theme={pTheme} />
+                    <MiniCard
+                      image={p.image}
+                      brand={cat?.name || "FlexiBerry"}
+                      name={p.name}
+                      price={p.price}
+                      originalPrice={p.originalPrice}
+                      rating={p.rating}
+                      theme={pTheme}
+                    />
                   </Link>
                 );
               })}
@@ -1023,8 +884,15 @@ const ProductDetail = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {RECENTLY_VIEWED.map((p) => (
               <Link key={p.id} to={`/product/${p.id}`}>
-                <MiniCard image={p.image} brand={p.brand} name={p.name}
-                  price={p.price} originalPrice={p.originalPrice} rating={p.rating} theme={DEFAULT_THEME} />
+                <MiniCard
+                  image={p.image}
+                  brand={p.brand}
+                  name={p.name}
+                  price={p.price}
+                  originalPrice={p.originalPrice}
+                  rating={p.rating}
+                  theme={DEFAULT_THEME}
+                />
               </Link>
             ))}
           </div>
@@ -1034,9 +902,11 @@ const ProductDetail = () => {
       <Footer />
 
       {/* Back to top */}
-      <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full text-white flex items-center justify-center shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
-        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}>
+        style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.dark})` }}
+      >
         <ArrowUpToLine className="w-5 h-5" />
       </button>
     </div>
