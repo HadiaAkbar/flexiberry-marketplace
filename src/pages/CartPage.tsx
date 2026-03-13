@@ -4,57 +4,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Trash2, Plus, Minus, ArrowLeft, Gift, Truck, Shield, Clock } from "lucide-react";
 import { formatPrice, getMonthlyInstallment } from "@/data/products";
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  quantity: number;
-  shopId: string;
-  shopName: string;
-}
+import { useCart } from "@/context/CartContext";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      name: "iPhone 15 Pro Max 256GB",
-      price: 549999,
-      originalPrice: 599999,
-      image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&h=400&fit=crop",
-      quantity: 1,
-      shopId: "s1",
-      shopName: "TechZone Electronics",
-    },
-    {
-      id: "2",
-      name: "MacBook Air M3 15\"",
-      price: 429999,
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop",
-      quantity: 1,
-      shopId: "s1",
-      shopName: "TechZone Electronics",
-    },
-  ]);
+  const { cartItems, updateQuantity, removeItem } = useCart();
 
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
-
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    setCartItems(
-      cartItems.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
 
   const applyPromo = () => {
     if (promoCode.toUpperCase() === "SAVE20") {
@@ -81,7 +37,7 @@ const CartPage = () => {
       }
       return acc;
     },
-    [] as Array<{ shopId: string; shopName: string; items: CartItem[] }>
+    [] as Array<{ shopId: string; shopName: string; items: typeof cartItems }>
   );
 
   return (
@@ -129,7 +85,7 @@ const CartPage = () => {
                   {/* Items */}
                   <div className="divide-y divide-gray-100">
                     {shop.items.map((item) => {
-                      const discount = item.originalPrice
+                      const itemDiscount = item.originalPrice
                         ? Math.round(
                             ((item.originalPrice - item.price) / item.originalPrice) * 100
                           )
@@ -167,9 +123,9 @@ const CartPage = () => {
                                   {formatPrice(item.originalPrice)}
                                 </span>
                               )}
-                              {discount > 0 && (
+                              {itemDiscount > 0 && (
                                 <span className="text-xs font-bold bg-red-100 text-red-700 px-2 py-1 rounded">
-                                  -{discount}%
+                                  -{itemDiscount}%
                                 </span>
                               )}
                             </div>
@@ -294,9 +250,12 @@ const CartPage = () => {
                   Proceed to Checkout
                 </button>
 
-                <button className="w-full py-3 border-2 border-gray-300 text-gray-900 font-bold rounded-xl hover:bg-gray-50 transition">
+                <Link
+                  to="/products"
+                  className="block w-full py-3 border-2 border-gray-300 text-gray-900 font-bold rounded-xl hover:bg-gray-50 transition text-center"
+                >
                   Continue Shopping
-                </button>
+                </Link>
 
                 {/* Benefits */}
                 <div className="mt-6 space-y-3 pt-6 border-t border-gray-200">
