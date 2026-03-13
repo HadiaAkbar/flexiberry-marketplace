@@ -56,138 +56,12 @@ const FlexiBerryLogo = ({ size = 40 }: { size?: number }) => (
   </svg>
 );
 
-// ── VENDOR FORM — defined OUTSIDE Header to prevent remount on every keystroke ──
-interface VendorFormProps {
-  onClose: () => void;
-  shopName: string; setShopName: (v: string) => void;
-  ownerName: string; setOwnerName: (v: string) => void;
-  phone: string; setPhone: (v: string) => void;
-  city: string; setCity: (v: string) => void;
-  email: string; setEmail: (v: string) => void;
-  password: string; setPassword: (v: string) => void;
-  category: string; setCategory: (v: string) => void;
-  showPass: boolean; setShowPass: (v: boolean) => void;
-  onSubmit: () => void;
-}
-
-const VendorForm = ({
-  onClose, shopName, setShopName, ownerName, setOwnerName,
-  phone, setPhone, city, setCity, email, setEmail,
-  password, setPassword, category, setCategory,
-  showPass, setShowPass, onSubmit,
-}: VendorFormProps) => (
-  <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
-    {/* Row 1 */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Shop Name</label>
-        <div style={{ position: "relative" }}>
-          <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-        </div>
-      </div>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Owner Name</label>
-        <div style={{ position: "relative" }}>
-          <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-        </div>
-      </div>
-    </div>
-    {/* Row 2 */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Phone</label>
-        <div style={{ position: "relative" }}>
-          <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-        </div>
-      </div>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>City</label>
-        <div style={{ position: "relative" }}>
-          <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-        </div>
-      </div>
-    </div>
-    {/* Category */}
-    <div>
-      <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Product Category</label>
-      <div style={{ position: "relative" }}>
-        <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
-        <select value={category} onChange={e => setCategory(e.target.value)}
-          style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#fafbff", appearance: "none" }}>
-          <option value="">Select a category…</option>
-          <option value="phones">Mobiles & Phones</option>
-          <option value="laptops">Laptops & Computers</option>
-          <option value="appliances">Home Appliances</option>
-          <option value="furniture">Furniture</option>
-          <option value="bikes">Bikes & Scooters</option>
-          <option value="solar">Solar & Energy</option>
-          <option value="cars">Cars & Vehicles</option>
-          <option value="jahez">Jahez & Dowry</option>
-          <option value="raw-materials">Raw Materials</option>
-          <option value="general">General / Other</option>
-        </select>
-      </div>
-    </div>
-    {/* Email + Password */}
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Business Email</label>
-        <div style={{ position: "relative" }}>
-          <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-        </div>
-      </div>
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Password</label>
-        <div style={{ position: "relative" }}>
-          <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-          <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
-            {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
-          </button>
-        </div>
-      </div>
-    </div>
-    {/* Submit */}
-    <button
-      onClick={onSubmit}
-      style={{
-        width: "100%", height: "40px", borderRadius: "11px",
-        background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-        border: "none", cursor: "pointer",
-        color: "white", fontSize: "13px", fontWeight: 700,
-        fontFamily: "'Plus Jakarta Sans', sans-serif",
-        display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-        boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
-        transition: "all 0.2s ease",
-        marginTop: "2px",
-      }}>
-      Create Vendor Account
-      <ChevronRight size={14}/>
-    </button>
-    <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-      By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
-    </p>
-  </div>
-);
-
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [vendorOpen, setVendorOpen] = useState(false);
   const [mobileVendorOpen, setMobileVendorOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  // Vendor form state lives here in Header, but VendorForm component is defined outside
   const [showPass, setShowPass] = useState(false);
   const [shopName, setShopName] = useState("");
   const [ownerName, setOwnerName] = useState("");
@@ -203,18 +77,6 @@ const Header = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const { cartCount } = useCart();
-
-  // Shared vendor form props object
-  const vendorFormProps = {
-    shopName, setShopName,
-    ownerName, setOwnerName,
-    phone, setPhone,
-    city, setCity,
-    email, setEmail,
-    password, setPassword,
-    category, setCategory,
-    showPass, setShowPass,
-  };
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -244,6 +106,113 @@ const Header = () => {
       window.removeEventListener("scroll", updatePos);
     };
   }, [vendorOpen]);
+
+  // Shared vendor registration form fields (used in both desktop dropdown and mobile panel)
+  const VendorForm = ({ onClose }: { onClose: () => void }) => (
+    <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+      {/* Row 1 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Shop Name</label>
+          <div style={{ position: "relative" }}>
+            <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Owner Name</label>
+          <div style={{ position: "relative" }}>
+            <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Row 2 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Phone</label>
+          <div style={{ position: "relative" }}>
+            <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>City</label>
+          <div style={{ position: "relative" }}>
+            <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Category */}
+      <div>
+        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Product Category</label>
+        <div style={{ position: "relative" }}>
+          <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
+          <select value={category} onChange={e => setCategory(e.target.value)}
+            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#fafbff", appearance: "none" }}>
+            <option value="">Select a category…</option>
+            <option value="phones">Mobiles & Phones</option>
+            <option value="laptops">Laptops & Computers</option>
+            <option value="appliances">Home Appliances</option>
+            <option value="furniture">Furniture</option>
+            <option value="bikes">Bikes & Scooters</option>
+            <option value="solar">Solar & Energy</option>
+            <option value="cars">Cars & Vehicles</option>
+            <option value="jahez">Jahez & Dowry</option>
+            <option value="raw-materials">Raw Materials</option>
+            <option value="general">General / Other</option>
+          </select>
+        </div>
+      </div>
+      {/* Email + Password */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Business Email</label>
+          <div style={{ position: "relative" }}>
+            <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Password</label>
+          <div style={{ position: "relative" }}>
+            <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+            <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
+              {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* Submit */}
+      <button
+        onClick={() => { onClose(); navigate("/vendor"); }}
+        style={{
+          width: "100%", height: "40px", borderRadius: "11px",
+          background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+          border: "none", cursor: "pointer",
+          color: "white", fontSize: "13px", fontWeight: 700,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+          boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
+          transition: "all 0.2s ease",
+          marginTop: "2px",
+        }}>
+        Create Vendor Account
+        <ChevronRight size={14}/>
+      </button>
+      <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
+      </p>
+    </div>
+  );
 
   return (
     <header className="sticky top-0 z-50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -662,11 +631,7 @@ const Header = () => {
                           </div>
                         ))}
                       </div>
-                      <VendorForm
-                        {...vendorFormProps}
-                        onClose={() => setVendorOpen(false)}
-                        onSubmit={() => { setVendorOpen(false); navigate("/vendor"); }}
-                      />
+                      <VendorForm onClose={() => setVendorOpen(false)} />
                     </div>
                   </div>
                 )}
@@ -953,11 +918,7 @@ const Header = () => {
 
                 {/* Registration form */}
                 <div style={{ background: "white" }}>
-                  <VendorForm
-                    {...vendorFormProps}
-                    onClose={() => { setMobileVendorOpen(false); setMenuOpen(false); }}
-                    onSubmit={() => { setMobileVendorOpen(false); setMenuOpen(false); navigate("/vendor"); }}
-                  />
+                  <VendorForm onClose={() => { setMobileVendorOpen(false); setMenuOpen(false); }} />
                 </div>
               </div>
             )}
