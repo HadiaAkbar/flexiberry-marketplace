@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CartProvider } from "@/context/CartContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductDetail from "./pages/ProductDetail";
@@ -21,7 +22,6 @@ import AccountPage  from "@/pages/AccountPage";
 import NewArrivalsPage from "./pages/NewArrivalsPage";
 import FlashSalePage from "./pages/FlashSalePage";
 
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -29,54 +29,51 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* ── Public ── */}
-          <Route path="/" element={<Index />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:slug" element={<ShopPage />} />
-          <Route path="/products" element={<ShopPage />} />
-          <Route path="/shop" element={<ShopPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/new-arrivals" element={<NewArrivalsPage />} />
-          <Route path="/flash-sale" element={<FlashSalePage />} />
-
-          {/* ── Vendor store (public-facing shop) ── */}
-          <Route path="/store/:vendorId" element={<VendorStorePage />} />
-          <Route path="/store" element={<VendorStorePage />} />
-          <Route path="/vendor/product/:id" element={<VendorProductDetail />} />
-
-          {/* ── Vendor Login / Register (standalone, no sidebar) ── */}
-          <Route path="/vendor/login" element={<VendorLoginPage />} />
-
-          {/* ── Vendor (Admin) Portal ── */}
-          <Route path="/vendor" element={<VendorLayout />}>
-            <Route index element={<VendorDashboard />} />
-            <Route path="shop" element={<VendorDashboard />} />
-            <Route path="products" element={<VendorDashboard />} />
-            <Route path="applications" element={<VendorDashboard />} />
-            <Route path="ledger" element={<VendorDashboard />} />
-            <Route path="analytics" element={<VendorDashboard />} />
-            <Route path="settings" element={<VendorDashboard />} />
-          </Route>
-
-          {/* ── Super Admin Portal ── */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="vendors" element={<AdminDashboard />} />
-            <Route path="users" element={<AdminDashboard />} />
-            <Route path="applications" element={<AdminDashboard />} />
-            <Route path="reports" element={<AdminDashboard />} />
-            <Route path="security" element={<AdminDashboard />} />
-            <Route path="settings" element={<AdminDashboard />} />
-          </Route>
-
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* ── Public ── */}
+            <Route path="/" element={<Index />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/category/:slug" element={<ShopPage />} />
+            <Route path="/products" element={<ShopPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
+            <Route path="/flash-sale" element={<FlashSalePage />} />
+            {/* ── Vendor store (public-facing shop) ── */}
+            <Route path="/store/:vendorId" element={<VendorStorePage />} />
+            <Route path="/store" element={<VendorStorePage />} />
+            <Route path="/vendor/product/:id" element={<VendorProductDetail />} />
+            {/* ── Vendor Login / Register (standalone, no sidebar) ── */}
+            <Route path="/vendor/login" element={<VendorLoginPage />} />
+            {/* ── Vendor (Admin) Portal ── */}
+            <Route path="/vendor" element={<VendorLayout />}>
+              <Route index element={<VendorDashboard />} />
+              <Route path="shop" element={<VendorDashboard />} />
+              <Route path="products" element={<VendorDashboard />} />
+              <Route path="applications" element={<VendorDashboard />} />
+              <Route path="ledger" element={<VendorDashboard />} />
+              <Route path="analytics" element={<VendorDashboard />} />
+              <Route path="settings" element={<VendorDashboard />} />
+            </Route>
+            {/* ── Super Admin Portal ── */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="vendors" element={<AdminDashboard />} />
+              <Route path="users" element={<AdminDashboard />} />
+              <Route path="applications" element={<AdminDashboard />} />
+              <Route path="reports" element={<AdminDashboard />} />
+              <Route path="security" element={<AdminDashboard />} />
+              <Route path="settings" element={<AdminDashboard />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
