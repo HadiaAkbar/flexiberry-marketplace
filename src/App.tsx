@@ -25,6 +25,13 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorStorePage from "./pages/vendor/VendorStorePage";
 import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import VendorLoginPage from "./pages/vendor/VendorLoginPage";
+import VendorProductsPage from "./pages/vendor/VendorProductsPage";
+import VendorOrdersPage from "./pages/vendor/VendorOrdersPage";
+import VendorInstallmentsPage from "./pages/vendor/VendorInstallmentsPage";
+import VendorBuyersPage from "./pages/vendor/VendorBuyersPage";
+import VendorAnalyticsPage from "./pages/vendor/VendorAnalyticsPage";
+import VendorKYCPage from "./pages/vendor/VendorKYCPage";
+import VendorSettingsPage from "./pages/vendor/VendorSettingsPage";
 
 /* Admin Pages */
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -87,10 +94,13 @@ const App = () => (
             {/* Vendor Dashboard */}
             <Route path="/vendor" element={<VendorLayout />}>
               <Route index element={<VendorDashboard />} />
-              <Route path="shop" element={<VendorDashboard />} />
-              <Route path="products" element={<VendorDashboard />} />
-              <Route path="analytics" element={<VendorDashboard />} />
-              <Route path="settings" element={<VendorDashboard />} />
+              <Route path="products" element={<VendorProductsPage />} />
+              <Route path="orders" element={<VendorOrdersPage />} />
+              <Route path="installments" element={<VendorInstallmentsPage />} />
+              <Route path="buyers" element={<VendorBuyersPage />} />
+              <Route path="analytics" element={<VendorAnalyticsPage />} />
+              <Route path="kyc" element={<VendorKYCPage />} />
+              <Route path="settings" element={<VendorSettingsPage />} />
             </Route>
 
             {/* Admin Panel */}
