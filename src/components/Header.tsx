@@ -681,9 +681,13 @@ const Header = () => {
           background: "white",
           borderBottom: "1px solid rgba(37,99,235,0.08)",
           boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
+          maxHeight: "85vh",
+          overflowY: "auto",
         }}>
-          <div className="p-4 space-y-2">
-            <div className="relative mb-3">
+          <div className="p-4">
+
+            {/* Search */}
+            <div className="relative mb-4">
               <input
                 placeholder="Search..."
                 style={{
@@ -691,26 +695,30 @@ const Header = () => {
                   borderRadius: "12px", border: "1.5px solid rgba(37,99,235,0.15)",
                   background: "#f8faff", fontSize: "14px", outline: "none",
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  boxSizing: "border-box",
                 }}
               />
               <Search size={16} color="#94a3b8" style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)" }}/>
             </div>
 
-            {/* Mobile Home link */}
-            <Link to="/"
+            {/* ── SECTION: Quick Links ── */}
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: "6px", paddingLeft: "4px" }}>
+              Quick Links
+            </p>
+
+            {/* Home */}
+            <Link to="/" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
                 padding: "10px 12px", borderRadius: "12px",
                 fontSize: "13px", fontWeight: 700,
                 color: isHome ? "#2563eb" : "#374151",
                 background: isHome ? "rgba(37,99,235,0.07)" : "transparent",
-                textDecoration: "none",
+                textDecoration: "none", marginBottom: "2px",
               }}>
               <div style={{
-                height: "32px", width: "32px", borderRadius: "10px",
-                background: isHome
-                  ? "linear-gradient(135deg, #2563eb, #7c3aed)"
-                  : "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                background: isHome ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "linear-gradient(135deg, #eff6ff, #eef2ff)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <Home size={15} strokeWidth={2.5} color={isHome ? "white" : "#2563eb"}/>
@@ -718,46 +726,147 @@ const Header = () => {
               Home
             </Link>
 
-            <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "4px 0" }}/>
-
-            {categories.slice(0, 6).map((cat) => (
-              <Link key={cat.id} to={`/category/${cat.slug}`}
-                style={{
-                  display: "flex", alignItems: "center", gap: "12px",
-                  padding: "10px 12px", borderRadius: "12px",
-                  fontSize: "13px", fontWeight: 600, color: "#374151",
-                  textDecoration: "none", transition: "all 0.15s ease",
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "#f0f7ff"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}>
-                <div style={{
-                  height: "32px", width: "32px", borderRadius: "10px",
-                  background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <cat.icon className="h-4 w-4" style={{ color: "#2563eb" }}/>
-                </div>
-                {cat.name}
-              </Link>
-            ))}
-
-            <Link to="/vendor/login"
+            {/* Flash Sale */}
+            <Link to="/flash-sale" onClick={() => setMenuOpen(false)}
               style={{
-                display: "flex", alignItems: "center", gap: "8px",
+                display: "flex", alignItems: "center", gap: "12px",
+                padding: "10px 12px", borderRadius: "12px",
+                fontSize: "13px", fontWeight: 700,
+                color: location.pathname === "/flash-sale" ? "#ef4444" : "#374151",
+                background: location.pathname === "/flash-sale" ? "rgba(239,68,68,0.07)" : "transparent",
+                textDecoration: "none", marginBottom: "2px",
+              }}>
+              <div style={{
+                height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                background: location.pathname === "/flash-sale"
+                  ? "linear-gradient(135deg, #ef4444, #f97316)"
+                  : "linear-gradient(135deg, #fff5f5, #fff1eb)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Zap size={15} strokeWidth={2.5}
+                  color={location.pathname === "/flash-sale" ? "white" : "#ef4444"}
+                  fill={location.pathname === "/flash-sale" ? "white" : "none"}/>
+              </div>
+              ⚡ Flash Sale
+              <span style={{
+                marginLeft: "auto", fontSize: "9px", fontWeight: 800,
+                background: "linear-gradient(135deg, #ef4444, #f97316)",
+                color: "white", padding: "2px 8px", borderRadius: "99px",
+              }}>HOT</span>
+            </Link>
+
+            {/* New Arrivals */}
+            <Link to="/new-arrivals" onClick={() => setMenuOpen(false)}
+              style={{
+                display: "flex", alignItems: "center", gap: "12px",
+                padding: "10px 12px", borderRadius: "12px",
+                fontSize: "13px", fontWeight: 700,
+                color: location.pathname === "/new-arrivals" ? "#7c3aed" : "#374151",
+                background: location.pathname === "/new-arrivals" ? "rgba(124,58,237,0.07)" : "transparent",
+                textDecoration: "none", marginBottom: "2px",
+              }}>
+              <div style={{
+                height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                background: location.pathname === "/new-arrivals"
+                  ? "linear-gradient(135deg, #7c3aed, #2563eb)"
+                  : "linear-gradient(135deg, #f5f3ff, #eff6ff)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <span style={{ fontSize: "15px", lineHeight: 1 }}>✨</span>
+              </div>
+              New Arrivals
+              <span style={{
+                marginLeft: "auto", fontSize: "9px", fontWeight: 800,
+                background: "linear-gradient(135deg, #7c3aed, #2563eb)",
+                color: "white", padding: "2px 8px", borderRadius: "99px",
+              }}>NEW</span>
+            </Link>
+
+            {/* ── SECTION: Categories (horizontal scrollable) ── */}
+            <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "12px 0 10px" }}/>
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "4px" }}>
+              Categories
+            </p>
+
+            {/* Scrollable horizontal strip */}
+            <div style={{
+              display: "flex",
+              gap: "8px",
+              overflowX: "auto",
+              paddingBottom: "10px",
+              /* Show a thin styled scrollbar */
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(37,99,235,0.35) rgba(37,99,235,0.07)",
+              WebkitOverflowScrolling: "touch",
+            }}>
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.slug}`}
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                    padding: "10px 14px", borderRadius: "14px", flexShrink: 0,
+                    background: "linear-gradient(135deg, #f8faff, #f0f4ff)",
+                    border: "1.5px solid rgba(37,99,235,0.10)",
+                    textDecoration: "none", minWidth: "72px",
+                    transition: "all 0.15s ease",
+                  }}>
+                  <div style={{
+                    height: "36px", width: "36px", borderRadius: "10px",
+                    background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: "0 2px 8px rgba(37,99,235,0.12)",
+                  }}>
+                    <cat.icon className="h-4 w-4" style={{ color: "#2563eb" }}/>
+                  </div>
+                  <span style={{
+                    fontSize: "10px", fontWeight: 700, color: "#374151",
+                    textAlign: "center", lineHeight: 1.2, whiteSpace: "nowrap",
+                  }}>
+                    {cat.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            {/* ── SECTION: Account ── */}
+            <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "10px 0" }}/>
+
+            <Link to="/vendor/login" onClick={() => setMenuOpen(false)}
+              style={{
+                display: "flex", alignItems: "center", gap: "12px",
                 padding: "10px 12px", borderRadius: "12px",
                 fontSize: "13px", fontWeight: 700, color: "#2563eb",
-                textDecoration: "none",
+                textDecoration: "none", marginBottom: "2px",
               }}>
-              <Store size={15} strokeWidth={2.5}/> Sell as Vendor
+              <div style={{
+                height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Store size={15} strokeWidth={2.5} color="#2563eb"/>
+              </div>
+              Sell as Vendor
             </Link>
-            <Link to="/login"
+
+            <Link to="/login" onClick={() => setMenuOpen(false)}
               style={{
-                display: "block", padding: "10px 12px", borderRadius: "12px",
-                fontSize: "13px", fontWeight: 700, color: "#2563eb",
+                display: "flex", alignItems: "center", gap: "12px",
+                padding: "10px 12px", borderRadius: "12px",
+                fontSize: "13px", fontWeight: 700, color: "#374151",
                 textDecoration: "none",
               }}>
+              <div style={{
+                height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <User size={15} strokeWidth={2.5} color="#2563eb"/>
+              </div>
               Login / Register
             </Link>
+
           </div>
         </div>
       )}
@@ -781,4 +890,3 @@ const Header = () => {
 };
 
 export default Header;
-
