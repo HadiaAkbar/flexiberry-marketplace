@@ -1,634 +1,1076 @@
-import { useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
-import { featuredProducts, categories } from "@/data/products";
 import {
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  SlidersHorizontal,
-  LayoutGrid,
-  List,
-  X,
+  Search, Star, MapPin, Package, TrendingUp, Shield,
+  ArrowUpRight, Zap, Store, ChevronRight, BadgeCheck,
+  SlidersHorizontal, X, Sparkles, Grid3X3, List,
 } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { useState, useMemo, useEffect } from "react";
 
-/* ─── Types ─────────────────────────────────────────── */
-interface FilterState {
-  categoryIds: string[];
-  priceRange: [number, number];
-  minRating: number;
-  inStockOnly: boolean;
-  sortBy: string;
-}
+/* ─────────────────── FlexiBerry Logo (from Header) ─────────────────── */
+const FlexiBerryLogo = ({ size = 40 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sLogoGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#3b82f6"/>
+        <stop offset="100%" stopColor="#8b5cf6"/>
+      </linearGradient>
+      <linearGradient id="sLogoSheen" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="white" stopOpacity="0.22"/>
+        <stop offset="100%" stopColor="white" stopOpacity="0"/>
+      </linearGradient>
+      <filter id="sLogoShadow">
+        <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#3b82f6" floodOpacity="0.5"/>
+      </filter>
+    </defs>
+    <g filter="url(#sLogoShadow)">
+      <rect width="100" height="100" rx="26" fill="url(#sLogoGrad)"/>
+      <rect width="100" height="100" rx="26" fill="url(#sLogoSheen)"/>
+    </g>
+    <g transform="rotate(-14, 50, 52)">
+      <path d="M 8 20 L 17 20 L 23 40" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      <path d="M 23 40 L 23 70 Q 23 76 29 76 L 79 76 Q 85 76 85 70 L 85 40 Q 85 34 79 34 L 35 34 Q 27 34 23 40 Z" fill="white"/>
+      <circle cx="32" cy="39" r="4.5" fill="url(#sLogoGrad)"/>
+      <rect x="30" y="45" width="5" height="21" rx="2.5" fill="url(#sLogoGrad)"/>
+      <rect x="30" y="45" width="13" height="4.5" rx="2.25" fill="url(#sLogoGrad)"/>
+      <rect x="30" y="53.5" width="10" height="4" rx="2" fill="url(#sLogoGrad)"/>
+      <rect x="48" y="45" width="5" height="21" rx="2.5" fill="url(#sLogoGrad)"/>
+      <path d="M 53 45 Q 65 45 65 51.5 Q 65 57.5 53 57.5" stroke="url(#sLogoGrad)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
+      <path d="M 53 57.8 Q 67 57.8 67 64.5 Q 67 71 53 71" stroke="url(#sLogoGrad)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
+      <circle cx="35" cy="86" r="7.5" fill="white"/>
+      <circle cx="35" cy="86" r="3.8" fill="url(#sLogoGrad)"/>
+      <circle cx="35" cy="86" r="1.5" fill="white"/>
+      <circle cx="70" cy="86" r="7.5" fill="#10b981"/>
+      <circle cx="70" cy="86" r="3.8" fill="white"/>
+      <circle cx="70" cy="86" r="1.5" fill="#10b981"/>
+      <circle cx="43" cy="92" r="2.2" fill="white" opacity="0.7"/>
+      <circle cx="52" cy="92" r="2.2" fill="white" opacity="0.4"/>
+      <circle cx="61" cy="92" r="2.2" fill="white" opacity="0.18"/>
+    </g>
+    <rect width="100" height="100" rx="26" fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.15"/>
+  </svg>
+);
 
-const SORT_OPTIONS = [
-  { value: "newest", label: "Sort by Newness" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "rating", label: "Best Rated" },
-  { value: "popular", label: "Most Popular" },
+/* ─────────────────── MOCK VENDOR DATA ─────────────────── */
+const VENDORS = [
+  {
+    id: "techzone",
+    name: "TechZone Electronics",
+    category: "Electronics",
+    categoryColor: "#2563eb",
+    categoryBg: "rgba(37,99,235,0.10)",
+    city: "Lahore",
+    description: "Premium electronics & gadgets — phones, laptops, accessories & more.",
+    rating: 4.8,
+    reviews: 1240,
+    products: 320,
+    verified: true,
+    featured: true,
+    installments: true,
+    emoji: "🔌",
+    bannerGrad: "linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%)",
+    joined: "2022",
+  },
+  {
+    id: "homekart",
+    name: "HomeKart Pakistan",
+    category: "Home & Living",
+    categoryColor: "#059669",
+    categoryBg: "rgba(5,150,105,0.10)",
+    city: "Karachi",
+    description: "Appliances, furniture & packages — complete home solutions.",
+    rating: 4.6,
+    reviews: 875,
+    products: 210,
+    verified: true,
+    featured: true,
+    installments: true,
+    emoji: "🏠",
+    bannerGrad: "linear-gradient(135deg, #047857 0%, #0891b2 100%)",
+    joined: "2021",
+  },
+  {
+    id: "megadeal",
+    name: "MegaDeal Motors",
+    category: "Motors & Energy",
+    categoryColor: "#7c3aed",
+    categoryBg: "rgba(124,58,237,0.10)",
+    city: "Islamabad",
+    description: "Vehicles, solar & heavy items — all on easy installments.",
+    rating: 4.7,
+    reviews: 560,
+    products: 95,
+    verified: true,
+    featured: true,
+    installments: true,
+    emoji: "🚗",
+    bannerGrad: "linear-gradient(135deg, #6d28d9 0%, #db2777 100%)",
+    joined: "2023",
+  },
+  {
+    id: "solarpk",
+    name: "SolarPK Solutions",
+    category: "Solar & Energy",
+    categoryColor: "#d97706",
+    categoryBg: "rgba(217,119,6,0.10)",
+    city: "Lahore",
+    description: "Go green with premium solar panels & energy systems.",
+    rating: 4.9,
+    reviews: 420,
+    products: 68,
+    verified: true,
+    featured: false,
+    installments: true,
+    emoji: "☀️",
+    bannerGrad: "linear-gradient(135deg, #b45309 0%, #f59e0b 100%)",
+    joined: "2023",
+  },
+  {
+    id: "jazbajahez",
+    name: "Jazba Jahez Store",
+    category: "Jahez & Dowry",
+    categoryColor: "#be185d",
+    categoryBg: "rgba(190,24,93,0.10)",
+    city: "Faisalabad",
+    description: "Complete jahez packages — furniture, appliances & bedding bundles.",
+    rating: 4.5,
+    reviews: 980,
+    products: 145,
+    verified: true,
+    featured: false,
+    installments: true,
+    emoji: "🎁",
+    bannerGrad: "linear-gradient(135deg, #9d174d 0%, #7c3aed 100%)",
+    joined: "2021",
+  },
+  {
+    id: "bikeworld",
+    name: "BikeWorld Pakistan",
+    category: "Bikes & Scooters",
+    categoryColor: "#0891b2",
+    categoryBg: "rgba(8,145,178,0.10)",
+    city: "Rawalpindi",
+    description: "Honda, Yamaha & electric bikes — all models on installments.",
+    rating: 4.4,
+    reviews: 670,
+    products: 87,
+    verified: true,
+    featured: false,
+    installments: true,
+    emoji: "🏍️",
+    bannerGrad: "linear-gradient(135deg, #0e7490 0%, #1d4ed8 100%)",
+    joined: "2022",
+  },
+  {
+    id: "furniturehub",
+    name: "Furniture Hub PK",
+    category: "Furniture",
+    categoryColor: "#92400e",
+    categoryBg: "rgba(146,64,14,0.10)",
+    city: "Multan",
+    description: "Bedroom sets, sofas & office furniture — crafted with quality.",
+    rating: 4.3,
+    reviews: 340,
+    products: 192,
+    verified: false,
+    featured: false,
+    installments: false,
+    emoji: "🛋️",
+    bannerGrad: "linear-gradient(135deg, #78350f 0%, #92400e 100%)",
+    joined: "2023",
+  },
+  {
+    id: "mobilezone",
+    name: "MobileZone Official",
+    category: "Mobiles",
+    categoryColor: "#2563eb",
+    categoryBg: "rgba(37,99,235,0.10)",
+    city: "Karachi",
+    description: "Official reseller of Samsung, iPhone, Xiaomi & more brands.",
+    rating: 4.7,
+    reviews: 2100,
+    products: 450,
+    verified: true,
+    featured: true,
+    installments: true,
+    emoji: "📱",
+    bannerGrad: "linear-gradient(135deg, #1e40af 0%, #0891b2 100%)",
+    joined: "2020",
+  },
+  {
+    id: "rawstore",
+    name: "RawStore Materials",
+    category: "Raw Materials",
+    categoryColor: "#374151",
+    categoryBg: "rgba(55,65,81,0.10)",
+    city: "Sialkot",
+    description: "Construction & industrial raw materials at wholesale prices.",
+    rating: 4.2,
+    reviews: 210,
+    products: 310,
+    verified: false,
+    featured: false,
+    installments: false,
+    emoji: "🧱",
+    bannerGrad: "linear-gradient(135deg, #1f2937 0%, #374151 100%)",
+    joined: "2024",
+  },
 ];
 
-const MAX_PRICE = 600000;
+const CATEGORIES = ["All", "Electronics", "Mobiles", "Home & Living", "Motors & Energy", "Solar & Energy", "Jahez & Dowry", "Bikes & Scooters", "Furniture", "Raw Materials"];
+const CITIES     = ["All Cities", "Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Sialkot"];
 
-/* ─── Collapsible Filter Section ────────────────────── */
-function FilterSection({
-  title,
-  children,
-  defaultOpen = true,
-}: {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="border-b border-gray-100 pb-4 mb-4 last:border-0 last:mb-0 last:pb-0">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full mb-3 group"
-      >
-        <span className="font-semibold text-sm text-gray-800">{title}</span>
-        {open ? (
-          <ChevronUp className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
-        ) : (
-          <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
-        )}
-      </button>
-      {open && <div>{children}</div>}
-    </div>
-  );
-}
+const PLATFORM_STATS = [
+  { label: "Verified Sellers", value: "1,200+", icon: BadgeCheck, color: "#2563eb" },
+  { label: "Products Listed", value: "85K+",   icon: Package,    color: "#7c3aed" },
+  { label: "Happy Customers", value: "2.4M+",  icon: Star,       color: "#f59e0b" },
+  { label: "Cities Covered",  value: "120+",   icon: MapPin,     color: "#10b981" },
+];
 
-/* ─── Main Page ──────────────────────────────────────── */
-const ShopPage = () => {
-  const { slug } = useParams<{ slug?: string }>();
+/* ─────────────────── SHOP CARD ─────────────────── */
+const ShopCard = ({ vendor, index, view }: { vendor: typeof VENDORS[0]; index: number; view: "grid" | "list" }) => {
+  const [hovered, setHovered] = useState(false);
 
-  // Determine active category from slug
-  const activeCategory = slug ? categories.find((c) => c.slug === slug) : null;
+  if (view === "list") {
+    return (
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          background: "white",
+          borderRadius: "20px",
+          border: `1.5px solid ${hovered ? "rgba(37,99,235,0.25)" : "rgba(37,99,235,0.08)"}`,
+          boxShadow: hovered ? "0 12px 40px rgba(37,99,235,0.14), 0 2px 8px rgba(0,0,0,0.04)" : "0 2px 12px rgba(0,0,0,0.04)",
+          padding: "20px 24px",
+          display: "flex", alignItems: "center", gap: "20px",
+          transition: "all 0.25s cubic-bezier(0.22,1,0.36,1)",
+          transform: hovered ? "translateY(-2px)" : "none",
+          animation: `cardIn 0.4s ease forwards`,
+          animationDelay: `${Math.min(index * 50, 350)}ms`,
+          opacity: 0,
+          cursor: "pointer",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          flexWrap: "wrap",
+        }}>
+        {/* Logo */}
+        <div style={{
+          height: "60px", width: "60px", borderRadius: "16px", flexShrink: 0,
+          background: vendor.bannerGrad,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "24px",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.18)",
+        }}>{vendor.emoji}</div>
 
-  const [filters, setFilters] = useState<FilterState>({
-    categoryIds: activeCategory ? [activeCategory.id] : [],
-    priceRange: [0, MAX_PRICE],
-    minRating: 0,
-    inStockOnly: false,
-    sortBy: "newest",
-  });
+        {/* Info */}
+        <div style={{ flex: 1, minWidth: "160px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em" }}>
+              {vendor.name}
+            </span>
+            {vendor.verified && <BadgeCheck size={15} color="#2563eb" fill="rgba(37,99,235,0.15)"/>}
+            {vendor.featured && (
+              <span style={{
+                fontSize: "9px", fontWeight: 800, padding: "2px 7px", borderRadius: "99px",
+                background: "linear-gradient(135deg, #2563eb, #7c3aed)", color: "white",
+              }}>FEATURED</span>
+            )}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "12px", fontWeight: 700, padding: "2px 9px", borderRadius: "99px", background: vendor.categoryBg, color: vendor.categoryColor }}>{vendor.category}</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "3px", fontSize: "12px", color: "#64748b" }}>
+              <MapPin size={11}/> {vendor.city}
+            </span>
+          </div>
+          <p style={{ fontSize: "12px", color: "#64748b", margin: "6px 0 0", lineHeight: 1.5 }}>{vendor.description}</p>
+        </div>
 
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+        {/* Stats */}
+        <div style={{ display: "flex", gap: "24px", flexShrink: 0, flexWrap: "wrap" }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "15px", fontWeight: 800, color: "#f59e0b" }}>★ {vendor.rating}</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 600 }}>{vendor.reviews.toLocaleString()} reviews</div>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a" }}>{vendor.products}</div>
+            <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 600 }}>Products</div>
+          </div>
+          {vendor.installments && (
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "13px", fontWeight: 800, color: "#2563eb" }}>⚡ Kisti</div>
+              <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 600 }}>Available</div>
+            </div>
+          )}
+        </div>
 
-  /* ── Filtered & sorted products ── */
-  const filteredProducts = useMemo(() => {
-    let result = [...featuredProducts];
-
-    if (filters.categoryIds.length > 0) {
-      result = result.filter((p) => filters.categoryIds.includes(p.categoryId));
-    }
-
-    result = result.filter(
-      (p) =>
-        p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
-    );
-
-    if (filters.minRating > 0) {
-      result = result.filter((p) => p.rating >= filters.minRating);
-    }
-
-    switch (filters.sortBy) {
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "popular":
-        result.sort((a, b) => b.reviews - a.reviews);
-        break;
-      default:
-        break;
-    }
-
-    return result;
-  }, [filters]);
-
-  /* ── Helpers ── */
-  const toggleCategory = (id: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      categoryIds: prev.categoryIds.includes(id)
-        ? prev.categoryIds.filter((c) => c !== id)
-        : [...prev.categoryIds, id],
-    }));
-  };
-
-  const clearAll = () => {
-    setFilters({
-      categoryIds: [],
-      priceRange: [0, MAX_PRICE],
-      minRating: 0,
-      inStockOnly: false,
-      sortBy: "newest",
-    });
-  };
-
-  const hasActiveFilters =
-    filters.categoryIds.length > 0 ||
-    filters.priceRange[0] > 0 ||
-    filters.priceRange[1] < MAX_PRICE ||
-    filters.minRating > 0 ||
-    filters.inStockOnly;
-
-  const formatPrice = (v: number) =>
-    v >= 1000 ? `PKR ${(v / 1000).toFixed(0)}K` : `PKR ${v}`;
-
-  /* ── Sidebar content (shared between desktop + mobile) ── */
-  const SidebarContent = () => (
-    <div className="p-5">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="font-bold text-base text-gray-900">Filters</h2>
-        {hasActiveFilters && (
-          <button
-            onClick={clearAll}
-            className="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1"
-          >
-            <X className="h-3 w-3" /> Clear All
+        {/* CTA */}
+        <Link to={`/store/${vendor.id}`} style={{ textDecoration: "none", flexShrink: 0 }}>
+          <button style={{
+            display: "flex", alignItems: "center", gap: "6px",
+            padding: "10px 20px", borderRadius: "12px",
+            background: hovered ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "transparent",
+            border: `1.5px solid ${hovered ? "transparent" : "rgba(37,99,235,0.20)"}`,
+            color: hovered ? "white" : "#2563eb",
+            fontSize: "13px", fontWeight: 700,
+            cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+            boxShadow: hovered ? "0 6px 20px rgba(37,99,235,0.35)" : "none",
+            transition: "all 0.2s ease",
+          }}>
+            Visit Shop <ArrowUpRight size={14} strokeWidth={2.5}/>
           </button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "white",
+        borderRadius: "22px",
+        border: `1.5px solid ${hovered ? "rgba(37,99,235,0.22)" : "rgba(37,99,235,0.07)"}`,
+        boxShadow: hovered
+          ? "0 20px 50px rgba(37,99,235,0.14), 0 6px 16px rgba(0,0,0,0.06)"
+          : "0 2px 12px rgba(0,0,0,0.04)",
+        overflow: "hidden",
+        transition: "all 0.3s cubic-bezier(0.22,1,0.36,1)",
+        transform: hovered ? "translateY(-6px) scale(1.01)" : "none",
+        animation: `cardIn 0.4s ease forwards`,
+        animationDelay: `${Math.min(index * 60, 400)}ms`,
+        opacity: 0,
+        cursor: "pointer",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        display: "flex", flexDirection: "column",
+      }}>
+
+      {/* ── Banner ── */}
+      <div style={{
+        height: "100px", position: "relative",
+        background: vendor.bannerGrad,
+        overflow: "hidden",
+      }}>
+        {/* Decorative circles */}
+        <div style={{ position: "absolute", width: "120px", height: "120px", borderRadius: "50%", background: "rgba(255,255,255,0.08)", top: "-30px", right: "-20px" }}/>
+        <div style={{ position: "absolute", width: "70px", height: "70px", borderRadius: "50%", background: "rgba(255,255,255,0.06)", bottom: "-20px", right: "40px" }}/>
+        <div style={{ position: "absolute", width: "50px", height: "50px", borderRadius: "50%", background: "rgba(255,255,255,0.05)", top: "10px", left: "30%"  }}/>
+
+        {/* Dot grid */}
+        <svg style={{ position: "absolute", right: 0, bottom: 0, opacity: 0.12 }} width="160" height="100" viewBox="0 0 160 100">
+          {Array.from({ length: 5 }).map((_, row) =>
+            Array.from({ length: 8 }).map((_, col) => (
+              <circle key={`${row}-${col}`} cx={col * 22 + 11} cy={row * 22 + 11} r="1.5" fill="white"/>
+            ))
+          )}
+        </svg>
+
+        {/* Badges top-right */}
+        <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-end" }}>
+          {vendor.featured && (
+            <span style={{
+              fontSize: "9px", fontWeight: 800, padding: "3px 8px", borderRadius: "99px",
+              background: "rgba(255,255,255,0.25)", backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,0.40)",
+              color: "white", display: "flex", alignItems: "center", gap: "3px",
+            }}>
+              <Sparkles size={8}/> FEATURED
+            </span>
+          )}
+          {vendor.installments && (
+            <span style={{
+              fontSize: "9px", fontWeight: 800, padding: "3px 8px", borderRadius: "99px",
+              background: "rgba(255,255,255,0.20)", backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,0.35)",
+              color: "white", display: "flex", alignItems: "center", gap: "3px",
+            }}>
+              <Zap size={8}/> KISTI
+            </span>
+          )}
+        </div>
+
+        {/* Large emoji */}
+        <div style={{
+          position: "absolute", bottom: "-20px", left: "20px",
+          height: "52px", width: "52px", borderRadius: "16px",
+          background: "white",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.20)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "24px",
+          border: "2px solid white",
+          transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+          transform: hovered ? "scale(1.12) rotate(-4deg)" : "scale(1)",
+        }}>{vendor.emoji}</div>
+
+        {/* Verified */}
+        {vendor.verified && (
+          <div style={{
+            position: "absolute", bottom: "-16px", left: "56px",
+            height: "22px", width: "22px", borderRadius: "50%",
+            background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            border: "2px solid white",
+            boxShadow: "0 2px 8px rgba(37,99,235,0.40)",
+          }}>
+            <BadgeCheck size={12} color="white" fill="transparent"/>
+          </div>
         )}
       </div>
 
-      {/* Categories */}
-      <FilterSection title="Categories" defaultOpen={true}>
-        <div className="space-y-1.5">
-          <button
-            onClick={() =>
-              setFilters((prev) => ({ ...prev, categoryIds: [] }))
-            }
-            className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-all ${
-              filters.categoryIds.length === 0
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-700"
-            }`}
-          >
-            <span>All Categories</span>
-            <span
-              className={`text-xs px-1.5 py-0.5 rounded-full ${
-                filters.categoryIds.length === 0
-                  ? "bg-white/20 text-white"
-                  : "bg-gray-100 text-gray-500"
-              }`}
-            >
-              {featuredProducts.length}
-            </span>
-          </button>
+      {/* ── Body ── */}
+      <div style={{ padding: "28px 18px 18px", flex: 1, display: "flex", flexDirection: "column" }}>
 
-          {categories.map((cat) => {
-            const count = featuredProducts.filter(
-              (p) => p.categoryId === cat.id
-            ).length;
-            const active = filters.categoryIds.includes(cat.id);
-            return (
-              <button
-                key={cat.id}
-                onClick={() => toggleCategory(cat.id)}
-                className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-all ${
-                  active
-                    ? "bg-blue-50 text-blue-700 font-semibold border border-blue-200"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <cat.icon
-                    className={`h-3.5 w-3.5 ${
-                      active ? "text-blue-600" : "text-gray-400"
-                    }`}
-                  />
-                  <span>{cat.name}</span>
-                </div>
-                <span
-                  className={`text-xs px-1.5 py-0.5 rounded-full ${
-                    active
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </FilterSection>
-
-      {/* Price Range */}
-      <FilterSection title="Price Range" defaultOpen={true}>
-        <div className="px-1">
-          <Slider
-            min={0}
-            max={MAX_PRICE}
-            step={5000}
-            value={[filters.priceRange[0], filters.priceRange[1]]}
-            onValueChange={(val) =>
-              setFilters((prev) => ({
-                ...prev,
-                priceRange: [val[0], val[1]] as [number, number],
-              }))
-            }
-            className="mb-4"
-          />
-          <div className="flex items-center justify-between">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
-              {formatPrice(filters.priceRange[0])}
-            </div>
-            <span className="text-gray-300 text-sm">—</span>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-700">
-              {formatPrice(filters.priceRange[1])}
+        {/* Name row */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "6px" }}>
+          <div>
+            <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+              {vendor.name}
+            </h3>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "5px", flexWrap: "wrap" }}>
+              <span style={{
+                fontSize: "11px", fontWeight: 700, padding: "2px 9px", borderRadius: "99px",
+                background: vendor.categoryBg, color: vendor.categoryColor,
+              }}>{vendor.category}</span>
+              <span style={{ display: "flex", alignItems: "center", gap: "3px", fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>
+                <MapPin size={10}/> {vendor.city}
+              </span>
             </div>
           </div>
+          {/* Rating pill */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "3px",
+            padding: "4px 9px", borderRadius: "99px",
+            background: "rgba(245,158,11,0.10)",
+            border: "1.5px solid rgba(245,158,11,0.20)",
+            flexShrink: 0,
+          }}>
+            <Star size={11} fill="#f59e0b" color="#f59e0b"/>
+            <span style={{ fontSize: "11px", fontWeight: 800, color: "#b45309" }}>{vendor.rating}</span>
+          </div>
         </div>
-      </FilterSection>
 
-      {/* Rating */}
-      <FilterSection title="Minimum Rating" defaultOpen={false}>
-        <div className="space-y-1.5">
-          {[0, 4, 4.5, 4.8].map((r) => (
-            <button
-              key={r}
-              onClick={() =>
-                setFilters((prev) => ({ ...prev, minRating: r }))
-              }
-              className={`flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-all ${
-                filters.minRating === r
-                  ? "bg-amber-50 text-amber-700 font-semibold border border-amber-200"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <span className="text-amber-400">
-                {"★".repeat(Math.floor(r || 1))}
-              </span>
-              <span>
-                {r === 0
-                  ? "All Ratings"
-                  : r === 4
-                  ? "4+ Stars"
-                  : r === 4.5
-                  ? "4.5+ Stars"
-                  : "4.8+ Stars"}
-              </span>
-            </button>
+        {/* Description */}
+        <p style={{
+          fontSize: "12px", color: "#64748b", lineHeight: 1.55,
+          margin: "8px 0 14px", flex: 1,
+          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+        }}>
+          {vendor.description}
+        </p>
+
+        {/* Stats strip */}
+        <div style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "0",
+          borderTop: "1px solid rgba(37,99,235,0.07)",
+          borderBottom: "1px solid rgba(37,99,235,0.07)",
+          margin: "0 -2px 14px",
+          padding: "10px 4px",
+        }}>
+          {[
+            { val: vendor.products.toString(), label: "Products", color: "#2563eb" },
+            { val: `${vendor.reviews >= 1000 ? (vendor.reviews / 1000).toFixed(1) + "k" : vendor.reviews}`, label: "Reviews", color: "#7c3aed" },
+            { val: vendor.joined, label: "Since", color: "#10b981" },
+          ].map((s, i) => (
+            <div key={i} style={{
+              textAlign: "center",
+              borderRight: i < 2 ? "1px solid rgba(37,99,235,0.07)" : "none",
+              padding: "0 4px",
+            }}>
+              <div style={{ fontSize: "14px", fontWeight: 800, color: s.color }}>{s.val}</div>
+              <div style={{ fontSize: "9px", fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</div>
+            </div>
           ))}
         </div>
-      </FilterSection>
 
-      {/* In Stock */}
-      <FilterSection title="Availability" defaultOpen={false}>
-        <label className="flex items-center gap-3 cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-50 transition-all">
-          <div
-            onClick={() =>
-              setFilters((prev) => ({
-                ...prev,
-                inStockOnly: !prev.inStockOnly,
-              }))
-            }
-            className={`w-10 h-5 rounded-full relative transition-all cursor-pointer ${
-              filters.inStockOnly
-                ? "bg-blue-600"
-                : "bg-gray-200"
-            }`}
-          >
-            <div
-              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${
-                filters.inStockOnly ? "left-5" : "left-0.5"
-              }`}
-            />
-          </div>
-          <span className="text-sm text-gray-700">In Stock Only</span>
-        </label>
-      </FilterSection>
+        {/* CTA */}
+        <Link to={`/store/${vendor.id}`} style={{ textDecoration: "none" }}>
+          <button style={{
+            width: "100%", height: "40px", borderRadius: "12px",
+            background: hovered ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "rgba(37,99,235,0.06)",
+            border: `1.5px solid ${hovered ? "transparent" : "rgba(37,99,235,0.15)"}`,
+            color: hovered ? "white" : "#2563eb",
+            fontSize: "13px", fontWeight: 700,
+            cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+            boxShadow: hovered ? "0 8px 24px rgba(37,99,235,0.38)" : "none",
+            transition: "all 0.25s cubic-bezier(0.22,1,0.36,1)",
+          }}>
+            Visit Shop
+            <ArrowUpRight size={14} strokeWidth={2.5} style={{ transition: "transform 0.2s", transform: hovered ? "translate(2px,-2px)" : "none" }}/>
+          </button>
+        </Link>
+      </div>
     </div>
   );
+};
 
-  /* ── Page title ── */
-  const pageTitle = activeCategory
-    ? activeCategory.name
-    : filters.categoryIds.length === 1
-    ? categories.find((c) => c.id === filters.categoryIds[0])?.name || "Shop"
-    : "All Products";
+/* ─────────────────── MAIN PAGE ─────────────────── */
+const ShopPage = () => {
+  const [search, setSearch]         = useState("");
+  const [activeCategory, setCategory] = useState("All");
+  const [activeCity, setCity]       = useState("All Cities");
+  const [verifiedOnly, setVerified] = useState(false);
+  const [installOnly, setInstall]   = useState(false);
+  const [sortBy, setSort]           = useState<"rating" | "products" | "reviews" | "newest">("rating");
+  const [view, setView]             = useState<"grid" | "list">("grid");
+  const [heroVisible, setHero]      = useState(false);
+
+  useEffect(() => { const t = setTimeout(() => setHero(true), 80); return () => clearTimeout(t); }, []);
+
+  const filtered = useMemo(() => {
+    let list = [...VENDORS];
+    if (search.trim())          list = list.filter(v => v.name.toLowerCase().includes(search.toLowerCase()) || v.description.toLowerCase().includes(search.toLowerCase()) || v.city.toLowerCase().includes(search.toLowerCase()));
+    if (activeCategory !== "All") list = list.filter(v => v.category === activeCategory);
+    if (activeCity !== "All Cities") list = list.filter(v => v.city === activeCity);
+    if (verifiedOnly)           list = list.filter(v => v.verified);
+    if (installOnly)            list = list.filter(v => v.installments);
+
+    list.sort((a, b) => {
+      if (sortBy === "rating")   return b.rating - a.rating;
+      if (sortBy === "products") return b.products - a.products;
+      if (sortBy === "reviews")  return b.reviews - a.reviews;
+      return b.joined.localeCompare(a.joined);
+    });
+    return list;
+  }, [search, activeCategory, activeCity, verifiedOnly, installOnly, sortBy]);
+
+  const featured = filtered.filter(v => v.featured);
+  const rest     = filtered.filter(v => !v.featured);
+
+  const activeFilterCount = [
+    activeCategory !== "All",
+    activeCity !== "All Cities",
+    verifiedOnly,
+    installOnly,
+    sortBy !== "rating",
+    !!search.trim(),
+  ].filter(Boolean).length;
+
+  const resetFilters = () => {
+    setSearch(""); setCategory("All"); setCity("All Cities");
+    setVerified(false); setInstall(false); setSort("rating");
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div style={{ minHeight: "100vh", background: "linear-gradient(160deg, #f8faff 0%, #f3f0ff 60%, #f0fff8 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <Header />
 
-      <main className="flex-1">
-        {/* Breadcrumb */}
-        <div className="bg-white border-b border-gray-100 py-3">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              <Link to="/" className="hover:text-blue-600 transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              {activeCategory ? (
-                <>
-                  <Link
-                    to="/products"
-                    className="hover:text-blue-600 transition-colors"
-                  >
-                    Shop
-                  </Link>
-                  <ChevronRight className="h-3.5 w-3.5" />
-                  <span className="text-blue-600 font-medium">
-                    {activeCategory.name}
-                  </span>
-                </>
-              ) : (
-                <span className="text-blue-600 font-medium">Shop</span>
+      {/* ── HERO SECTION ── */}
+      <section style={{
+        background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 35%, #7c3aed 70%, #4c1d95 100%)",
+        padding: "64px 16px 80px",
+        position: "relative", overflow: "hidden",
+      }}>
+        {/* Animated orbs */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          <div style={{ position: "absolute", width: "500px", height: "500px", borderRadius: "50%", background: "rgba(255,255,255,0.05)", top: "-150px", right: "-100px", animation: "floatOrb 8s ease-in-out infinite" }}/>
+          <div style={{ position: "absolute", width: "300px", height: "300px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", bottom: "-80px", left: "10%", animation: "floatOrb 10s ease-in-out infinite 2s" }}/>
+          <div style={{ position: "absolute", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(124,58,237,0.25)", top: "20%", left: "40%", filter: "blur(40px)" }}/>
+          {/* Grid dots */}
+          <svg style={{ position: "absolute", right: "5%", top: 0, opacity: 0.07 }} width="400" height="300" viewBox="0 0 400 300">
+            {Array.from({ length: 12 }).map((_, row) =>
+              Array.from({ length: 20 }).map((_, col) => (
+                <circle key={`${row}-${col}`} cx={col * 22 + 11} cy={row * 26 + 13} r="1.8" fill="white"/>
+              ))
+            )}
+          </svg>
+        </div>
+
+        <div style={{ maxWidth: "1400px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+          {/* Eyebrow */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: "8px",
+            padding: "6px 14px", borderRadius: "99px",
+            background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            marginBottom: "20px",
+            opacity: heroVisible ? 1 : 0,
+            transform: heroVisible ? "none" : "translateY(-8px)",
+            transition: "all 0.5s ease",
+          }}>
+            <BadgeCheck size={13} color="rgba(255,255,255,0.9)"/>
+            <span style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.9)", letterSpacing: "0.10em", textTransform: "uppercase" }}>
+              Verified Sellers
+            </span>
+          </div>
+
+          {/* Headline + logo */}
+          <div style={{
+            display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+            flexWrap: "wrap", gap: "24px",
+            opacity: heroVisible ? 1 : 0,
+            transform: heroVisible ? "none" : "translateY(16px)",
+            transition: "all 0.55s cubic-bezier(0.22,1,0.36,1) 0.05s",
+          }}>
+            <div>
+              {/* Logo + title side-by-side */}
+              <div style={{ display: "flex", alignItems: "center", gap: "18px", marginBottom: "12px" }}>
+                <div style={{
+                  background: "rgba(255,255,255,0.15)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "20px",
+                  padding: "8px",
+                  border: "1.5px solid rgba(255,255,255,0.25)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.20)",
+                  flexShrink: 0,
+                }}>
+                  <FlexiBerryLogo size={52}/>
+                </div>
+                <h1 style={{
+                  color: "white", fontWeight: 900,
+                  fontSize: "clamp(2.2rem, 5vw, 3.8rem)",
+                  margin: 0, letterSpacing: "-0.04em", lineHeight: 1,
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  textShadow: "0 4px 24px rgba(0,0,0,0.20)",
+                }}>
+                  All Shops
+                </h1>
+              </div>
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "clamp(14px,2vw,17px)", margin: 0, fontWeight: 500, maxWidth: "480px", lineHeight: 1.55 }}>
+                {VENDORS.length} verified sellers • Shop with confidence on FlexiBerry
+              </p>
+            </div>
+
+            {/* Platform stats */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px",
+              opacity: heroVisible ? 1 : 0,
+              transition: "all 0.55s ease 0.15s",
+            }}>
+              {PLATFORM_STATS.map(({ label, value, icon: Icon, color }) => (
+                <div key={label} style={{
+                  padding: "12px 16px", borderRadius: "16px",
+                  background: "rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.20)",
+                  display: "flex", alignItems: "center", gap: "10px",
+                  minWidth: "140px",
+                }}>
+                  <div style={{
+                    height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
+                    background: "rgba(255,255,255,0.18)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <Icon size={15} color="white" strokeWidth={2}/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "16px", fontWeight: 900, color: "white", lineHeight: 1 }}>{value}</div>
+                    <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.65)", fontWeight: 600, marginTop: "2px" }}>{label}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Search bar ── */}
+          <div style={{
+            marginTop: "32px",
+            opacity: heroVisible ? 1 : 0,
+            transform: heroVisible ? "none" : "translateY(12px)",
+            transition: "all 0.55s ease 0.20s",
+          }}>
+            <div style={{ position: "relative", maxWidth: "600px" }}>
+              <Search size={16} color="rgba(255,255,255,0.55)"
+                style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
+              <input
+                placeholder="Search shops by name, city, or category…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{
+                  width: "100%", height: "52px",
+                  paddingLeft: "44px", paddingRight: search ? "44px" : "16px",
+                  borderRadius: "16px",
+                  border: "1.5px solid rgba(255,255,255,0.25)",
+                  background: "rgba(255,255,255,0.14)",
+                  backdropFilter: "blur(16px)",
+                  fontSize: "14px", fontWeight: 500, color: "white",
+                  outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  boxSizing: "border-box",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+                  transition: "border-color 0.2s",
+                }}
+                onFocus={e => (e.target as HTMLInputElement).style.borderColor = "rgba(255,255,255,0.5)"}
+                onBlur={e  => (e.target as HTMLInputElement).style.borderColor = "rgba(255,255,255,0.25)"}
+              />
+              {search && (
+                <button onClick={() => setSearch("")} style={{
+                  position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
+                  background: "rgba(255,255,255,0.2)", border: "none", borderRadius: "50%",
+                  cursor: "pointer", height: "26px", width: "26px",
+                  display: "flex", alignItems: "center", justifyContent: "center", color: "white",
+                }}>
+                  <X size={11} strokeWidth={3}/>
+                </button>
               )}
             </div>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex gap-6">
-            {/* ── SIDEBAR (desktop) ── */}
-            <aside className="hidden lg:block w-64 shrink-0">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm sticky top-24">
-                <SidebarContent />
-              </div>
-            </aside>
+        {/* Curved bottom edge */}
+        <div style={{
+          position: "absolute", bottom: -1, left: 0, right: 0, height: "40px",
+          background: "linear-gradient(160deg, #f8faff 0%, #f3f0ff 60%, #f0fff8 100%)",
+          borderRadius: "60% 60% 0 0 / 100% 100% 0 0",
+        }}/>
+      </section>
 
-            {/* ── MAIN CONTENT ── */}
-            <div className="flex-1 min-w-0">
-              {/* Toolbar */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3.5 mb-5 flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-3">
-                  {/* Mobile filter toggle */}
-                  <button
-                    onClick={() => setMobileSidebarOpen(true)}
-                    className="lg:hidden flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 transition-colors"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filters
-                    {hasActiveFilters && (
-                      <span className="h-5 w-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">
-                        {filters.categoryIds.length +
-                          (filters.minRating > 0 ? 1 : 0) +
-                          (filters.inStockOnly ? 1 : 0)}
-                      </span>
-                    )}
-                  </button>
+      {/* ── FILTERS TOOLBAR ── */}
+      <div style={{ maxWidth: "1400px", margin: "-10px auto 0", padding: "0 16px 0" }}>
+        <div style={{
+          background: "white",
+          borderRadius: "20px",
+          border: "1.5px solid rgba(37,99,235,0.08)",
+          boxShadow: "0 4px 24px rgba(37,99,235,0.08)",
+          padding: "16px 20px",
+          display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center",
+        }}>
+          {/* Filter icon */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <div style={{
+              height: "32px", width: "32px", borderRadius: "9px",
+              background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(37,99,235,0.35)",
+            }}>
+              <SlidersHorizontal size={14} color="white" strokeWidth={2.5}/>
+            </div>
+            <span style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>Filter</span>
+            {activeFilterCount > 0 && (
+              <span style={{
+                height: "18px", minWidth: "18px", borderRadius: "99px",
+                background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+                fontSize: "10px", fontWeight: 800, color: "white",
+                display: "flex", alignItems: "center", justifyContent: "center", padding: "0 5px",
+              }}>{activeFilterCount}</span>
+            )}
+          </div>
 
-                  <p className="text-sm text-gray-500">
-                    <span className="font-semibold text-gray-900">
-                      {filteredProducts.length}
-                    </span>{" "}
-                    {filteredProducts.length === 1 ? "Product" : "Products"}{" "}
-                    Found
-                  </p>
-                </div>
+          <div style={{ width: "1px", height: "28px", background: "rgba(37,99,235,0.10)", flexShrink: 0 }}/>
 
-                <div className="flex items-center gap-3 ml-auto">
-                  {/* Sort */}
-                  <select
-                    value={filters.sortBy}
-                    onChange={(e) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        sortBy: e.target.value,
-                      }))
-                    }
-                    className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent cursor-pointer"
-                  >
-                    {SORT_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
+          {/* Category pills (scrollable) */}
+          <div style={{ display: "flex", gap: "5px", overflowX: "auto", scrollbarWidth: "none", flex: 1, minWidth: 0 }}>
+            {CATEGORIES.map(cat => {
+              const active = activeCategory === cat;
+              return (
+                <button key={cat} onClick={() => setCategory(cat)} style={{
+                  padding: "6px 14px", borderRadius: "99px", flexShrink: 0,
+                  fontSize: "12px", fontWeight: 700,
+                  border: `1.5px solid ${active ? "#2563eb" : "rgba(37,99,235,0.12)"}`,
+                  background: active ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "transparent",
+                  color: active ? "white" : "#64748b",
+                  cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  boxShadow: active ? "0 4px 12px rgba(37,99,235,0.30)" : "none",
+                  transition: "all 0.18s cubic-bezier(0.34,1.56,0.64,1)",
+                }}>{cat}</button>
+              );
+            })}
+          </div>
 
-                  {/* View toggle */}
-                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                    <button
-                      onClick={() => setViewMode("grid")}
-                      className={`p-2 transition-colors ${
-                        viewMode === "grid"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-gray-400 hover:text-gray-700"
-                      }`}
-                    >
-                      <LayoutGrid className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode("list")}
-                      className={`p-2 transition-colors ${
-                        viewMode === "list"
-                          ? "bg-blue-600 text-white"
-                          : "bg-white text-gray-400 hover:text-gray-700"
-                      }`}
-                    >
-                      <List className="h-4 w-4" />
-                    </button>
+          <div style={{ width: "1px", height: "28px", background: "rgba(37,99,235,0.10)", flexShrink: 0 }}/>
+
+          {/* Right side controls */}
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0, flexWrap: "wrap" }}>
+            {/* City */}
+            <select value={activeCity} onChange={e => setCity(e.target.value)} style={{
+              height: "34px", padding: "0 10px", borderRadius: "10px",
+              border: "1.5px solid rgba(37,99,235,0.15)",
+              background: "#fafbff", fontSize: "12px", fontWeight: 600,
+              color: "#374151", outline: "none", cursor: "pointer",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
+              {CITIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+
+            {/* Sort */}
+            <select value={sortBy} onChange={e => setSort(e.target.value as any)} style={{
+              height: "34px", padding: "0 10px", borderRadius: "10px",
+              border: "1.5px solid rgba(37,99,235,0.15)",
+              background: "#fafbff", fontSize: "12px", fontWeight: 600,
+              color: "#374151", outline: "none", cursor: "pointer",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
+              <option value="rating">Top Rated</option>
+              <option value="products">Most Products</option>
+              <option value="reviews">Most Reviews</option>
+              <option value="newest">Newest</option>
+            </select>
+
+            {/* Verified toggle */}
+            <button onClick={() => setVerified(!verifiedOnly)} style={{
+              display: "flex", alignItems: "center", gap: "5px",
+              height: "34px", padding: "0 12px", borderRadius: "10px",
+              border: `1.5px solid ${verifiedOnly ? "#2563eb" : "rgba(37,99,235,0.15)"}`,
+              background: verifiedOnly ? "rgba(37,99,235,0.08)" : "transparent",
+              color: verifiedOnly ? "#2563eb" : "#64748b",
+              fontSize: "12px", fontWeight: 700, cursor: "pointer",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              transition: "all 0.15s",
+            }}>
+              <BadgeCheck size={13} strokeWidth={2.5}/> Verified
+            </button>
+
+            {/* Kisti toggle */}
+            <button onClick={() => setInstall(!installOnly)} style={{
+              display: "flex", alignItems: "center", gap: "5px",
+              height: "34px", padding: "0 12px", borderRadius: "10px",
+              border: `1.5px solid ${installOnly ? "#2563eb" : "rgba(37,99,235,0.15)"}`,
+              background: installOnly ? "rgba(37,99,235,0.08)" : "transparent",
+              color: installOnly ? "#2563eb" : "#64748b",
+              fontSize: "12px", fontWeight: 700, cursor: "pointer",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              transition: "all 0.15s",
+            }}>
+              <Zap size={13} strokeWidth={2.5}/> Kisti
+            </button>
+
+            {/* Reset */}
+            {activeFilterCount > 0 && (
+              <button onClick={resetFilters} style={{
+                height: "34px", padding: "0 12px", borderRadius: "10px",
+                border: "1.5px solid rgba(239,68,68,0.20)",
+                background: "rgba(239,68,68,0.07)",
+                color: "#ef4444", fontSize: "12px", fontWeight: 700,
+                cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                display: "flex", alignItems: "center", gap: "4px",
+              }}>
+                <X size={11} strokeWidth={3}/> Reset
+              </button>
+            )}
+
+            {/* View toggle */}
+            <div style={{
+              display: "flex", borderRadius: "10px",
+              border: "1.5px solid rgba(37,99,235,0.12)",
+              overflow: "hidden",
+            }}>
+              {([["grid", Grid3X3], ["list", List]] as const).map(([mode, Icon]) => (
+                <button key={mode} onClick={() => setView(mode)} style={{
+                  height: "34px", width: "34px", border: "none",
+                  background: view === mode ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "transparent",
+                  color: view === mode ? "white" : "#94a3b8",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "all 0.15s",
+                }}>
+                  <Icon size={14} strokeWidth={2}/>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── MAIN CONTENT ── */}
+      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "28px 16px 60px" }}>
+
+        {/* Results count */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "#64748b", margin: 0 }}>
+            Showing <span style={{ fontWeight: 800, color: "#0f172a" }}>{filtered.length}</span> shop{filtered.length !== 1 ? "s" : ""}
+            {activeCategory !== "All" && ` in ${activeCategory}`}
+          </p>
+        </div>
+
+        {filtered.length === 0 ? (
+          /* Empty state */
+          <div style={{
+            textAlign: "center", padding: "80px 24px",
+            background: "white", borderRadius: "24px",
+            border: "1.5px solid rgba(37,99,235,0.08)",
+            boxShadow: "0 4px 24px rgba(37,99,235,0.06)",
+          }}>
+            <div style={{
+              height: "80px", width: "80px", borderRadius: "24px",
+              background: "linear-gradient(135deg, #eff6ff, #f5f3ff)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              margin: "0 auto 20px",
+            }}>
+              <Store size={36} color="#2563eb" strokeWidth={1.5}/>
+            </div>
+            <p style={{ fontSize: "20px", fontWeight: 900, color: "#0f172a", margin: "0 0 8px", letterSpacing: "-0.03em" }}>No shops found</p>
+            <p style={{ fontSize: "14px", color: "#94a3b8", margin: "0 0 28px" }}>Try adjusting your filters or search terms</p>
+            <button onClick={resetFilters} style={{
+              padding: "12px 32px", borderRadius: "14px",
+              background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+              border: "none", color: "white", fontSize: "14px", fontWeight: 700,
+              cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+              boxShadow: "0 8px 24px rgba(37,99,235,0.35)",
+            }}>Reset Filters</button>
+          </div>
+        ) : (
+          <>
+            {/* Featured shops */}
+            {featured.length > 0 && activeCategory === "All" && !search && (
+              <div style={{ marginBottom: "36px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+                  <div style={{
+                    height: "28px", width: "28px", borderRadius: "8px",
+                    background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <Sparkles size={13} color="white" strokeWidth={2.5}/>
                   </div>
+                  <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.02em" }}>Featured Shops</h2>
+                  <span style={{
+                    padding: "2px 10px", borderRadius: "99px", fontSize: "11px", fontWeight: 700,
+                    background: "rgba(37,99,235,0.08)", color: "#2563eb",
+                  }}>{featured.length} shops</span>
+                </div>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: view === "list" ? "1fr" : "repeat(auto-fill, minmax(260px, 1fr))",
+                  gap: "18px",
+                }}>
+                  {featured.map((v, i) => <ShopCard key={v.id} vendor={v} index={i} view={view}/>)}
                 </div>
               </div>
+            )}
 
-              {/* Active filter chips */}
-              {hasActiveFilters && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {filters.categoryIds.map((id) => {
-                    const cat = categories.find((c) => c.id === id);
-                    return cat ? (
-                      <span
-                        key={id}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200"
-                      >
-                        {cat.name}
-                        <button
-                          onClick={() => toggleCategory(id)}
-                          className="hover:text-blue-900"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    ) : null;
-                  })}
-                  {filters.minRating > 0 && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200">
-                      {filters.minRating}+ Stars
-                      <button
-                        onClick={() =>
-                          setFilters((prev) => ({ ...prev, minRating: 0 }))
-                        }
-                        className="hover:text-amber-900"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  )}
-                  {(filters.priceRange[0] > 0 ||
-                    filters.priceRange[1] < MAX_PRICE) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200">
-                      {formatPrice(filters.priceRange[0])} –{" "}
-                      {formatPrice(filters.priceRange[1])}
-                      <button
-                        onClick={() =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            priceRange: [0, MAX_PRICE],
-                          }))
-                        }
-                        className="hover:text-green-900"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  )}
-                  {filters.inStockOnly && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-200">
-                      In Stock
-                      <button
-                        onClick={() =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            inStockOnly: false,
-                          }))
-                        }
-                        className="hover:text-purple-900"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Products Grid / List */}
-              {filteredProducts.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-gray-100 py-24 text-center">
-                  <p className="text-4xl mb-4">🔍</p>
-                  <h3 className="text-lg font-bold text-gray-800 mb-2">
-                    No products found
-                  </h3>
-                  <p className="text-gray-500 text-sm mb-4">
-                    Try adjusting your filters to see more results.
-                  </p>
-                  <button
-                    onClick={clearAll}
-                    className="px-5 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              ) : viewMode === "grid" ? (
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredProducts.map((product, i) => (
-                    <ProductCard key={product.id} product={product} index={i} />
+            {/* All / remaining shops */}
+            {(rest.length > 0 || search || activeCategory !== "All") && (
+              <div>
+                {featured.length > 0 && activeCategory === "All" && !search && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
+                    <div style={{
+                      height: "28px", width: "28px", borderRadius: "8px",
+                      background: "linear-gradient(135deg, #eff6ff, #f5f3ff)",
+                      border: "1.5px solid rgba(37,99,235,0.12)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <Store size={13} color="#2563eb" strokeWidth={2.5}/>
+                    </div>
+                    <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", margin: 0, letterSpacing: "-0.02em" }}>All Shops</h2>
+                    <span style={{
+                      padding: "2px 10px", borderRadius: "99px", fontSize: "11px", fontWeight: 700,
+                      background: "rgba(37,99,235,0.08)", color: "#2563eb",
+                    }}>{rest.length} shops</span>
+                  </div>
+                )}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: view === "list" ? "1fr" : "repeat(auto-fill, minmax(260px, 1fr))",
+                  gap: "18px",
+                }}>
+                  {(search || activeCategory !== "All" ? filtered : rest).map((v, i) => (
+                    <ShopCard key={v.id} vendor={v} index={i} view={view}/>
                   ))}
                 </div>
-              ) : (
-                /* List view */
-                <div className="space-y-3">
-                  {filteredProducts.map((product) => {
-                    const discount = product.originalPrice
-                      ? Math.round(
-                          ((product.originalPrice - product.price) /
-                            product.originalPrice) *
-                            100
-                        )
-                      : 0;
-                    return (
-                      <Link
-                        key={product.id}
-                        to={`/product/${product.id}`}
-                        className="group flex items-center gap-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md hover:border-blue-200 transition-all"
-                      >
-                        <div className="h-24 w-24 rounded-xl bg-gray-50 overflow-hidden shrink-0">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-gray-400 uppercase tracking-wide mb-0.5">
-                            {product.description}
-                          </p>
-                          <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
-                            {product.name}
-                          </h3>
-                          <div className="flex items-center gap-1.5 mt-1">
-                            <span className="text-amber-400 text-xs">★</span>
-                            <span className="text-xs font-medium text-gray-700">
-                              {product.rating}
-                            </span>
-                            <span className="text-xs text-gray-400">
-                              ({product.reviews})
-                            </span>
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-lg font-bold text-blue-600">
-                            PKR {product.price.toLocaleString()}
-                          </p>
-                          {product.originalPrice && (
-                            <p className="text-xs text-gray-400 line-through">
-                              PKR {product.originalPrice.toLocaleString()}
-                            </p>
-                          )}
-                          {discount > 0 && (
-                            <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 bg-red-100 text-red-600 rounded-full">
-                              -{discount}%
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── BECOME A VENDOR BANNER ── */}
+        <div style={{
+          marginTop: "56px",
+          borderRadius: "28px",
+          background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #7c3aed 100%)",
+          padding: "44px 40px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          flexWrap: "wrap", gap: "24px",
+          position: "relative", overflow: "hidden",
+          boxShadow: "0 20px 60px rgba(37,99,235,0.30), 0 8px 24px rgba(124,58,237,0.20)",
+        }}>
+          {/* Background decoration */}
+          <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+            <div style={{ position: "absolute", width: "300px", height: "300px", borderRadius: "50%", background: "rgba(255,255,255,0.05)", top: "-80px", right: "15%" }}/>
+            <div style={{ position: "absolute", width: "180px", height: "180px", borderRadius: "50%", background: "rgba(255,255,255,0.04)", bottom: "-60px", right: "5%" }}/>
+            <svg style={{ position: "absolute", right: "20%", top: 0, opacity: 0.06 }} width="300" height="200" viewBox="0 0 300 200">
+              {Array.from({ length: 8 }).map((_, row) =>
+                Array.from({ length: 14 }).map((_, col) => (
+                  <circle key={`${row}-${col}`} cx={col * 22 + 11} cy={row * 26 + 13} r="1.8" fill="white"/>
+                ))
               )}
+            </svg>
+          </div>
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "10px" }}>
+              <div style={{
+                background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
+                borderRadius: "16px", padding: "8px",
+                border: "1.5px solid rgba(255,255,255,0.25)",
+              }}>
+                <FlexiBerryLogo size={44}/>
+              </div>
+              <div>
+                <h2 style={{
+                  color: "white", fontWeight: 900, fontSize: "clamp(20px, 3vw, 28px)",
+                  margin: 0, letterSpacing: "-0.03em",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                }}>
+                  Sell on FlexiBerry
+                </h2>
+                <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "14px", margin: "4px 0 0", fontWeight: 500 }}>
+                  0% commission for your first 90 days · 1,200+ vendors already growing
+                </p>
+              </div>
             </div>
+            <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+              {[
+                { icon: TrendingUp, text: "Reach 2.4M+ customers" },
+                { icon: Zap,        text: "Installments built-in" },
+                { icon: Shield,     text: "KYC verified payouts" },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <Icon size={13} color="rgba(255,255,255,0.75)"/>
+                  <span style={{ fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.80)" }}>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: "12px", position: "relative", zIndex: 1, flexWrap: "wrap" }}>
+            <Link to="/vendor/login" style={{ textDecoration: "none" }}>
+              <button style={{
+                padding: "14px 28px", borderRadius: "14px",
+                background: "rgba(255,255,255,0.15)",
+                border: "1.5px solid rgba(255,255,255,0.30)",
+                backdropFilter: "blur(8px)",
+                color: "white", fontSize: "14px", fontWeight: 700,
+                cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+                display: "flex", alignItems: "center", gap: "6px",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.25)"}
+              onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.15)"}>
+                Vendor Login <ChevronRight size={15}/>
+              </button>
+            </Link>
+            <button style={{
+              padding: "14px 28px", borderRadius: "14px",
+              background: "white",
+              border: "none",
+              color: "#2563eb", fontSize: "14px", fontWeight: 800,
+              cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif",
+              display: "flex", alignItems: "center", gap: "6px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.20)",
+              transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)",
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px) scale(1.02)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 12px 32px rgba(0,0,0,0.25)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.20)"; }}>
+              Register Free <ArrowUpRight size={15}/>
+            </button>
           </div>
         </div>
       </main>
 
-      {/* Mobile Sidebar Drawer */}
-      {mobileSidebarOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setMobileSidebarOpen(false)}
-          />
-          <div className="fixed inset-y-0 left-0 w-80 bg-white z-50 shadow-2xl overflow-y-auto lg:hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="font-bold text-gray-900">Filters</h2>
-              <button
-                onClick={() => setMobileSidebarOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <X className="h-5 w-5 text-gray-500" />
-              </button>
-            </div>
-            <SidebarContent />
-            <div className="px-5 pb-6">
-              <button
-                onClick={() => setMobileSidebarOpen(false)}
-                className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-              >
-                Show {filteredProducts.length} Results
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      <Footer/>
 
-      <Footer />
+      <style>{`
+        @keyframes cardIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatOrb {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33%       { transform: translate(-20px, -15px) scale(1.04); }
+          66%       { transform: translate(15px, -25px) scale(0.97); }
+        }
+        input::placeholder { color: rgba(255,255,255,0.40); }
+        select { appearance: auto; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
     </div>
   );
 };
