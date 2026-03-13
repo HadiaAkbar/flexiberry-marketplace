@@ -10,6 +10,7 @@ import {
   featuredProducts, formatPrice,
   getMonthlyInstallment, categories,
 } from "@/data/products";
+import { useCart } from "@/context/CartContext";
 import {
   Star, Heart, ShoppingCart, ChevronRight,
   Sparkles, Zap, TrendingUp, BadgeCheck,
@@ -141,6 +142,7 @@ const HoloCard = ({
   const [imgFailed, setImgFailed] = useState(false);
   const [carted, setCarted]       = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart } = useCart();
 
   /* Spring-physics tilt */
   const mx = useMotionValue(0);
@@ -162,6 +164,15 @@ const HoloCard = ({
 
   const handleCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      shopId: product.categoryId,
+      shopName: product.name,
+    });
     setCarted(true);
     setTimeout(() => setCarted(false), 2200);
   };
