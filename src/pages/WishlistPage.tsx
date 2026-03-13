@@ -5,6 +5,9 @@ import {
   Heart, ShoppingCart, Trash2, Star, Share2,
   Tag, Clock, TrendingDown, Store, ChevronRight, Package, ShoppingBag
 } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
 
 // ── Mock wishlist data ──────────────────────────────────────────────────────
 const initialWishlist = [
@@ -112,14 +115,24 @@ const formatPKR = (n: number) => "PKR " + n.toLocaleString("en-PK");
 const WishlistPage = () => {
   const [items, setItems] = useState(initialWishlist);
   const [failedImgs, setFailedImgs] = useState<Set<string>>(new Set());
-  const [addedToCart, setAddedToCart] = useState<string[]>([]);
+  const [addedToCartIds, setAddedToCartIds] = useState<string[]>([]);
+  const { addToCart } = useCart();
 
   const remove = (id: string) =>
     setItems((prev) => prev.filter((i) => i.id !== id));
 
-  const handleAddToCart = (id: string) => {
-    setAddedToCart((prev) => [...prev, id]);
-    setTimeout(() => setAddedToCart((prev) => prev.filter((i) => i !== id)), 2000);
+  const handleAddToCart = (item: typeof initialWishlist[0]) => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      originalPrice: item.originalPrice,
+      image: item.image,
+      shopId: item.shopId,
+      shopName: item.shop,
+    });
+    setAddedToCartIds((prev) => [...prev, item.id]);
+    setTimeout(() => setAddedToCartIds((prev) => prev.filter((i) => i !== item.id)), 2000);
   };
 
   const clearAll = () => setItems([]);
@@ -251,7 +264,6 @@ const WishlistPage = () => {
                     )}
 
                     {failedImgs.has(item.id) ? (
-                      /* Emoji fallback */
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="text-7xl">{EMOJI_FALLBACK[item.id] ?? "📦"}</span>
                       </div>
@@ -267,7 +279,6 @@ const WishlistPage = () => {
                       />
                     )}
 
-                    {/* Subtle gradient overlay at bottom for legibility */}
                     <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                   </div>
 
@@ -320,10 +331,10 @@ const WishlistPage = () => {
                     {/* Actions */}
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleAddToCart(item.id)}
-                        disabled={!item.inStock || addedToCart.includes(item.id)}
+                        onClick={() => handleAddToCart(item)}
+                        disabled={!item.inStock || addedToCartIds.includes(item.id)}
                         className={`flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl transition-all
-                          ${addedToCart.includes(item.id)
+                          ${addedToCartIds.includes(item.id)
                             ? "bg-green-100 text-green-700 border border-green-200"
                             : item.inStock
                               ? "gradient-primary text-white hover:shadow-primary hover:-translate-y-0.5"
@@ -331,7 +342,7 @@ const WishlistPage = () => {
                           }`}
                       >
                         <ShoppingCart className="h-4 w-4" />
-                        {addedToCart.includes(item.id) ? "Added!" : item.inStock ? "Add to Cart" : "Unavailable"}
+                        {addedToCartIds.includes(item.id) ? "Added!" : item.inStock ? "Add to Cart" : "Unavailable"}
                       </button>
                       <button className="h-10 w-10 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors">
                         <Share2 className="h-4 w-4" />
