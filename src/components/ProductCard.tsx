@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
-import { Star, Heart, ShoppingCart, Store } from "lucide-react";
+import { Star, Heart, ShoppingCart, Store, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Product, formatPrice, getMonthlyInstallment } from "@/data/products";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useCart } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: Product;
   index?: number;
 }
 
-// Mock vendor map — matches categoryId to a shop name
 const VENDOR_NAMES: Record<string, string> = {
   phones:          "TechZone Official Store",
   laptops:         "DigiWorld Electronics",
@@ -24,7 +24,19 @@ const VENDOR_NAMES: Record<string, string> = {
   general:         "FlexiBerry Official",
 };
 
-// Category emoji map for the placeholder
+const VENDOR_IDS: Record<string, string> = {
+  phones:          "vendor-techzone-001",
+  laptops:         "vendor-digiworld-002",
+  bikes:           "vendor-speedriders-003",
+  appliances:      "vendor-homeelite-004",
+  solar:           "vendor-greenpower-005",
+  furniture:       "vendor-crafthouse-006",
+  jahez:           "vendor-stylehub-007",
+  cars:            "vendor-autoprime-008",
+  "raw-materials": "vendor-buildmart-009",
+  general:         "vendor-flexiberry-000",
+};
+
 const getCategoryEmoji = (text: string): string => {
   const t = text.toLowerCase();
   if (t.includes("ac") || t.includes("air condition") || t.includes("cooling")) return "❄️";
@@ -44,8 +56,7 @@ const getCategoryEmoji = (text: string): string => {
   return "📦";
 };
 
-// Deterministic pastel bg per product id so each card has a unique color
-const PASTEL_BGAS = [
+const PASTEL_BGS = [
   "from-blue-50 to-indigo-100",
   "from-emerald-50 to-teal-100",
   "from-violet-50 to-purple-100",
@@ -54,7 +65,7 @@ const PASTEL_BGAS = [
   "from-sky-50 to-cyan-100",
 ];
 const getCardBg = (id: string | number): string =>
-  PASTEL_BGAS[String(id).charCodeAt(0) % PASTEL_BGAS.length];
+  PASTEL_BGS[String(id).charCodeAt(0) % PASTEL_BGS.length];
 
 const ImagePlaceholder = ({ product }: { product: Product }) => (
   <div className={`w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br ${getCardBg(product.id)}`}>
@@ -69,12 +80,38 @@ const ImagePlaceholder = ({ product }: { product: Product }) => (
 
 const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const [imgFailed, setImgFailed] = useState(false);
+  const [wished, setWished] = useState(false);
+  const [added, setAdded] = useState(false);
+  const { addToCart } = useCart();
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
   const shopName = VENDOR_NAMES[product.categoryId] ?? "FlexiBerry Official";
+  const shopId   = VENDOR_IDS[product.categoryId]   ?? "vendor-flexiberry-000";
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      shopId,
+      shopName,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setWished(!wished);
+  };
 
   return (
     <motion.div
@@ -107,8 +144,17 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               </span>
             )}
 
-            <button className="absolute top-2.5 right-2.5 h-8 w-8 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-card shadow-sm">
-              <Heart className="h-4 w-4 text-primary" />
+            <button
+              onClick={handleWishlist}
+              className="absolute top-2.5 right-2.5 h-8 w-8 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-card shadow-sm"
+            >
+              <Heart
+                className="h-4 w-4"
+                style={{
+                  fill: wished ? "#ef4444" : "none",
+                  color: wished ? "#ef4444" : "currentColor",
+                }}
+              />
             </button>
           </div>
 
@@ -124,6 +170,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
             <h3 className="font-semibold text-sm text-foreground line-clamp-2 min-h-[2.5rem] mb-2 leading-snug">
               {product.name}
             </h3>
+
             <div className="flex items-baseline gap-2 mb-1.5">
               <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
               {product.originalPrice && (
@@ -132,11 +179,13 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
                 </span>
               )}
             </div>
+
             <div className="bg-accent/10 rounded-lg px-2.5 py-2 mb-3 border border-accent/20">
               <p className="text-xs text-accent font-semibold">
                 💳 {getMonthlyInstallment(product.price, 12)}/mo × 12
               </p>
             </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-amber text-amber" />
@@ -145,10 +194,18 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               </div>
               <Button
                 size="sm"
-                className="h-8 text-xs gradient-coral border-none text-primary-foreground shadow-none hover:opacity-90 rounded-lg px-3"
+                onClick={handleAddToCart}
+                className={`h-8 text-xs border-none text-primary-foreground shadow-none hover:opacity-90 rounded-lg px-3 transition-all ${
+                  added
+                    ? "bg-green-500 hover:bg-green-500"
+                    : "gradient-coral"
+                }`}
               >
-                <ShoppingCart className="h-3 w-3 mr-1" />
-                Add
+                {added ? (
+                  <><Check className="h-3 w-3 mr-1" />Added</>
+                ) : (
+                  <><ShoppingCart className="h-3 w-3 mr-1" />Add</>
+                )}
               </Button>
             </div>
           </div>
