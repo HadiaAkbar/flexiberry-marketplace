@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { shops } from "@/data/products";
 import { Star, ArrowRight, ArrowUpRight, Package } from "lucide-react";
@@ -71,7 +70,7 @@ const VendorShowcase = () => {
             </p>
           </div>
           <Link
-            to="/shops"
+            to="/shop"
             style={{
               display: "inline-flex", alignItems: "center", gap: "8px",
               padding: "12px 24px", borderRadius: "14px",
@@ -163,7 +162,7 @@ const VendorShowcase = () => {
                       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
 
                         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                          {/* Logo bubble — 3D */}
+                          {/* Logo bubble */}
                           <div style={{
                             width: "64px", height: "64px",
                             borderRadius: "20px",
