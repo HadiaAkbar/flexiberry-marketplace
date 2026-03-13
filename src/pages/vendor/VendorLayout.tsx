@@ -101,7 +101,7 @@ const VendorLayout = () => {
         <div style={{ position: "absolute", top: "-40px", left: "50%", transform: "translateX(-50%)", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(37,99,235,0.3)", filter: "blur(60px)", pointerEvents: "none" }}/>
 
         {/* Logo */}
-        <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 1 }}>
+        {/* <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", position: "relative", zIndex: 1 }}>
           <Link to="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
             <FlexiBerryLogo size={36}/>
             <div>
@@ -109,7 +109,54 @@ const VendorLayout = () => {
               <div style={{ fontSize: "9px", fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "2px" }}>Vendor Portal</div>
             </div>
           </Link>
-        </div>
+        </div> */}
+        {/* Logo */}
+<div
+  style={{
+    padding: "24px 20px 20px",
+    borderBottom: "1px solid rgba(255,255,255,0.06)",
+    position: "relative",
+    zIndex: 1
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      cursor: "default"
+    }}
+  >
+    <FlexiBerryLogo size={36} />
+
+    <div>
+      <div
+        style={{
+          fontSize: "14px",
+          fontWeight: 800,
+          color: "white",
+          letterSpacing: "-0.02em",
+          lineHeight: 1
+        }}
+      >
+        FlexiBerry
+      </div>
+
+      <div
+        style={{
+          fontSize: "9px",
+          fontWeight: 600,
+          color: "rgba(255,255,255,0.4)",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          marginTop: "2px"
+        }}
+      >
+        Vendor Portal
+      </div>
+    </div>
+  </div>
+</div>
 
         {/* Vendor badge */}
         <div style={{ margin: "16px 16px 8px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px", padding: "12px 14px", display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
