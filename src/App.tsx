@@ -13,6 +13,7 @@ import CartPage from "./pages/CartPage";
 import WishlistPage from "./pages/WishlistPage";
 import AccountPage from "./pages/AccountPage";
 import FlashSalePage from "./pages/FlashSalePage";
+import NewArrivalsPage from "./pages/NewArrivalsPage";
 import CategoryPage from "./pages/CategoryPage";
 import CustomerDashboard from "./pages/CustomerDashboard";
 
@@ -24,7 +25,7 @@ import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import VendorLoginPage from "./pages/vendor/VendorLoginPage";
 
 /* Admin Pages */
-import AdminLayout from "./components/admin/AdminLayout";
+import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductsPage from "./pages/admin/ProductsPage";
 import CategoriesPage from "./pages/admin/CategoriesPage";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/flash-sale" element={<FlashSalePage />} />
+            <Route path="/new-arrivals" element={<NewArrivalsPage />} />
 
             {/* ✅ Customer Dashboard */}
             <Route path="/dashboard" element={<CustomerDashboard />} />
