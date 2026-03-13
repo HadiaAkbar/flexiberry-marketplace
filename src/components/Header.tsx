@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, CheckCircle2, TrendingUp, DollarSign, BarChart3, ChevronRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { categories } from "@/data/products";
+import { useCart } from "@/context/CartContext";
 
 const marqueeItems = [
   { icon: "🔥", text: "0% Commission for first 90 days!" },
@@ -74,6 +75,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -307,7 +309,7 @@ const Header = () => {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   border: "2px solid white",
                   boxShadow: "0 2px 6px rgba(239,68,68,0.50)",
-                }}>0</span>
+                }}>{cartCount}</span>
               </button>
             </Link>
 
