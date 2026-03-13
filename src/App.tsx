@@ -94,10 +94,13 @@ const App = () => (
             {/* Vendor Dashboard */}
             <Route path="/vendor" element={<VendorLayout />}>
               <Route index element={<VendorDashboard />} />
-              <Route path="shop" element={<VendorDashboard />} />
-              <Route path="products" element={<VendorDashboard />} />
-              <Route path="analytics" element={<VendorDashboard />} />
-              <Route path="settings" element={<VendorDashboard />} />
+              <Route path="products" element={<VendorProductsPage />} />
+              <Route path="orders" element={<VendorOrdersPage />} />
+              <Route path="installments" element={<VendorInstallmentsPage />} />
+              <Route path="buyers" element={<VendorBuyersPage />} />
+              <Route path="analytics" element={<VendorAnalyticsPage />} />
+              <Route path="kyc" element={<VendorKYCPage />} />
+              <Route path="settings" element={<VendorSettingsPage />} />
             </Route>
 
             {/* Admin Panel */}
