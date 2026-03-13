@@ -25,6 +25,13 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorStorePage from "./pages/vendor/VendorStorePage";
 import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import VendorLoginPage from "./pages/vendor/VendorLoginPage";
+import VendorProductsPage from "./pages/vendor/VendorProductsPage";
+import VendorOrdersPage from "./pages/vendor/VendorOrdersPage";
+import VendorInstallmentsPage from "./pages/vendor/VendorInstallmentsPage";
+import VendorBuyersPage from "./pages/vendor/VendorBuyersPage";
+import VendorAnalyticsPage from "./pages/vendor/VendorAnalyticsPage";
+import VendorKYCPage from "./pages/vendor/VendorKYCPage";
+import VendorSettingsPage from "./pages/vendor/VendorSettingsPage";
 
 /* Admin Pages */
 import AdminLayout from "./pages/admin/AdminLayout";
