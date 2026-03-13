@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
-import { CheckCircle2, X, PartyPopper } from "lucide-react";
+import { CheckCircle2, X, PartyPopper, Mail, ArrowLeft, KeyRound, RefreshCw } from "lucide-react";
 
 /* ── Inline SVG: FlexiBerry Tagged-Cart Logo ── */
 const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
@@ -47,155 +47,170 @@ const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
   </svg>
 );
 
-/* ── Success Popup ── */
+/* ── Shared animation styles ── */
+const GlobalStyles = () => (
+  <style>{`
+    @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popUp {
+      from { opacity: 0; transform: translate(-50%, -46%) scale(0.92); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes pulseRing {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+      50%       { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  `}</style>
+);
+
+/* ── Account Created Popup ── */
 const SuccessPopup = ({ name, onClose }: { name: string; onClose: () => void }) => (
   <>
-    {/* Backdrop */}
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed", inset: 0,
-        background: "rgba(0,0,0,0.45)",
-        backdropFilter: "blur(4px)",
-        zIndex: 999,
-        animation: "fadeIn 0.2s ease",
-      }}
-    />
-
-    {/* Modal */}
-    <div style={{
-      position: "fixed",
-      top: "50%", left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 1000,
-      width: "min(420px, 92vw)",
-      background: "white",
-      borderRadius: "24px",
-      boxShadow: "0 32px 80px rgba(37,99,235,0.22), 0 8px 24px rgba(0,0,0,0.12)",
-      overflow: "hidden",
-      animation: "popUp 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-    }}>
-      {/* Gradient top band */}
-      <div style={{
-        background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-        padding: "28px 24px 24px",
-        textAlign: "center",
-        position: "relative",
-      }}>
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute", top: "12px", right: "12px",
-            background: "rgba(255,255,255,0.2)", border: "none",
-            borderRadius: "50%", width: "28px", height: "28px",
-            cursor: "pointer", color: "white",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-          <X size={14} />
-        </button>
-
-        {/* Animated checkmark circle */}
-        <div style={{
-          width: "72px", height: "72px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.2)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto 14px",
-          border: "3px solid rgba(255,255,255,0.4)",
-          animation: "pulse 2s ease-in-out infinite",
-        }}>
-          <CheckCircle2 size={38} color="white" strokeWidth={2} />
+    <div onClick={onClose} style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(4px)",zIndex:999,animation:"fadeIn 0.2s ease" }}/>
+    <div style={{ position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",zIndex:1000,width:"min(420px,92vw)",background:"white",borderRadius:"24px",boxShadow:"0 32px 80px rgba(37,99,235,0.22),0 8px 24px rgba(0,0,0,0.12)",overflow:"hidden",animation:"popUp 0.35s cubic-bezier(0.34,1.56,0.64,1)",fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+      <div style={{ background:"linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)",padding:"28px 24px 24px",textAlign:"center",position:"relative" }}>
+        <button onClick={onClose} style={{ position:"absolute",top:"12px",right:"12px",background:"rgba(255,255,255,0.2)",border:"none",borderRadius:"50%",width:"28px",height:"28px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",justifyContent:"center" }}><X size={14}/></button>
+        <div style={{ width:"72px",height:"72px",borderRadius:"50%",background:"rgba(255,255,255,0.2)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",border:"3px solid rgba(255,255,255,0.4)",animation:"pulseRing 2s ease-in-out infinite" }}>
+          <CheckCircle2 size={38} color="white" strokeWidth={2}/>
         </div>
-
-        <h2 style={{
-          color: "white", fontFamily: "'Plus Jakarta Sans', sans-serif",
-          fontWeight: 800, fontSize: "20px", margin: "0 0 6px",
-        }}>
-          Account Created! 🎉
-        </h2>
-        <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "13px", margin: 0 }}>
-          Welcome to FlexiBerry, {name || "there"}!
-        </p>
+        <h2 style={{ color:"white",fontWeight:800,fontSize:"20px",margin:"0 0 6px" }}>Account Created! 🎉</h2>
+        <p style={{ color:"rgba(255,255,255,0.75)",fontSize:"13px",margin:0 }}>Welcome to FlexiBerry, {name||"there"}!</p>
       </div>
-
-      {/* Body */}
-      <div style={{ padding: "24px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-        {/* Perks */}
-        {[
-          { emoji: "🛒", text: "Shop thousands of products on easy installments" },
-          { emoji: "⚡", text: "Exclusive flash sale deals just for members" },
-          { emoji: "🔒", text: "KYC-secured account with safe payments" },
-        ].map(({ emoji, text }) => (
-          <div key={text} style={{
-            display: "flex", alignItems: "center", gap: "12px",
-            padding: "10px 0",
-            borderBottom: "1px solid rgba(37,99,235,0.07)",
-          }}>
-            <span style={{ fontSize: "20px" }}>{emoji}</span>
-            <p style={{ margin: 0, fontSize: "13px", color: "#374151", fontWeight: 600 }}>{text}</p>
+      <div style={{ padding:"24px" }}>
+        {[{emoji:"🛒",text:"Shop thousands of products on easy installments"},{emoji:"⚡",text:"Exclusive flash sale deals just for members"},{emoji:"🔒",text:"KYC-secured account with safe payments"}].map(({emoji,text})=>(
+          <div key={text} style={{ display:"flex",alignItems:"center",gap:"12px",padding:"10px 0",borderBottom:"1px solid rgba(37,99,235,0.07)" }}>
+            <span style={{ fontSize:"20px" }}>{emoji}</span>
+            <p style={{ margin:0,fontSize:"13px",color:"#374151",fontWeight:600 }}>{text}</p>
           </div>
         ))}
-
-        {/* CTA buttons */}
-        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-          <button
-            onClick={onClose}
-            style={{
-              flex: 1, height: "44px", borderRadius: "12px",
-              background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-              border: "none", cursor: "pointer",
-              color: "white", fontSize: "13px", fontWeight: 700,
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              boxShadow: "0 6px 18px rgba(37,99,235,0.35)",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-            }}>
-            <PartyPopper size={15} />
-            Start Shopping
-          </button>
-          <button
-            onClick={onClose}
-            style={{
-              height: "44px", padding: "0 16px", borderRadius: "12px",
-              background: "transparent",
-              border: "1.5px solid rgba(37,99,235,0.2)",
-              cursor: "pointer", color: "#2563eb",
-              fontSize: "13px", fontWeight: 600,
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-            }}>
-            Close
-          </button>
+        <div style={{ display:"flex",gap:"10px",marginTop:"20px" }}>
+          <button onClick={onClose} style={{ flex:1,height:"44px",borderRadius:"12px",background:"linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)",border:"none",cursor:"pointer",color:"white",fontSize:"13px",fontWeight:700,fontFamily:"'Plus Jakarta Sans',sans-serif",boxShadow:"0 6px 18px rgba(37,99,235,0.35)",display:"flex",alignItems:"center",justifyContent:"center",gap:"6px" }}><PartyPopper size={15}/>Start Shopping</button>
+          <button onClick={onClose} style={{ height:"44px",padding:"0 16px",borderRadius:"12px",background:"transparent",border:"1.5px solid rgba(37,99,235,0.2)",cursor:"pointer",color:"#2563eb",fontSize:"13px",fontWeight:600,fontFamily:"'Plus Jakarta Sans',sans-serif" }}>Close</button>
         </div>
       </div>
     </div>
-
-    <style>{`
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-      }
-      @keyframes popUp {
-        from { opacity: 0; transform: translate(-50%, -46%) scale(0.92); }
-        to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      }
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
-        50%       { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
-      }
-    `}</style>
   </>
 );
 
+/* ── Forgot Password Modal ── */
+type ForgotStep = "email" | "sent";
+
+const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
+  const [step, setStep] = useState<ForgotStep>("email");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = () => {
+    if (!email) return;
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setStep("sent"); }, 1500);
+  };
+
+  const F = { fontFamily: "'Plus Jakarta Sans',sans-serif" };
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.45)",backdropFilter:"blur(4px)",zIndex:999,animation:"fadeIn 0.2s ease" }}/>
+      <div style={{ position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",zIndex:1000,width:"min(400px,92vw)",background:"white",borderRadius:"24px",boxShadow:"0 32px 80px rgba(37,99,235,0.22),0 8px 24px rgba(0,0,0,0.12)",overflow:"hidden",animation:"popUp 0.35s cubic-bezier(0.34,1.56,0.64,1)",...F }}>
+
+        {/* Gradient header */}
+        <div style={{ background:"linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)",padding:"24px",position:"relative",textAlign:"center" }}>
+          <button onClick={onClose} style={{ position:"absolute",top:"12px",right:"12px",background:"rgba(255,255,255,0.2)",border:"none",borderRadius:"50%",width:"28px",height:"28px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",justifyContent:"center" }}>
+            <X size={14}/>
+          </button>
+          <div style={{ width:"60px",height:"60px",borderRadius:"50%",background:"rgba(255,255,255,0.2)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 12px",border:"3px solid rgba(255,255,255,0.35)" }}>
+            {step === "email" ? <KeyRound size={28} color="white"/> : <Mail size={28} color="white"/>}
+          </div>
+          <h2 style={{ color:"white",fontWeight:800,fontSize:"18px",margin:"0 0 4px" }}>
+            {step === "email" ? "Forgot Password?" : "Check Your Email"}
+          </h2>
+          <p style={{ color:"rgba(255,255,255,0.7)",fontSize:"12px",margin:0 }}>
+            {step === "email" ? "Enter your email and we'll send a reset link" : `We sent a reset link to ${email}`}
+          </p>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding:"24px" }}>
+          {step === "email" ? (
+            <>
+              <div style={{ marginBottom:"16px" }}>
+                <label style={{ fontSize:"12px",fontWeight:700,color:"#374151",display:"block",marginBottom:"6px",...F }}>Email Address</label>
+                <div style={{ position:"relative" }}>
+                  <Mail size={15} color="#94a3b8" style={{ position:"absolute",left:"12px",top:"50%",transform:"translateY(-50%)",pointerEvents:"none" }}/>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleSend()}
+                    autoFocus
+                    style={{ width:"100%",height:"44px",paddingLeft:"36px",paddingRight:"12px",borderRadius:"11px",border:"1.5px solid rgba(37,99,235,0.2)",fontSize:"13px",outline:"none",boxSizing:"border-box",background:"#fafbff",...F }}
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleSend}
+                disabled={loading || !email}
+                style={{ width:"100%",height:"44px",borderRadius:"12px",background:loading||!email?"rgba(37,99,235,0.35)":"linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)",border:"none",cursor:loading||!email?"not-allowed":"pointer",color:"white",fontSize:"13px",fontWeight:700,boxShadow:"0 6px 18px rgba(37,99,235,0.3)",display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s",...F }}>
+                {loading
+                  ? <><RefreshCw size={15} style={{ animation:"spin 1s linear infinite" }}/> Sending…</>
+                  : "Send Reset Link"}
+              </button>
+
+              <button onClick={onClose} style={{ width:"100%",marginTop:"10px",height:"40px",borderRadius:"12px",background:"transparent",border:"1.5px solid rgba(37,99,235,0.15)",cursor:"pointer",color:"#64748b",fontSize:"13px",fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center",gap:"6px",...F }}>
+                <ArrowLeft size={14}/> Back to Login
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Email sent confirmation */}
+              <div style={{ textAlign:"center",padding:"8px 0 16px" }}>
+                <div style={{ width:"64px",height:"64px",borderRadius:"50%",background:"linear-gradient(135deg,#d1fae5,#a7f3d0)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",border:"3px solid #6ee7b7" }}>
+                  <CheckCircle2 size={32} color="#059669"/>
+                </div>
+                <p style={{ fontSize:"13px",color:"#374151",fontWeight:700,margin:"0 0 4px" }}>Reset link sent successfully!</p>
+                <p style={{ fontSize:"12px",color:"#94a3b8",margin:0 }}>Didn't receive it? Check your spam folder or try again.</p>
+              </div>
+
+              {/* Tips */}
+              <div style={{ background:"rgba(37,99,235,0.05)",border:"1px solid rgba(37,99,235,0.12)",borderRadius:"12px",padding:"12px 14px",marginBottom:"16px" }}>
+                {[{emoji:"📬",text:"Check your inbox for the reset link"},{emoji:"⏱️",text:"Link expires in 30 minutes"},{emoji:"🔒",text:"Choose a strong new password"}].map(({emoji,text})=>(
+                  <div key={text} style={{ display:"flex",alignItems:"center",gap:"10px",padding:"5px 0" }}>
+                    <span style={{ fontSize:"16px" }}>{emoji}</span>
+                    <span style={{ fontSize:"12px",color:"#475569",fontWeight:500,...F }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button onClick={() => { setStep("email"); setEmail(""); }} style={{ width:"100%",marginBottom:"8px",height:"40px",borderRadius:"12px",background:"transparent",border:"1.5px solid rgba(37,99,235,0.2)",cursor:"pointer",color:"#2563eb",fontSize:"13px",fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center",gap:"6px",...F }}>
+                <RefreshCw size={14}/> Resend Email
+              </button>
+
+              <button onClick={onClose} style={{ width:"100%",height:"44px",borderRadius:"12px",background:"linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)",border:"none",cursor:"pointer",color:"white",fontSize:"13px",fontWeight:700,boxShadow:"0 6px 18px rgba(37,99,235,0.3)",...F }}>
+                Back to Login
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+/* ── Main Page ── */
 const LoginPage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const [name, setName] = useState("");
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <GlobalStyles />
       <Header />
 
-      {showSuccess && (
-        <SuccessPopup name={name} onClose={() => setShowSuccess(false)} />
-      )}
+      {showSuccess && <SuccessPopup name={name} onClose={() => setShowSuccess(false)} />}
+      {showForgot  && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
 
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
@@ -226,7 +241,12 @@ const LoginPage = () => {
                 </div>
                 <Button className="w-full gradient-coral border-none text-primary-foreground hover:opacity-90">Login</Button>
                 <p className="text-center text-xs text-muted-foreground">
-                  <Link to="#" className="text-primary hover:underline">Forgot password?</Link>
+                  <button
+                    onClick={() => setShowForgot(true)}
+                    className="text-primary hover:underline bg-transparent border-none cursor-pointer text-xs p-0"
+                  >
+                    Forgot password?
+                  </button>
                 </p>
               </TabsContent>
 
