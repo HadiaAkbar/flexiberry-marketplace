@@ -81,12 +81,12 @@ const CategoryGrid = () => {
               Find what you need across 10+ categories
             </p>
           </div>
-          <Link
+          {/* <Link
             to="/categories"
             className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             View All <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          </Link> */}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
