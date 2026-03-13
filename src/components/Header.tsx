@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, TrendingUp, DollarSign, BarChart3, ChevronRight } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, TrendingUp, DollarSign, BarChart3, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { categories } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -56,24 +56,221 @@ const FlexiBerryLogo = ({ size = 40 }: { size?: number }) => (
   </svg>
 );
 
-const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [catOpen, setCatOpen] = useState(false);
-  const [vendorOpen, setVendorOpen] = useState(false);
-  const [mobileVendorOpen, setMobileVendorOpen] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
+/* ─────────────────────────────────────────────────────────────────
+   VendorForm — MUST live OUTSIDE Header so it is never remounted
+   on Header state changes (fixes the "lose focus after each key"
+   bug caused by the component being redefined on every render).
+───────────────────────────────────────────────────────────────── */
+interface VendorFormProps {
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const VendorForm = ({ onClose, onSuccess }: VendorFormProps) => {
+  const F = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
   const [showPass, setShowPass] = useState(false);
-  const [shopName, setShopName] = useState("");
+  const [shopName,  setShopName]  = useState("");
   const [ownerName, setOwnerName] = useState("");
-  const [city, setCity] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [category, setCategory] = useState("");
-  const vendorRef = useRef<HTMLDivElement>(null);
+  const [city,      setCity]      = useState("");
+  const [phone,     setPhone]     = useState("");
+  const [email,     setEmail]     = useState("");
+  const [password,  setPassword]  = useState("");
+  const [category,  setCategory]  = useState("");
+
+  const handleSubmit = () => {
+    // No navigate — show success popup instead
+    onSuccess();
+  };
+
+  return (
+    <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+      {/* Row 1 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Shop Name</label>
+          <div style={{ position: "relative" }}>
+            <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Owner Name</label>
+          <div style={{ position: "relative" }}>
+            <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Row 2 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Phone</label>
+          <div style={{ position: "relative" }}>
+            <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>City</label>
+          <div style={{ position: "relative" }}>
+            <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Category */}
+      <div>
+        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Product Category</label>
+        <div style={{ position: "relative" }}>
+          <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
+          <select value={category} onChange={e => setCategory(e.target.value)}
+            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, background: "#fafbff", appearance: "none" }}>
+            <option value="">Select a category…</option>
+            <option value="phones">Mobiles & Phones</option>
+            <option value="laptops">Laptops & Computers</option>
+            <option value="appliances">Home Appliances</option>
+            <option value="furniture">Furniture</option>
+            <option value="bikes">Bikes & Scooters</option>
+            <option value="solar">Solar & Energy</option>
+            <option value="cars">Cars & Vehicles</option>
+            <option value="jahez">Jahez & Dowry</option>
+            <option value="raw-materials">Raw Materials</option>
+            <option value="general">General / Other</option>
+          </select>
+        </div>
+      </div>
+      {/* Email + Password */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Business Email</label>
+          <div style={{ position: "relative" }}>
+            <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", ...F }}>Password</label>
+          <div style={{ position: "relative" }}>
+            <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", ...F, boxSizing: "border-box", background: "#fafbff" }}/>
+            <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
+              {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* Submit — calls onSuccess, does NOT navigate */}
+      <button
+        onClick={handleSubmit}
+        style={{
+          width: "100%", height: "40px", borderRadius: "11px",
+          background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+          border: "none", cursor: "pointer",
+          color: "white", fontSize: "13px", fontWeight: 700,
+          ...F,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+          boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
+          transition: "all 0.2s ease",
+          marginTop: "2px",
+        }}>
+        Create Vendor Account
+        <ChevronRight size={14}/>
+      </button>
+      <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, ...F }}>
+        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
+      </p>
+    </div>
+  );
+};
+
+/* ── Vendor Registration Success Modal ── */
+const VendorSuccessModal = ({ onClose }: { onClose: () => void }) => {
+  const F = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", zIndex: 9999, animation: "vsIn 0.2s ease" }}
+      />
+      {/* Modal */}
+      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 10000, width: "min(420px,94vw)", background: "white", borderRadius: "24px", boxShadow: "0 32px 80px rgba(37,99,235,0.22), 0 8px 24px rgba(0,0,0,0.12)", overflow: "hidden", animation: "vsPopUp 0.35s cubic-bezier(0.34,1.56,0.64,1)", ...F }}>
+
+        {/* Gradient header */}
+        <div style={{ background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", padding: "28px 24px 24px", position: "relative", textAlign: "center" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: "12px", right: "12px", background: "rgba(255,255,255,0.2)", border: "none", borderRadius: "50%", width: "28px", height: "28px", cursor: "pointer", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <X size={14} />
+          </button>
+          <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid rgba(255,255,255,0.35)" }}>
+            <CheckCircle2 size={30} color="white" />
+          </div>
+          <h2 style={{ color: "white", fontWeight: 800, fontSize: "20px", margin: "0 0 6px" }}>You're Almost In!</h2>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "13px", margin: 0 }}>
+            Your vendor application has been received successfully
+          </p>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "24px" }}>
+          <div style={{ textAlign: "center", paddingBottom: "18px" }}>
+            <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: "linear-gradient(135deg,#d1fae5,#a7f3d0)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid #6ee7b7" }}>
+              <CheckCircle2 size={36} color="#059669" />
+            </div>
+            <p style={{ fontSize: "16px", color: "#111827", fontWeight: 800, margin: "0 0 6px", ...F }}>Application Submitted!</p>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.6, ...F }}>
+              Our team will review your application and contact you within <strong>24 hours</strong> for KYC verification.
+            </p>
+          </div>
+
+          <div style={{ background: "rgba(37,99,235,0.05)", border: "1px solid rgba(37,99,235,0.12)", borderRadius: "12px", padding: "12px 14px", marginBottom: "20px" }}>
+            {[
+              { emoji: "📧", text: "Check your email for a confirmation message" },
+              { emoji: "📋", text: "Prepare your CNIC & business documents" },
+              { emoji: "⏱️", text: "KYC review completed within 24 hours" },
+              { emoji: "🚀", text: "Dashboard access granted after approval" },
+            ].map(({ emoji, text }) => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "6px 0" }}>
+                <span style={{ fontSize: "16px" }}>{emoji}</span>
+                <span style={{ fontSize: "12px", color: "#475569", fontWeight: 500, ...F }}>{text}</span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={onClose}
+            style={{ width: "100%", height: "46px", borderRadius: "12px", background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", border: "none", cursor: "pointer", color: "white", fontSize: "14px", fontWeight: 700, boxShadow: "0 6px 18px rgba(37,99,235,0.3)", display: "flex", alignItems: "center", justifyContent: "center", transition: "opacity 0.2s", ...F }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            Got it, thanks!
+          </button>
+        </div>
+      </div>
+      <style>{`
+        @keyframes vsIn    { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes vsPopUp { from { opacity: 0; transform: translate(-50%,-46%) scale(0.92); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+      `}</style>
+    </>
+  );
+};
+
+/* ── Main Header ── */
+const Header = () => {
+  const [menuOpen,          setMenuOpen]          = useState(false);
+  const [catOpen,           setCatOpen]           = useState(false);
+  const [vendorOpen,        setVendorOpen]        = useState(false);
+  const [mobileVendorOpen,  setMobileVendorOpen]  = useState(false);
+  const [searchFocused,     setSearchFocused]     = useState(false);
+  const [showVendorSuccess, setShowVendorSuccess] = useState(false);
+  const vendorRef    = useRef<HTMLDivElement>(null);
   const vendorBtnRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
-  const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
   const { cartCount } = useCart();
@@ -92,10 +289,7 @@ const Header = () => {
     const updatePos = () => {
       if (vendorBtnRef.current && vendorOpen) {
         const rect = vendorBtnRef.current.getBoundingClientRect();
-        setDropdownPos({
-          top: rect.bottom + 10,
-          right: window.innerWidth - rect.right,
-        });
+        setDropdownPos({ top: rect.bottom + 10, right: window.innerWidth - rect.right });
       }
     };
     updatePos();
@@ -107,115 +301,18 @@ const Header = () => {
     };
   }, [vendorOpen]);
 
-  // Shared vendor registration form fields (used in both desktop dropdown and mobile panel)
-  const VendorForm = ({ onClose }: { onClose: () => void }) => (
-    <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
-      {/* Row 1 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Shop Name</label>
-          <div style={{ position: "relative" }}>
-            <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          </div>
-        </div>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Owner Name</label>
-          <div style={{ position: "relative" }}>
-            <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          </div>
-        </div>
-      </div>
-      {/* Row 2 */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Phone</label>
-          <div style={{ position: "relative" }}>
-            <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          </div>
-        </div>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>City</label>
-          <div style={{ position: "relative" }}>
-            <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          </div>
-        </div>
-      </div>
-      {/* Category */}
-      <div>
-        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Product Category</label>
-        <div style={{ position: "relative" }}>
-          <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
-          <select value={category} onChange={e => setCategory(e.target.value)}
-            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#fafbff", appearance: "none" }}>
-            <option value="">Select a category…</option>
-            <option value="phones">Mobiles & Phones</option>
-            <option value="laptops">Laptops & Computers</option>
-            <option value="appliances">Home Appliances</option>
-            <option value="furniture">Furniture</option>
-            <option value="bikes">Bikes & Scooters</option>
-            <option value="solar">Solar & Energy</option>
-            <option value="cars">Cars & Vehicles</option>
-            <option value="jahez">Jahez & Dowry</option>
-            <option value="raw-materials">Raw Materials</option>
-            <option value="general">General / Other</option>
-          </select>
-        </div>
-      </div>
-      {/* Email + Password */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Business Email</label>
-          <div style={{ position: "relative" }}>
-            <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-          </div>
-        </div>
-        <div>
-          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Password</label>
-          <div style={{ position: "relative" }}>
-            <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
-              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-            <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
-              {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* Submit */}
-      <button
-        onClick={() => { onClose(); navigate("/vendor"); }}
-        style={{
-          width: "100%", height: "40px", borderRadius: "11px",
-          background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-          border: "none", cursor: "pointer",
-          color: "white", fontSize: "13px", fontWeight: 700,
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-          boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
-          transition: "all 0.2s ease",
-          marginTop: "2px",
-        }}>
-        Create Vendor Account
-        <ChevronRight size={14}/>
-      </button>
-      <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
-      </p>
-    </div>
-  );
+  const handleVendorSuccess = () => {
+    setVendorOpen(false);
+    setMobileVendorOpen(false);
+    setMenuOpen(false);
+    setShowVendorSuccess(true);
+  };
 
   return (
     <header className="sticky top-0 z-50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+
+      {/* Success Modal */}
+      {showVendorSuccess && <VendorSuccessModal onClose={() => setShowVendorSuccess(false)} />}
 
       {/* ── MARQUEE TOP BAR ── */}
       <div className="relative overflow-hidden" style={{
@@ -256,21 +353,14 @@ const Header = () => {
             <div className="hidden sm:flex flex-col leading-none">
               <div className="flex items-baseline gap-0.5">
                 <span style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "1.35rem",
+                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: "1.35rem",
                   background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                   letterSpacing: "-0.03em",
                 }}>Flexi</span>
                 <span style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 800,
-                  fontSize: "1.35rem",
-                  color: "#0f172a",
-                  letterSpacing: "-0.03em",
+                  fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: "1.35rem",
+                  color: "#0f172a", letterSpacing: "-0.03em",
                 }}>Berry</span>
               </div>
               <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.12em", color: "#94a3b8", textTransform: "uppercase", marginTop: "1px" }}>
@@ -287,8 +377,7 @@ const Header = () => {
                 background: "linear-gradient(135deg, #2563eb, #7c3aed)",
                 opacity: searchFocused ? 1 : 0,
                 transition: "opacity 0.25s ease",
-                filter: "blur(6px)",
-                zIndex: 0,
+                filter: "blur(6px)", zIndex: 0,
               }}/>
               <div style={{ position: "relative", zIndex: 1 }}>
                 <input
@@ -302,8 +391,7 @@ const Header = () => {
                     border: searchFocused ? "1.5px solid rgba(37,99,235,0.5)" : "1.5px solid rgba(37,99,235,0.15)",
                     background: searchFocused ? "#fff" : "rgba(248,250,255,0.9)",
                     fontSize: "14px", color: "#0f172a", outline: "none",
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontWeight: 500,
+                    fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 500,
                     boxShadow: searchFocused
                       ? "0 0 0 3px rgba(37,99,235,0.12), 0 4px 16px rgba(37,99,235,0.10)"
                       : "0 2px 8px rgba(0,0,0,0.04)",
@@ -331,12 +419,9 @@ const Header = () => {
               <button style={{
                 display: "flex", alignItems: "center", gap: "8px",
                 padding: "9px 16px", borderRadius: "12px",
-                background: "transparent",
-                border: "1.5px solid rgba(37,99,235,0.15)",
-                cursor: "pointer", fontSize: "13px", fontWeight: 600,
-                color: "#374151",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                transition: "all 0.2s ease",
+                background: "transparent", border: "1.5px solid rgba(37,99,235,0.15)",
+                cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "#374151",
+                fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "all 0.2s ease",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
               }}
               onMouseEnter={e => {
@@ -365,8 +450,7 @@ const Header = () => {
                 height: "42px", width: "42px", borderRadius: "12px",
                 background: "transparent", border: "1.5px solid rgba(37,99,235,0.12)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", color: "#94a3b8",
-                transition: "all 0.2s ease",
+                cursor: "pointer", color: "#94a3b8", transition: "all 0.2s ease",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
               }}
               onMouseEnter={e => {
@@ -395,8 +479,7 @@ const Header = () => {
                 fontSize: "13px", fontWeight: 700, color: "white",
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 boxShadow: "0 6px 20px rgba(37,99,235,0.45), 0 2px 6px rgba(124,58,237,0.30), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.12)",
-                transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)",
-                letterSpacing: "-0.01em",
+                transition: "all 0.2s cubic-bezier(0.34,1.56,0.64,1)", letterSpacing: "-0.01em",
               }}
               onMouseEnter={e => {
                 (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px) scale(1.03)";
@@ -414,8 +497,7 @@ const Header = () => {
                   background: "linear-gradient(135deg, #f97316, #ef4444)",
                   fontSize: "10px", fontWeight: 800, color: "white",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  border: "2px solid white",
-                  boxShadow: "0 2px 6px rgba(239,68,68,0.50)",
+                  border: "2px solid white", boxShadow: "0 2px 6px rgba(239,68,68,0.50)",
                 }}>{cartCount}</span>
               </button>
             </Link>
@@ -427,8 +509,7 @@ const Header = () => {
                 height: "42px", width: "42px", borderRadius: "12px",
                 background: menuOpen ? "rgba(37,99,235,0.08)" : "transparent",
                 border: "1.5px solid rgba(37,99,235,0.12)",
-                cursor: "pointer", color: "#64748b",
-                transition: "all 0.2s ease",
+                cursor: "pointer", color: "#64748b", transition: "all 0.2s ease",
               }}>
               <Menu size={18} strokeWidth={2}/>
             </button>
@@ -453,8 +534,7 @@ const Header = () => {
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   borderRadius: "0 0 14px 0",
                   boxShadow: "0 4px 14px rgba(37,99,235,0.35), inset 0 1px 0 rgba(255,255,255,0.20)",
-                  letterSpacing: "-0.01em",
-                  transition: "all 0.2s ease",
+                  letterSpacing: "-0.01em", transition: "all 0.2s ease",
                 }}>
                   <Menu size={15} strokeWidth={2.5}/>
                   All Categories
@@ -464,8 +544,7 @@ const Header = () => {
                 {catOpen && (
                   <div style={{
                     position: "absolute", top: "100%", left: 0,
-                    background: "white",
-                    borderRadius: "0 16px 16px 16px",
+                    background: "white", borderRadius: "0 16px 16px 16px",
                     boxShadow: "0 20px 60px rgba(37,99,235,0.15), 0 4px 16px rgba(0,0,0,0.08)",
                     border: "1px solid rgba(37,99,235,0.10)",
                     width: "260px", zIndex: 50, overflow: "hidden",
@@ -547,8 +626,7 @@ const Header = () => {
                     border: vendorOpen ? "1.5px solid rgba(37,99,235,0.4)" : "1.5px solid rgba(37,99,235,0.20)",
                     background: vendorOpen ? "rgba(37,99,235,0.06)" : "transparent",
                     color: "#2563eb",
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    transition: "all 0.2s ease",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "all 0.2s ease",
                   }}>
                   <Store size={14} strokeWidth={2.5}/>
                   Sell as Vendor
@@ -561,8 +639,7 @@ const Header = () => {
                     width: "520px", background: "white", borderRadius: "20px",
                     boxShadow: "0 24px 64px rgba(37,99,235,0.18), 0 4px 16px rgba(0,0,0,0.08)",
                     border: "1px solid rgba(37,99,235,0.12)",
-                    zIndex: 100, overflow: "hidden",
-                    maxHeight: "80vh",
+                    zIndex: 100, overflow: "hidden", maxHeight: "80vh",
                     animation: "dropIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
                   }}>
                     {/* Header strip */}
@@ -611,8 +688,8 @@ const Header = () => {
                         {[
                           { icon: DollarSign, label: "Earn More" },
                           { icon: TrendingUp, label: "Grow Faster" },
-                          { icon: Shield, label: "KYC Secure" },
-                          { icon: BarChart3, label: "Live Stats" },
+                          { icon: Shield,     label: "KYC Secure" },
+                          { icon: BarChart3,  label: "Live Stats" },
                         ].map(({ icon: Icon, label }, i) => (
                           <div key={label} style={{
                             display: "flex", flexDirection: "column", alignItems: "center", gap: "4px",
@@ -631,7 +708,8 @@ const Header = () => {
                           </div>
                         ))}
                       </div>
-                      <VendorForm onClose={() => setVendorOpen(false)} />
+                      {/* VendorForm is a stable component defined outside — no remount on Header state change */}
+                      <VendorForm onClose={() => setVendorOpen(false)} onSuccess={handleVendorSuccess} />
                     </div>
                   </div>
                 )}
@@ -657,9 +735,7 @@ const Header = () => {
                   <span style={{
                     fontSize: "12px", fontWeight: 700,
                     background: "linear-gradient(135deg, #2563eb, #7c3aed)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                     letterSpacing: "-0.01em",
                   }}>Shop Now · Pay in Installments</span>
                 </div>
@@ -676,8 +752,7 @@ const Header = () => {
           background: "white",
           borderBottom: "1px solid rgba(37,99,235,0.08)",
           boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
-          maxHeight: "85vh",
-          overflowY: "auto",
+          maxHeight: "85vh", overflowY: "auto",
         }}>
           <div className="p-4">
 
@@ -689,19 +764,16 @@ const Header = () => {
                   width: "100%", height: "44px", paddingLeft: "16px", paddingRight: "48px",
                   borderRadius: "12px", border: "1.5px solid rgba(37,99,235,0.15)",
                   background: "#f8faff", fontSize: "14px", outline: "none",
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  boxSizing: "border-box",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box",
                 }}
               />
               <Search size={16} color="#94a3b8" style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)" }}/>
             </div>
 
-            {/* ── SECTION: Quick Links ── */}
             <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: "6px", paddingLeft: "4px" }}>
               Quick Links
             </p>
 
-            {/* Home */}
             <Link to="/" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
@@ -721,7 +793,6 @@ const Header = () => {
               Home
             </Link>
 
-            {/* Flash Sale */}
             <Link to="/flash-sale" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
@@ -733,9 +804,7 @@ const Header = () => {
               }}>
               <div style={{
                 height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
-                background: location.pathname === "/flash-sale"
-                  ? "linear-gradient(135deg, #ef4444, #f97316)"
-                  : "linear-gradient(135deg, #fff5f5, #fff1eb)",
+                background: location.pathname === "/flash-sale" ? "linear-gradient(135deg, #ef4444, #f97316)" : "linear-gradient(135deg, #fff5f5, #fff1eb)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <Zap size={15} strokeWidth={2.5}
@@ -750,7 +819,6 @@ const Header = () => {
               }}>HOT</span>
             </Link>
 
-            {/* New Arrivals */}
             <Link to="/new-arrivals" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
@@ -762,9 +830,7 @@ const Header = () => {
               }}>
               <div style={{
                 height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
-                background: location.pathname === "/new-arrivals"
-                  ? "linear-gradient(135deg, #7c3aed, #2563eb)"
-                  : "linear-gradient(135deg, #f5f3ff, #eff6ff)",
+                background: location.pathname === "/new-arrivals" ? "linear-gradient(135deg, #7c3aed, #2563eb)" : "linear-gradient(135deg, #f5f3ff, #eff6ff)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <span style={{ fontSize: "15px", lineHeight: 1 }}>✨</span>
@@ -777,7 +843,6 @@ const Header = () => {
               }}>NEW</span>
             </Link>
 
-            {/* ── SECTION: Categories (horizontal scrollable) ── */}
             <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "12px 0 10px" }}/>
             <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "4px" }}>
               Categories
@@ -814,10 +879,8 @@ const Header = () => {
               ))}
             </div>
 
-            {/* ── SECTION: Vendor ── */}
             <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "10px 0" }}/>
 
-            {/* Sell as Vendor — toggles inline registration panel */}
             <button
               onClick={() => setMobileVendorOpen(!mobileVendorOpen)}
               style={{
@@ -831,31 +894,24 @@ const Header = () => {
               }}>
               <div style={{
                 height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
-                background: mobileVendorOpen
-                  ? "linear-gradient(135deg, #2563eb, #7c3aed)"
-                  : "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                background: mobileVendorOpen ? "linear-gradient(135deg, #2563eb, #7c3aed)" : "linear-gradient(135deg, #eff6ff, #eef2ff)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <Store size={15} strokeWidth={2.5} color={mobileVendorOpen ? "white" : "#2563eb"}/>
               </div>
               Sell as Vendor
               <ChevronDown size={14} strokeWidth={2.5} style={{
-                marginLeft: "auto",
-                transition: "transform 0.2s ease",
+                marginLeft: "auto", transition: "transform 0.2s ease",
                 transform: mobileVendorOpen ? "rotate(180deg)" : "rotate(0deg)",
               }}/>
             </button>
 
-            {/* ── INLINE MOBILE VENDOR REGISTRATION PANEL ── */}
             {mobileVendorOpen && (
               <div style={{
-                borderRadius: "16px",
-                border: "1.5px solid rgba(37,99,235,0.12)",
-                overflow: "hidden",
-                marginBottom: "4px",
+                borderRadius: "16px", border: "1.5px solid rgba(37,99,235,0.12)",
+                overflow: "hidden", marginBottom: "4px",
                 animation: "dropIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
               }}>
-                {/* Panel header */}
                 <div style={{
                   background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
                   padding: "14px 16px",
@@ -887,7 +943,6 @@ const Header = () => {
                   </Link>
                 </div>
 
-                {/* Perks strip */}
                 <div style={{
                   display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
                   background: "rgba(248,250,255,0.9)",
@@ -896,8 +951,8 @@ const Header = () => {
                   {[
                     { icon: DollarSign, label: "Earn More" },
                     { icon: TrendingUp, label: "Grow Faster" },
-                    { icon: Shield, label: "KYC Secure" },
-                    { icon: BarChart3, label: "Live Stats" },
+                    { icon: Shield,     label: "KYC Secure" },
+                    { icon: BarChart3,  label: "Live Stats" },
                   ].map(({ icon: Icon, label }, i) => (
                     <div key={label} style={{
                       display: "flex", flexDirection: "column", alignItems: "center", gap: "3px",
@@ -916,14 +971,13 @@ const Header = () => {
                   ))}
                 </div>
 
-                {/* Registration form */}
                 <div style={{ background: "white" }}>
-                  <VendorForm onClose={() => { setMobileVendorOpen(false); setMenuOpen(false); }} />
+                  {/* VendorForm stable component — no remount */}
+                  <VendorForm onClose={() => { setMobileVendorOpen(false); setMenuOpen(false); }} onSuccess={handleVendorSuccess} />
                 </div>
               </div>
             )}
 
-            {/* Login / Register */}
             <Link to="/login" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
