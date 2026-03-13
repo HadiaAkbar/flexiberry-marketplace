@@ -14,6 +14,7 @@ import WishlistPage from "./pages/WishlistPage";
 import AccountPage from "./pages/AccountPage";
 import FlashSalePage from "./pages/FlashSalePage";
 import NewArrivalsPage from "./pages/NewArrivalsPage";
+import AllProductsPage from "./pages/AllProductsPage";
 import CategoryPage from "./pages/CategoryPage";
 import CustomerDashboard from "./pages/CustomerDashboard";
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryPage />} />
             <Route path="/shop" element={<ShopPage />} />
+            <Route path="/products" element={<AllProductsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
@@ -62,7 +64,7 @@ const App = () => (
             <Route path="/flash-sale" element={<FlashSalePage />} />
             <Route path="/new-arrivals" element={<NewArrivalsPage />} />
 
-            {/* ✅ Customer Dashboard */}
+            {/* Customer Dashboard */}
             <Route path="/dashboard" element={<CustomerDashboard />} />
 
             {/* Vendor Store */}
