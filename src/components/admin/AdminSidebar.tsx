@@ -18,35 +18,35 @@ const navSections = [
   {
     label: "Overview",
     items: [
-      { title: "Dashboard", icon: LayoutDashboard, path: "/" },
+      { title: "Dashboard", icon: LayoutDashboard, path: "/admin" },
     ],
   },
   {
     label: "Catalog",
     items: [
-      { title: "Products", icon: Package, path: "/products" },
-      { title: "Categories", icon: FolderOpen, path: "/categories" },
+      { title: "Products", icon: Package, path: "/admin/products" },
+      { title: "Categories", icon: FolderOpen, path: "/admin/categories" },
     ],
   },
   {
     label: "Commerce",
     items: [
-      { title: "Orders", icon: ShoppingCart, path: "/orders", badge: "4" },
-      { title: "Customers", icon: Users, path: "/customers" },
-      { title: "Installment Plans", icon: CreditCard, path: "/installments" },
+      { title: "Orders", icon: ShoppingCart, path: "/admin/orders", badge: "4" },
+      { title: "Customers", icon: Users, path: "/admin/customers" },
+      { title: "Installment Plans", icon: CreditCard, path: "/admin/installments" },
     ],
   },
   {
     label: "Communication",
     items: [
-      { title: "Notifications", icon: Bell, path: "/notifications", badge: "3", badgeGreen: false },
+      { title: "Notifications", icon: Bell, path: "/admin/notifications", badge: "3", badgeGreen: false },
     ],
   },
   {
     label: "Settings",
     items: [
-      { title: "Shop Profile", icon: Store, path: "/shop-profile" },
-      { title: "Settings", icon: Settings, path: "/settings" },
+      { title: "Shop Profile", icon: Store, path: "/admin/shop-profile" },
+      { title: "Settings", icon: Settings, path: "/admin/settings" },
     ],
   },
 ];

@@ -24,7 +24,7 @@ import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import VendorLoginPage from "./pages/vendor/VendorLoginPage";
 
 /* Admin Pages */
-import AdminLayout from "./pages/admin/AdminLayout";
+import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductsPage from "./pages/admin/ProductsPage";
 import CategoriesPage from "./pages/admin/CategoriesPage";
