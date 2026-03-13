@@ -349,7 +349,7 @@ const VendorLoginPage = () => {
                 {/* Submit */}
                 <Button
                   className="w-full gradient-primary border-none text-white font-semibold py-5 text-sm hover:opacity-90 transition-opacity"
-                  onClick={() => navigate("/admin")}
+                  onClick={() => navigate("/vendor")}
                 >
                   Sign In to Vendor Dashboard
                   <ChevronRight className="h-4 w-4 ml-1" />
