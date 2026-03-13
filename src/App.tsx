@@ -18,6 +18,7 @@ import NewArrivalsPage from "./pages/NewArrivalsPage";
 import AllProductsPage from "./pages/AllProductsPage";
 import CategoryPage from "./pages/CategoryPage";
 import CustomerDashboard from "./pages/CustomerDashboard";
+import CheckoutPage from "./pages/CheckoutPage";
 
 /* Vendor Pages */
 import VendorLayout from "./pages/vendor/VendorLayout";
@@ -83,6 +84,9 @@ const App = () => (
 
             {/* Customer Dashboard */}
             <Route path="/dashboard" element={<CustomerDashboard />} />
+
+            {/* Checkout */}
+            <Route path="/checkout/verify" element={<CheckoutPage />} />
 
             {/* Vendor Store */}
             <Route path="/store/:vendorId" element={<VendorStorePage />} />
