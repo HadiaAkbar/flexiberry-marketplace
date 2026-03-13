@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import { CheckCircle2, X, PartyPopper } from "lucide-react";
 
 /* ── Inline SVG: FlexiBerry Tagged-Cart Logo ── */
 const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
@@ -24,7 +26,6 @@ const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
     <g transform="rotate(-14, 50, 52)">
       <path d="M 8 20 L 17 20 L 23 40" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
       <path d="M 23 40 L 23 70 Q 23 76 29 76 L 79 76 Q 85 76 85 70 L 85 40 Q 85 34 79 34 L 35 34 Q 27 34 23 40 Z" fill="white"/>
-      {/* FB initials inside cart */}
       <circle cx="32" cy="39" r="4.5" fill="url(#lg-bg)"/>
       <rect x="30" y="45" width="5" height="21" rx="2.5" fill="url(#lg-bg)"/>
       <rect x="30" y="45" width="13" height="4.5" rx="2.25" fill="url(#lg-bg)"/>
@@ -32,14 +33,12 @@ const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
       <rect x="48" y="45" width="5" height="21" rx="2.5" fill="url(#lg-bg)"/>
       <path d="M 53 45 Q 65 45 65 51.5 Q 65 57.5 53 57.5" stroke="url(#lg-bg)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
       <path d="M 53 57.8 Q 67 57.8 67 64.5 Q 67 71 53 71" stroke="url(#lg-bg)" strokeWidth="4.5" fill="none" strokeLinecap="round"/>
-      {/* Wheels */}
       <circle cx="35" cy="86" r="7.5" fill="white"/>
       <circle cx="35" cy="86" r="3.8" fill="url(#lg-bg)"/>
       <circle cx="35" cy="86" r="1.5" fill="white"/>
       <circle cx="70" cy="86" r="7.5" fill="#10b981"/>
       <circle cx="70" cy="86" r="3.8" fill="white"/>
       <circle cx="70" cy="86" r="1.5" fill="#10b981"/>
-      {/* Installment dots */}
       <circle cx="43" cy="91" r="2.5" fill="white" opacity="0.7"/>
       <circle cx="52" cy="91" r="2.5" fill="white" opacity="0.4"/>
       <circle cx="61" cy="91" r="2.5" fill="white" opacity="0.18"/>
@@ -48,10 +47,156 @@ const FlexiBerryLogo = ({ size = 64 }: { size?: number }) => (
   </svg>
 );
 
+/* ── Success Popup ── */
+const SuccessPopup = ({ name, onClose }: { name: string; onClose: () => void }) => (
+  <>
+    {/* Backdrop */}
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0,
+        background: "rgba(0,0,0,0.45)",
+        backdropFilter: "blur(4px)",
+        zIndex: 999,
+        animation: "fadeIn 0.2s ease",
+      }}
+    />
+
+    {/* Modal */}
+    <div style={{
+      position: "fixed",
+      top: "50%", left: "50%",
+      transform: "translate(-50%, -50%)",
+      zIndex: 1000,
+      width: "min(420px, 92vw)",
+      background: "white",
+      borderRadius: "24px",
+      boxShadow: "0 32px 80px rgba(37,99,235,0.22), 0 8px 24px rgba(0,0,0,0.12)",
+      overflow: "hidden",
+      animation: "popUp 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+    }}>
+      {/* Gradient top band */}
+      <div style={{
+        background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+        padding: "28px 24px 24px",
+        textAlign: "center",
+        position: "relative",
+      }}>
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute", top: "12px", right: "12px",
+            background: "rgba(255,255,255,0.2)", border: "none",
+            borderRadius: "50%", width: "28px", height: "28px",
+            cursor: "pointer", color: "white",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+          <X size={14} />
+        </button>
+
+        {/* Animated checkmark circle */}
+        <div style={{
+          width: "72px", height: "72px", borderRadius: "50%",
+          background: "rgba(255,255,255,0.2)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          margin: "0 auto 14px",
+          border: "3px solid rgba(255,255,255,0.4)",
+          animation: "pulse 2s ease-in-out infinite",
+        }}>
+          <CheckCircle2 size={38} color="white" strokeWidth={2} />
+        </div>
+
+        <h2 style={{
+          color: "white", fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800, fontSize: "20px", margin: "0 0 6px",
+        }}>
+          Account Created! 🎉
+        </h2>
+        <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "13px", margin: 0 }}>
+          Welcome to FlexiBerry, {name || "there"}!
+        </p>
+      </div>
+
+      {/* Body */}
+      <div style={{ padding: "24px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        {/* Perks */}
+        {[
+          { emoji: "🛒", text: "Shop thousands of products on easy installments" },
+          { emoji: "⚡", text: "Exclusive flash sale deals just for members" },
+          { emoji: "🔒", text: "KYC-secured account with safe payments" },
+        ].map(({ emoji, text }) => (
+          <div key={text} style={{
+            display: "flex", alignItems: "center", gap: "12px",
+            padding: "10px 0",
+            borderBottom: "1px solid rgba(37,99,235,0.07)",
+          }}>
+            <span style={{ fontSize: "20px" }}>{emoji}</span>
+            <p style={{ margin: 0, fontSize: "13px", color: "#374151", fontWeight: 600 }}>{text}</p>
+          </div>
+        ))}
+
+        {/* CTA buttons */}
+        <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+          <button
+            onClick={onClose}
+            style={{
+              flex: 1, height: "44px", borderRadius: "12px",
+              background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+              border: "none", cursor: "pointer",
+              color: "white", fontSize: "13px", fontWeight: 700,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              boxShadow: "0 6px 18px rgba(37,99,235,0.35)",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+            }}>
+            <PartyPopper size={15} />
+            Start Shopping
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              height: "44px", padding: "0 16px", borderRadius: "12px",
+              background: "transparent",
+              border: "1.5px solid rgba(37,99,235,0.2)",
+              cursor: "pointer", color: "#2563eb",
+              fontSize: "13px", fontWeight: 600,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <style>{`
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes popUp {
+        from { opacity: 0; transform: translate(-50%, -46%) scale(0.92); }
+        to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+        50%       { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+      }
+    `}</style>
+  </>
+);
+
 const LoginPage = () => {
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [name, setName] = useState("");
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+
+      {showSuccess && (
+        <SuccessPopup name={name} onClose={() => setShowSuccess(false)} />
+      )}
+
       <main className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
@@ -88,7 +233,13 @@ const LoginPage = () => {
               <TabsContent value="register" className="space-y-4">
                 <div>
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="Muhammad Ali" className="mt-1" />
+                  <Input
+                    id="name"
+                    placeholder="Muhammad Ali"
+                    className="mt-1"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="reg-email">Email</Label>
@@ -102,7 +253,12 @@ const LoginPage = () => {
                   <Label htmlFor="reg-password">Password</Label>
                   <Input id="reg-password" type="password" placeholder="••••••••" className="mt-1" />
                 </div>
-                <Button className="w-full gradient-coral border-none text-primary-foreground hover:opacity-90">Create Account</Button>
+                <Button
+                  className="w-full gradient-coral border-none text-primary-foreground hover:opacity-90"
+                  onClick={() => setShowSuccess(true)}
+                >
+                  Create Account
+                </Button>
               </TabsContent>
             </Tabs>
 
