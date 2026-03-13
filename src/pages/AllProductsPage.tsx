@@ -301,46 +301,7 @@ const FilterSidebar = ({
       </Section>
 
       {/* Extras */}
-      <Section title="Options" open={extrasOpen} toggle={() => setExtrasOpen(!extrasOpen)}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {/* Installments toggle */}
-          {[
-            { key: "installmentOnly" as const, label: "Installments Only", sub: "Easy monthly payments", icon: Zap, color: "#2563eb" },
-            { key: "inStockOnly" as const,     label: "In Stock Only",      sub: "Available now",        icon: Package, color: "#059669" },
-          ].map(({ key, label, sub, icon: Icon, color }) => (
-            <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{
-                  height: "28px", width: "28px", borderRadius: "8px",
-                  background: filters[key] ? `${color}18` : "rgba(0,0,0,0.04)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <Icon size={13} strokeWidth={2.5} color={filters[key] ? color : "#94a3b8"} />
-                </div>
-                <div>
-                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a" }}>{label}</div>
-                  <div style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 500 }}>{sub}</div>
-                </div>
-              </div>
-              <button
-                onClick={() => onChange({ [key]: !filters[key] })}
-                style={{
-                  width: "40px", height: "22px", borderRadius: "99px", border: "none",
-                  cursor: "pointer", padding: "2px",
-                  background: filters[key] ? `linear-gradient(135deg, ${color}, ${color}cc)` : "rgba(203,213,225,0.8)",
-                  transition: "all 0.2s ease",
-                  display: "flex", alignItems: "center",
-                  justifyContent: filters[key] ? "flex-end" : "flex-start",
-                }}>
-                <div style={{
-                  height: "18px", width: "18px", borderRadius: "50%", background: "white",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.15)", transition: "all 0.2s ease",
-                }} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </Section>
+    
     </aside>
   );
 };
