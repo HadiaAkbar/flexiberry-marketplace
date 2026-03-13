@@ -1,10 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
-import { useEffect } from "react";
 
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
@@ -25,6 +24,10 @@ import VendorDashboard from "./pages/vendor/VendorDashboard";
 import VendorStorePage from "./pages/vendor/VendorStorePage";
 import VendorProductDetail from "./pages/vendor/VendorProductDetail";
 import VendorLoginPage from "./pages/vendor/VendorLoginPage";
+import VendorProductsPage from "./pages/vendor/VendorProductsPage";
+import VendorOrdersPage from "./pages/vendor/VendorOrdersPage";
+import VendorInstallmentsPage from "./pages/vendor/VendorInstallmentsPage";
+import VendorKYCPage from "./pages/vendor/VendorKYCPage";
 
 /* Admin Pages */
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -40,14 +43,6 @@ import SettingsPage from "./pages/admin/SettingsPage";
 
 import NotFound from "./pages/NotFound";
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -58,7 +53,6 @@ const App = () => (
 
       <CartProvider>
         <BrowserRouter>
-          <ScrollToTop />
           <Routes>
 
             {/* PUBLIC ROUTES */}
@@ -88,8 +82,12 @@ const App = () => (
             <Route path="/vendor" element={<VendorLayout />}>
               <Route index element={<VendorDashboard />} />
               <Route path="shop" element={<VendorDashboard />} />
-              <Route path="products" element={<VendorDashboard />} />
+              <Route path="products" element={<VendorProductsPage />} />
+              <Route path="orders" element={<VendorOrdersPage />} />
+              <Route path="installments" element={<VendorInstallmentsPage />} />
+              <Route path="buyers" element={<VendorDashboard />} />
               <Route path="analytics" element={<VendorDashboard />} />
+              <Route path="kyc" element={<VendorKYCPage />} />
               <Route path="settings" element={<VendorDashboard />} />
             </Route>
 
