@@ -64,12 +64,12 @@ const STATS = [
   { val: "PKR 2B+", label: "GMV Processed" },
 ];
 
-/* ── Forgot Password Modal (same as CustomerLogin) ── */
+/* ── Forgot Password Modal ── */
 type ForgotStep = "email" | "sent";
 
 const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
-  const [step, setStep]     = useState<ForgotStep>("email");
-  const [email, setEmail]   = useState("");
+  const [step, setStep]       = useState<ForgotStep>("email");
+  const [email, setEmail]     = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSend = () => {
@@ -186,12 +186,113 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+/* ── Create Vendor Account Modal ── */
+const CreateVendorModal = ({ onClose }: { onClose: () => void }) => {
+  const navigate = useNavigate();
+  const F = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", zIndex: 999, animation: "cvFadeIn 0.2s ease" }}
+      />
+
+      {/* Modal */}
+      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1000, width: "min(440px,94vw)", background: "white", borderRadius: "24px", boxShadow: "0 32px 80px rgba(37,99,235,0.22), 0 8px 24px rgba(0,0,0,0.12)", overflow: "hidden", animation: "cvPopUp 0.35s cubic-bezier(0.34,1.56,0.64,1)", ...F }}>
+
+        {/* Gradient header */}
+        <div style={{ background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", padding: "28px 24px 24px", position: "relative", textAlign: "center" }}>
+          <button
+            onClick={onClose}
+            style={{ position: "absolute", top: "12px", right: "12px", background: "rgba(255,255,255,0.2)", border: "none", borderRadius: "50%", width: "28px", height: "28px", cursor: "pointer", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            <X size={14} />
+          </button>
+          <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid rgba(255,255,255,0.35)" }}>
+            <Store size={30} color="white" />
+          </div>
+          <h2 style={{ color: "white", fontWeight: 800, fontSize: "20px", margin: "0 0 6px" }}>
+            Become a FlexiBerry Vendor
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "13px", margin: 0 }}>
+            Join 500+ verified vendors already selling on Pakistan's fastest-growing installment marketplace
+          </p>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "24px" }}>
+
+          {/* Stats row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "10px", marginBottom: "20px" }}>
+            {[
+              { val: "10K+", label: "Active Buyers" },
+              { val: "Free", label: "To Join" },
+              { val: "24hr", label: "KYC Approval" },
+            ].map(({ val, label }) => (
+              <div key={label} style={{ background: "rgba(37,99,235,0.06)", borderRadius: "12px", padding: "12px 8px", textAlign: "center", border: "1px solid rgba(37,99,235,0.12)" }}>
+                <p style={{ fontWeight: 800, fontSize: "16px", color: "#2563eb", margin: "0 0 2px", ...F }}>{val}</p>
+                <p style={{ fontSize: "11px", color: "#64748b", margin: 0, ...F }}>{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Feature checklist */}
+          <div style={{ marginBottom: "20px" }}>
+            {[
+              { emoji: "🏪", text: "List unlimited products with installment plans" },
+              { emoji: "📊", text: "Real-time dashboard for orders & revenue" },
+              { emoji: "🔒", text: "KYC-verified payouts, zero fraud risk" },
+              { emoji: "📣", text: "Reach buyers across all of Pakistan" },
+            ].map(({ emoji, text }) => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "9px 0", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
+                <span style={{ fontSize: "18px", width: "24px", textAlign: "center" }}>{emoji}</span>
+                <span style={{ fontSize: "13px", color: "#374151", fontWeight: 500, ...F }}>{text}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Primary CTA */}
+          <button
+            onClick={() => navigate("/vendor/register")}
+            style={{ width: "100%", height: "46px", borderRadius: "12px", background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", border: "none", cursor: "pointer", color: "white", fontSize: "14px", fontWeight: 700, boxShadow: "0 6px 18px rgba(37,99,235,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "10px", transition: "opacity 0.2s", ...F }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            <Store size={16} />
+            Create Vendor Account — It's Free
+          </button>
+
+          {/* Secondary / back */}
+          <button
+            onClick={onClose}
+            style={{ width: "100%", height: "40px", borderRadius: "12px", background: "transparent", border: "1.5px solid rgba(37,99,235,0.18)", cursor: "pointer", color: "#64748b", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", ...F }}
+          >
+            <ArrowLeft size={14} /> Back to Login
+          </button>
+
+          <p style={{ textAlign: "center", fontSize: "11px", color: "#94a3b8", marginTop: "14px", ...F }}>
+            By registering, you agree to FlexiBerry's Vendor Terms & Conditions
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes cvFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes cvPopUp  { from { opacity: 0; transform: translate(-50%,-46%) scale(0.92); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+      `}</style>
+    </>
+  );
+};
+
 /* ── Main Page ── */
 const VendorLoginPage = () => {
-  const [showPass,    setShowPass]    = useState(false);
-  const [loginEmail,  setLoginEmail]  = useState("");
-  const [loginPass,   setLoginPass]   = useState("");
-  const [showForgot,  setShowForgot]  = useState(false);
+  const [showPass,        setShowPass]        = useState(false);
+  const [loginEmail,      setLoginEmail]      = useState("");
+  const [loginPass,       setLoginPass]       = useState("");
+  const [showForgot,      setShowForgot]      = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -200,6 +301,9 @@ const VendorLoginPage = () => {
 
       {/* Forgot Password Modal */}
       {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
+
+      {/* Create Vendor Account Modal */}
+      {showCreateModal && <CreateVendorModal onClose={() => setShowCreateModal(false)} />}
 
       <main className="flex-1 flex items-stretch">
         <div className="container mx-auto max-w-6xl px-4 py-10 flex gap-8 items-start">
@@ -317,7 +421,6 @@ const VendorLoginPage = () => {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <Label htmlFor="v-pass" className="text-sm font-medium">Password</Label>
-                    {/* ── Forgot password trigger ── */}
                     <button
                       type="button"
                       onClick={() => setShowForgot(true)}
@@ -367,9 +470,17 @@ const VendorLoginPage = () => {
               <div className="bg-muted/40 rounded-2xl p-5 text-center">
                 <p className="text-sm font-semibold text-foreground mb-1">New to FlexiBerry Vendor?</p>
                 <p className="text-xs text-muted-foreground mb-3">
-                  Register your shop using the <strong>"Sell as Vendor"</strong> button in the top navigation bar.
+                  Register your shop and start selling on Pakistan's fastest-growing installment marketplace.
                 </p>
-                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(true)}
+                  className="w-full h-10 rounded-xl gradient-primary border-none text-white text-xs font-semibold cursor-pointer flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                >
+                  <Store className="h-3.5 w-3.5" />
+                  Create Vendor Account
+                </button>
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-3">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
                   Free to join · KYC verified · Instant dashboard access
                 </div>
