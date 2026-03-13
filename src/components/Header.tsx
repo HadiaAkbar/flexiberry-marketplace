@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, CheckCircle2, TrendingUp, DollarSign, BarChart3, ChevronRight } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, TrendingUp, DollarSign, BarChart3, ChevronRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { categories } from "@/data/products";
 import { useCart } from "@/context/CartContext";
@@ -60,6 +60,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [vendorOpen, setVendorOpen] = useState(false);
+  const [mobileVendorOpen, setMobileVendorOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [shopName, setShopName] = useState("");
@@ -106,6 +107,112 @@ const Header = () => {
     };
   }, [vendorOpen]);
 
+  // Shared vendor registration form fields (used in both desktop dropdown and mobile panel)
+  const VendorForm = ({ onClose }: { onClose: () => void }) => (
+    <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+      {/* Row 1 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Shop Name</label>
+          <div style={{ position: "relative" }}>
+            <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Owner Name</label>
+          <div style={{ position: "relative" }}>
+            <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Row 2 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Phone</label>
+          <div style={{ position: "relative" }}>
+            <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>City</label>
+          <div style={{ position: "relative" }}>
+            <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+      </div>
+      {/* Category */}
+      <div>
+        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Product Category</label>
+        <div style={{ position: "relative" }}>
+          <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
+          <select value={category} onChange={e => setCategory(e.target.value)}
+            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#fafbff", appearance: "none" }}>
+            <option value="">Select a category…</option>
+            <option value="phones">Mobiles & Phones</option>
+            <option value="laptops">Laptops & Computers</option>
+            <option value="appliances">Home Appliances</option>
+            <option value="furniture">Furniture</option>
+            <option value="bikes">Bikes & Scooters</option>
+            <option value="solar">Solar & Energy</option>
+            <option value="cars">Cars & Vehicles</option>
+            <option value="jahez">Jahez & Dowry</option>
+            <option value="raw-materials">Raw Materials</option>
+            <option value="general">General / Other</option>
+          </select>
+        </div>
+      </div>
+      {/* Email + Password */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Business Email</label>
+          <div style={{ position: "relative" }}>
+            <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+          </div>
+        </div>
+        <div>
+          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Password</label>
+          <div style={{ position: "relative" }}>
+            <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
+            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
+              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
+            <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
+              {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* Submit */}
+      <button
+        onClick={() => { onClose(); navigate("/vendor"); }}
+        style={{
+          width: "100%", height: "40px", borderRadius: "11px",
+          background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+          border: "none", cursor: "pointer",
+          color: "white", fontSize: "13px", fontWeight: 700,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+          boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
+          transition: "all 0.2s ease",
+          marginTop: "2px",
+        }}>
+        Create Vendor Account
+        <ChevronRight size={14}/>
+      </button>
+      <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
+      </p>
+    </div>
+  );
 
   return (
     <header className="sticky top-0 z-50" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -328,7 +435,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* ── CATEGORY NAV ── */}
+        {/* ── CATEGORY NAV (desktop) ── */}
         <div className="hidden md:block" style={{ borderTop: "1px solid rgba(37,99,235,0.07)" }}>
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-1">
@@ -428,7 +535,7 @@ const Header = () => {
                 </Link>
               ))}
 
-              {/* ── SELL AS VENDOR DROPDOWN ── */}
+              {/* ── SELL AS VENDOR DROPDOWN (desktop) ── */}
               <div className="relative" ref={vendorRef}>
                 <button
                   ref={vendorBtnRef}
@@ -496,148 +603,36 @@ const Header = () => {
                     </div>
 
                     {/* Perks row */}
-                    <div style={{
-                      overflowY: "auto",
-                      maxHeight: "calc(80vh - 68px)",
-                    }}>
-                    <div style={{
-                      display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-                      gap: "0", borderBottom: "1px solid rgba(37,99,235,0.08)",
-                    }}>
-                      {[
-                        { icon: DollarSign, label: "Earn More" },
-                        { icon: TrendingUp, label: "Grow Faster" },
-                        { icon: Shield, label: "KYC Secure" },
-                        { icon: BarChart3, label: "Live Stats" },
-                      ].map(({ icon: Icon, label }, i) => (
-                        <div key={label} style={{
-                          display: "flex", flexDirection: "column", alignItems: "center", gap: "4px",
-                          padding: "10px 8px",
-                          borderRight: i < 3 ? "1px solid rgba(37,99,235,0.07)" : "none",
-                          background: "rgba(248,250,255,0.8)",
-                        }}>
-                          <div style={{
-                            height: "28px", width: "28px", borderRadius: "8px",
-                            background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
+                    <div style={{ overflowY: "auto", maxHeight: "calc(80vh - 68px)" }}>
+                      <div style={{
+                        display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+                        gap: "0", borderBottom: "1px solid rgba(37,99,235,0.08)",
+                      }}>
+                        {[
+                          { icon: DollarSign, label: "Earn More" },
+                          { icon: TrendingUp, label: "Grow Faster" },
+                          { icon: Shield, label: "KYC Secure" },
+                          { icon: BarChart3, label: "Live Stats" },
+                        ].map(({ icon: Icon, label }, i) => (
+                          <div key={label} style={{
+                            display: "flex", flexDirection: "column", alignItems: "center", gap: "4px",
+                            padding: "10px 8px",
+                            borderRight: i < 3 ? "1px solid rgba(37,99,235,0.07)" : "none",
+                            background: "rgba(248,250,255,0.8)",
                           }}>
-                            <Icon size={13} color="#2563eb" strokeWidth={2.5}/>
+                            <div style={{
+                              height: "28px", width: "28px", borderRadius: "8px",
+                              background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                            }}>
+                              <Icon size={13} color="#2563eb" strokeWidth={2.5}/>
+                            </div>
+                            <span style={{ fontSize: "10px", fontWeight: 700, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{label}</span>
                           </div>
-                          <span style={{ fontSize: "10px", fontWeight: 700, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{label}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      <VendorForm onClose={() => setVendorOpen(false)} />
                     </div>
-
-                    {/* Form */}
-                    <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {/* Row 1 */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Shop Name</label>
-                          <div style={{ position: "relative" }}>
-                            <Store size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="TechZone Electronics"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                          </div>
-                        </div>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Owner Name</label>
-                          <div style={{ position: "relative" }}>
-                            <User size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Muhammad Ali"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Row 2 */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Phone</label>
-                          <div style={{ position: "relative" }}>
-                            <Phone size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+92 3XX XXXXXXX"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                          </div>
-                        </div>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>City</label>
-                          <div style={{ position: "relative" }}>
-                            <MapPin size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input value={city} onChange={e => setCity(e.target.value)} placeholder="Lahore, Karachi…"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Row 3 — Category */}
-                      <div>
-                        <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Product Category</label>
-                        <div style={{ position: "relative" }}>
-                          <Package size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}/>
-                          <select value={category} onChange={e => setCategory(e.target.value)}
-                            style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", background: "#fafbff", appearance: "none" }}>
-                            <option value="">Select a category…</option>
-                            <option value="phones">Mobiles & Phones</option>
-                            <option value="laptops">Laptops & Computers</option>
-                            <option value="appliances">Home Appliances</option>
-                            <option value="furniture">Furniture</option>
-                            <option value="bikes">Bikes & Scooters</option>
-                            <option value="solar">Solar & Energy</option>
-                            <option value="cars">Cars & Vehicles</option>
-                            <option value="jahez">Jahez & Dowry</option>
-                            <option value="raw-materials">Raw Materials</option>
-                            <option value="general">General / Other</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Row 4 — Email + Password */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Business Email</label>
-                          <div style={{ position: "relative" }}>
-                            <Mail size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="store@example.com"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "10px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                          </div>
-                        </div>
-                        <div>
-                          <label style={{ fontSize: "11px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "4px", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Password</label>
-                          <div style={{ position: "relative" }}>
-                            <Lock size={13} color="#94a3b8" style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)" }}/>
-                            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 characters"
-                              style={{ width: "100%", height: "36px", paddingLeft: "28px", paddingRight: "30px", borderRadius: "9px", border: "1.5px solid rgba(37,99,235,0.15)", fontSize: "12px", outline: "none", fontFamily: "'Plus Jakarta Sans', sans-serif", boxSizing: "border-box", background: "#fafbff" }}/>
-                            <button type="button" onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 0 }}>
-                              {showPass ? <EyeOff size={13}/> : <Eye size={13}/>}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Submit */}
-                      <button
-                        onClick={() => { setVendorOpen(false); navigate("/vendor"); }}
-                        style={{
-                          width: "100%", height: "40px", borderRadius: "11px",
-                          background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-                          border: "none", cursor: "pointer",
-                          color: "white", fontSize: "13px", fontWeight: 700,
-                          fontFamily: "'Plus Jakarta Sans', sans-serif",
-                          display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-                          boxShadow: "0 6px 18px rgba(37,99,235,0.40)",
-                          transition: "all 0.2s ease",
-                          marginTop: "2px",
-                        }}>
-                        Create Vendor Account
-                        <ChevronRight size={14}/>
-                      </button>
-
-                      <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
-                      </p>
-                    </div>
-                    </div>{/* end scrollable */}
                   </div>
                 )}
               </div>
@@ -787,22 +782,15 @@ const Header = () => {
             <p style={{ fontSize: "10px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.10em", textTransform: "uppercase", marginBottom: "8px", paddingLeft: "4px" }}>
               Categories
             </p>
-
-            {/* Scrollable horizontal strip */}
             <div style={{
-              display: "flex",
-              gap: "8px",
-              overflowX: "auto",
-              paddingBottom: "10px",
-              /* Show a thin styled scrollbar */
+              display: "flex", gap: "8px",
+              overflowX: "auto", paddingBottom: "10px",
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(37,99,235,0.35) rgba(37,99,235,0.07)",
               WebkitOverflowScrolling: "touch",
             }}>
               {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  to={`/category/${cat.slug}`}
+                <Link key={cat.id} to={`/category/${cat.slug}`}
                   onClick={() => setMenuOpen(false)}
                   style={{
                     display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
@@ -810,7 +798,6 @@ const Header = () => {
                     background: "linear-gradient(135deg, #f8faff, #f0f4ff)",
                     border: "1.5px solid rgba(37,99,235,0.10)",
                     textDecoration: "none", minWidth: "72px",
-                    transition: "all 0.15s ease",
                   }}>
                   <div style={{
                     height: "36px", width: "36px", borderRadius: "10px",
@@ -820,36 +807,123 @@ const Header = () => {
                   }}>
                     <cat.icon className="h-4 w-4" style={{ color: "#2563eb" }}/>
                   </div>
-                  <span style={{
-                    fontSize: "10px", fontWeight: 700, color: "#374151",
-                    textAlign: "center", lineHeight: 1.2, whiteSpace: "nowrap",
-                  }}>
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "#374151", textAlign: "center", lineHeight: 1.2, whiteSpace: "nowrap" }}>
                     {cat.name}
                   </span>
                 </Link>
               ))}
             </div>
 
-            {/* ── SECTION: Account ── */}
+            {/* ── SECTION: Vendor ── */}
             <div style={{ height: "1px", background: "rgba(37,99,235,0.07)", margin: "10px 0" }}/>
 
-            <Link to="/vendor/login" onClick={() => setMenuOpen(false)}
+            {/* Sell as Vendor — toggles inline registration panel */}
+            <button
+              onClick={() => setMobileVendorOpen(!mobileVendorOpen)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
                 padding: "10px 12px", borderRadius: "12px",
                 fontSize: "13px", fontWeight: 700, color: "#2563eb",
-                textDecoration: "none", marginBottom: "2px",
+                background: mobileVendorOpen ? "rgba(37,99,235,0.07)" : "transparent",
+                border: "none", cursor: "pointer", width: "100%",
+                textAlign: "left", marginBottom: "2px",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}>
               <div style={{
                 height: "32px", width: "32px", borderRadius: "10px", flexShrink: 0,
-                background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                background: mobileVendorOpen
+                  ? "linear-gradient(135deg, #2563eb, #7c3aed)"
+                  : "linear-gradient(135deg, #eff6ff, #eef2ff)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <Store size={15} strokeWidth={2.5} color="#2563eb"/>
+                <Store size={15} strokeWidth={2.5} color={mobileVendorOpen ? "white" : "#2563eb"}/>
               </div>
               Sell as Vendor
-            </Link>
+              <ChevronDown size={14} strokeWidth={2.5} style={{
+                marginLeft: "auto",
+                transition: "transform 0.2s ease",
+                transform: mobileVendorOpen ? "rotate(180deg)" : "rotate(0deg)",
+              }}/>
+            </button>
 
+            {/* ── INLINE MOBILE VENDOR REGISTRATION PANEL ── */}
+            {mobileVendorOpen && (
+              <div style={{
+                borderRadius: "16px",
+                border: "1.5px solid rgba(37,99,235,0.12)",
+                overflow: "hidden",
+                marginBottom: "4px",
+                animation: "dropIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
+              }}>
+                {/* Panel header */}
+                <div style={{
+                  background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
+                  padding: "14px 16px",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{
+                      height: "32px", width: "32px", borderRadius: "9px",
+                      background: "rgba(255,255,255,0.2)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <Store size={16} color="white" strokeWidth={2.5}/>
+                    </div>
+                    <div>
+                      <p style={{ color: "white", fontWeight: 800, fontSize: "13px", margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Register Your Shop</p>
+                      <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "10px", margin: 0 }}>Start selling on FlexiBerry today</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/vendor/login"
+                    onClick={() => { setMobileVendorOpen(false); setMenuOpen(false); }}
+                    style={{
+                      fontSize: "10px", fontWeight: 700, color: "white",
+                      background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)",
+                      padding: "4px 10px", borderRadius: "7px", textDecoration: "none",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif", whiteSpace: "nowrap",
+                    }}>
+                    Login →
+                  </Link>
+                </div>
+
+                {/* Perks strip */}
+                <div style={{
+                  display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+                  background: "rgba(248,250,255,0.9)",
+                  borderBottom: "1px solid rgba(37,99,235,0.08)",
+                }}>
+                  {[
+                    { icon: DollarSign, label: "Earn More" },
+                    { icon: TrendingUp, label: "Grow Faster" },
+                    { icon: Shield, label: "KYC Secure" },
+                    { icon: BarChart3, label: "Live Stats" },
+                  ].map(({ icon: Icon, label }, i) => (
+                    <div key={label} style={{
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: "3px",
+                      padding: "8px 4px",
+                      borderRight: i < 3 ? "1px solid rgba(37,99,235,0.07)" : "none",
+                    }}>
+                      <div style={{
+                        height: "24px", width: "24px", borderRadius: "7px",
+                        background: "linear-gradient(135deg, #eff6ff, #eef2ff)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <Icon size={11} color="#2563eb" strokeWidth={2.5}/>
+                      </div>
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: "#374151", fontFamily: "'Plus Jakarta Sans', sans-serif", textAlign: "center" }}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Registration form */}
+                <div style={{ background: "white" }}>
+                  <VendorForm onClose={() => { setMobileVendorOpen(false); setMenuOpen(false); }} />
+                </div>
+              </div>
+            )}
+
+            {/* Login / Register */}
             <Link to="/login" onClick={() => setMenuOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
