@@ -13,7 +13,6 @@ const steps = [
     numColor: "#2563eb",
     iconBg: "rgba(37,99,235,0.12)",
     dotBg: "linear-gradient(135deg, #2563eb, #60a5fa)",
-    connectorColor: "#bfdbfe",
   },
   {
     icon: FileText,
@@ -26,7 +25,6 @@ const steps = [
     numColor: "#7c3aed",
     iconBg: "rgba(124,58,237,0.12)",
     dotBg: "linear-gradient(135deg, #7c3aed, #c4b5fd)",
-    connectorColor: "#ddd6fe",
   },
   {
     icon: CheckCircle,
@@ -39,7 +37,6 @@ const steps = [
     numColor: "#059669",
     iconBg: "rgba(5,150,105,0.12)",
     dotBg: "linear-gradient(135deg, #059669, #6ee7b7)",
-    connectorColor: "#a7f3d0",
   },
   {
     icon: ShoppingBag,
@@ -52,7 +49,6 @@ const steps = [
     numColor: "#d97706",
     iconBg: "rgba(217,119,6,0.12)",
     dotBg: "linear-gradient(135deg, #d97706, #fde68a)",
-    connectorColor: "#fde68a",
   },
 ];
 
@@ -111,25 +107,7 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.10, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              style={{ position: "relative" }}
             >
-              {/* Connector arrow between cards (desktop) */}
-              {i < steps.length - 1 && (
-                <div style={{
-                  position: "absolute",
-                  top: "52px",
-                  right: "-12px",
-                  zIndex: 20,
-                  display: "flex",
-                  alignItems: "center",
-                  pointerEvents: "none"
-                }} className="hidden lg:flex">
-                  <svg width="24" height="14" viewBox="0 0 24 14" fill="none">
-                    <path d="M0 7 H18 M14 2 L22 7 L14 12" stroke={step.connectorColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              )}
-
               {/* Card */}
               <div
                 style={{
