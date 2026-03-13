@@ -8,6 +8,7 @@ import {
   formatPrice,
   getMonthlyInstallment,
 } from "@/data/products";
+import { useCart } from "@/context/CartContext";
 import {
   Star,
   Heart,
@@ -209,6 +210,7 @@ function MiniCard({
 const ProductDetail = () => {
   const { id } = useParams();
   const product = featuredProducts.find((p) => p.id === id);
+  const { addToCart } = useCart();
 
   const [mainImg, setMainImg] = useState(0);
   const [qty, setQty] = useState(1);
@@ -259,6 +261,15 @@ const ProductDetail = () => {
   const STORAGES = ["128GB", "256GB", "512GB", "1TB"];
 
   const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      shopId: vendor.shopId,
+      shopName: vendor.shopName,
+    });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
