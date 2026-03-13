@@ -5,7 +5,7 @@ import FeaturedProducts from "@/components/FeaturedProducts";
 import InstallmentBanner from "@/components/InstallmentBanner";
 import HowItWorks from "@/components/HowItWorks";
 import VendorShowcase from "@/components/VendorShowcase";
-import BrandShowcase from "@/components/BrandShowcase";
+//import BrandShowcase from "@/components/BrandShowcase";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 
@@ -20,7 +20,7 @@ const Index = () => {
         <InstallmentBanner />
         <HowItWorks />
         <VendorShowcase />
-        <BrandShowcase />
+    
         <FAQSection />
       </main>
       <Footer />
