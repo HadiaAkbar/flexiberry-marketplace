@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import {
   Store, Shield, TrendingUp, ChevronRight,
   Eye, EyeOff, ArrowLeft, DollarSign, BarChart3,
-  CheckCircle2, Mail, Lock,
+  CheckCircle2, Mail, Lock, X, KeyRound, RefreshCw,
 } from "lucide-react";
 
-/* ── Inline SVG Logo ───────────────────────────────────────────────── */
+/* ── Inline SVG Logo ── */
 const FlexiBerryLogo = ({ size = 48 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -64,15 +64,142 @@ const STATS = [
   { val: "PKR 2B+", label: "GMV Processed" },
 ];
 
+/* ── Forgot Password Modal (same as CustomerLogin) ── */
+type ForgotStep = "email" | "sent";
+
+const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
+  const [step, setStep]     = useState<ForgotStep>("email");
+  const [email, setEmail]   = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = () => {
+    if (!email) return;
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setStep("sent"); }, 1500);
+  };
+
+  const F = { fontFamily: "'Plus Jakarta Sans', sans-serif" };
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", zIndex: 999, animation: "fpFadeIn 0.2s ease" }}
+      />
+
+      {/* Modal */}
+      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1000, width: "min(400px,92vw)", background: "white", borderRadius: "24px", boxShadow: "0 32px 80px rgba(37,99,235,0.22), 0 8px 24px rgba(0,0,0,0.12)", overflow: "hidden", animation: "fpPopUp 0.35s cubic-bezier(0.34,1.56,0.64,1)", ...F }}>
+
+        {/* Gradient header */}
+        <div style={{ background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", padding: "24px", position: "relative", textAlign: "center" }}>
+          <button onClick={onClose} style={{ position: "absolute", top: "12px", right: "12px", background: "rgba(255,255,255,0.2)", border: "none", borderRadius: "50%", width: "28px", height: "28px", cursor: "pointer", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <X size={14} />
+          </button>
+          <div style={{ width: "60px", height: "60px", borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", border: "3px solid rgba(255,255,255,0.35)" }}>
+            {step === "email" ? <KeyRound size={28} color="white" /> : <Mail size={28} color="white" />}
+          </div>
+          <h2 style={{ color: "white", fontWeight: 800, fontSize: "18px", margin: "0 0 4px" }}>
+            {step === "email" ? "Forgot Password?" : "Check Your Email"}
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "12px", margin: 0 }}>
+            {step === "email" ? "Enter your vendor email and we'll send a reset link" : `We sent a reset link to ${email}`}
+          </p>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "24px" }}>
+          {step === "email" ? (
+            <>
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "#374151", display: "block", marginBottom: "6px", ...F }}>Vendor Email Address</label>
+                <div style={{ position: "relative" }}>
+                  <Mail size={15} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+                  <input
+                    type="email"
+                    placeholder="store@example.com"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleSend()}
+                    autoFocus
+                    style={{ width: "100%", height: "44px", paddingLeft: "36px", paddingRight: "12px", borderRadius: "11px", border: "1.5px solid rgba(37,99,235,0.2)", fontSize: "13px", outline: "none", boxSizing: "border-box", background: "#fafbff", ...F }}
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleSend}
+                disabled={loading || !email}
+                style={{ width: "100%", height: "44px", borderRadius: "12px", background: loading || !email ? "rgba(37,99,235,0.35)" : "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", border: "none", cursor: loading || !email ? "not-allowed" : "pointer", color: "white", fontSize: "13px", fontWeight: 700, boxShadow: "0 6px 18px rgba(37,99,235,0.3)", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "all 0.2s", ...F }}>
+                {loading
+                  ? <><RefreshCw size={15} style={{ animation: "fpSpin 1s linear infinite" }} /> Sending…</>
+                  : "Send Reset Link"}
+              </button>
+
+              <button onClick={onClose} style={{ width: "100%", marginTop: "10px", height: "40px", borderRadius: "12px", background: "transparent", border: "1.5px solid rgba(37,99,235,0.15)", cursor: "pointer", color: "#64748b", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", ...F }}>
+                <ArrowLeft size={14} /> Back to Login
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Sent confirmation */}
+              <div style={{ textAlign: "center", padding: "8px 0 16px" }}>
+                <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg,#d1fae5,#a7f3d0)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid #6ee7b7" }}>
+                  <CheckCircle2 size={32} color="#059669" />
+                </div>
+                <p style={{ fontSize: "13px", color: "#374151", fontWeight: 700, margin: "0 0 4px" }}>Reset link sent successfully!</p>
+                <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>Didn't receive it? Check your spam folder or try again.</p>
+              </div>
+
+              {/* Tips */}
+              <div style={{ background: "rgba(37,99,235,0.05)", border: "1px solid rgba(37,99,235,0.12)", borderRadius: "12px", padding: "12px 14px", marginBottom: "16px" }}>
+                {[
+                  { emoji: "📬", text: "Check your inbox for the reset link" },
+                  { emoji: "⏱️", text: "Link expires in 30 minutes" },
+                  { emoji: "🔒", text: "Choose a strong new password" },
+                ].map(({ emoji, text }) => (
+                  <div key={text} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "5px 0" }}>
+                    <span style={{ fontSize: "16px" }}>{emoji}</span>
+                    <span style={{ fontSize: "12px", color: "#475569", fontWeight: 500, ...F }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button onClick={() => { setStep("email"); setEmail(""); }} style={{ width: "100%", marginBottom: "8px", height: "40px", borderRadius: "12px", background: "transparent", border: "1.5px solid rgba(37,99,235,0.2)", cursor: "pointer", color: "#2563eb", fontSize: "13px", fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", ...F }}>
+                <RefreshCw size={14} /> Resend Email
+              </button>
+
+              <button onClick={onClose} style={{ width: "100%", height: "44px", borderRadius: "12px", background: "linear-gradient(135deg,#2563eb 0%,#7c3aed 100%)", border: "none", cursor: "pointer", color: "white", fontSize: "13px", fontWeight: 700, boxShadow: "0 6px 18px rgba(37,99,235,0.3)", ...F }}>
+                Back to Login
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fpFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fpPopUp   { from { opacity: 0; transform: translate(-50%,-46%) scale(0.92); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+        @keyframes fpSpin    { to { transform: rotate(360deg); } }
+      `}</style>
+    </>
+  );
+};
+
+/* ── Main Page ── */
 const VendorLoginPage = () => {
-  const [showPass,   setShowPass]   = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPass,  setLoginPass]  = useState("");
+  const [showPass,    setShowPass]    = useState(false);
+  const [loginEmail,  setLoginEmail]  = useState("");
+  const [loginPass,   setLoginPass]   = useState("");
+  const [showForgot,  setShowForgot]  = useState(false);
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
+
+      {/* Forgot Password Modal */}
+      {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
 
       <main className="flex-1 flex items-stretch">
         <div className="container mx-auto max-w-6xl px-4 py-10 flex gap-8 items-start">
@@ -190,7 +317,14 @@ const VendorLoginPage = () => {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <Label htmlFor="v-pass" className="text-sm font-medium">Password</Label>
-                    <Link to="#" className="text-xs text-primary hover:underline">Forgot password?</Link>
+                    {/* ── Forgot password trigger ── */}
+                    <button
+                      type="button"
+                      onClick={() => setShowForgot(true)}
+                      className="text-xs text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
+                    >
+                      Forgot password?
+                    </button>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
