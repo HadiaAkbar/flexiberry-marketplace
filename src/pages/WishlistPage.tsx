@@ -6,6 +6,8 @@ import {
   Tag, Clock, TrendingDown, Store, ChevronRight, Package,
   ShoppingBag
 } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ── Mock wishlist data ────────────────────────────────────────────────────────
 const initialWishlist = [
@@ -117,7 +119,8 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
 
       {/* ── Page hero — matches site header gradient style ── */}
       <div className="relative overflow-hidden gradient-primary">
@@ -173,7 +176,7 @@ const WishlistPage = () => {
       </div>
 
       {/* ── Content ── */}
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+      <div className="flex-1 container mx-auto max-w-7xl px-4 py-8">
 
         {/* Empty state */}
         {items.length === 0 && (
@@ -342,6 +345,8 @@ const WishlistPage = () => {
           </>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 };
