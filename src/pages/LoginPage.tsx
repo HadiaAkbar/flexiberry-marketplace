@@ -468,21 +468,21 @@ const LoginPage = () => {
                 {/* Divider */}
                 <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0 16px" }}>
                   <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right,transparent,rgba(37,99,235,0.12))" }}/>
-                  <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, whiteSpace: "nowrap" }}>Are you a vendor?</span>
+                  <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, whiteSpace: "nowrap" }}>Want to sell?</span>
                   <div style={{ flex: 1, height: "1px", background: "linear-gradient(to left,transparent,rgba(37,99,235,0.12))" }}/>
                 </div>
 
                 {/* Vendor CTA */}
-                <Link to="/vendor/login" style={{ textDecoration: "none", display: "block" }}>
+                <Link to="/vendor/register" style={{ textDecoration: "none", display: "block" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px 16px", background: "linear-gradient(135deg,#f8faff,#f5f3ff)", borderRadius: "16px", border: "1.5px solid rgba(37,99,235,0.12)", transition: "all 0.2s", cursor: "pointer" }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(37,99,235,0.3)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(37,99,235,0.12)"; (e.currentTarget as HTMLElement).style.transform = "none"; }}>
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(37,99,235,0.3)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(37,99,235,0.1)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(37,99,235,0.12)"; (e.currentTarget as HTMLElement).style.transform = "none"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
                     <div style={{ width: "38px", height: "38px", borderRadius: "11px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: "0 4px 12px rgba(37,99,235,0.3)" }}>
                       <Store size={17} color="white"/>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Vendor Dashboard</p>
-                      <p style={{ fontSize: "11px", color: "#64748b", margin: "1px 0 0" }}>Manage your store & installments</p>
+                      <p style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", margin: 0 }}>Become a Vendor</p>
+                      <p style={{ fontSize: "11px", color: "#64748b", margin: "1px 0 0" }}>Create your store & start selling today</p>
                     </div>
                     <ChevronRight size={16} color="#94a3b8"/>
                   </div>
