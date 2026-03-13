@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
 import {
   Zap, Clock, ShoppingCart, Heart, Star, TrendingDown,
   ChevronRight, Filter, Tag, Flame, Timer, Package,
@@ -32,7 +33,7 @@ const FLASH_PRODUCTS = [
     installment: 24166, rating: 4.9, reviews: 2341,
     stock: 7, totalStock: 30,
     image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80",
-    shop: "TechZone Official", verified: true, hot: true,
+    shop: "TechZone Official", shopId: "vendor-techzone-001", verified: true, hot: true,
   },
   {
     id: "f2", name: 'LG OLED C3 65" 4K Smart TV',
@@ -41,7 +42,7 @@ const FLASH_PRODUCTS = [
     installment: 37499, rating: 4.8, reviews: 876,
     stock: 3, totalStock: 10,
     image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=600&q=80",
-    shop: "HomeElite Appliances", verified: true, hot: true,
+    shop: "HomeElite Appliances", shopId: "vendor-homeelite-004", verified: true, hot: true,
   },
   {
     id: "f3", name: "MacBook Air M3 16GB 512GB",
@@ -50,7 +51,7 @@ const FLASH_PRODUCTS = [
     installment: 29999, rating: 4.7, reviews: 543,
     stock: 12, totalStock: 20,
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
-    shop: "DigiWorld Electronics", verified: true, hot: false,
+    shop: "DigiWorld Electronics", shopId: "vendor-digiworld-002", verified: true, hot: false,
   },
   {
     id: "f4", name: "Sony WH-1000XM5 Headphones",
@@ -59,7 +60,7 @@ const FLASH_PRODUCTS = [
     installment: 6666, rating: 4.9, reviews: 3102,
     stock: 18, totalStock: 40,
     image: "https://images.unsplash.com/photo-1545127398-14699f92334b?w=600&q=80",
-    shop: "TechZone Official", verified: true, hot: false,
+    shop: "TechZone Official", shopId: "vendor-techzone-001", verified: true, hot: false,
   },
   {
     id: "f5", name: "Dyson V15 Detect Absolute",
@@ -68,7 +69,7 @@ const FLASH_PRODUCTS = [
     installment: 10833, rating: 4.6, reviews: 712,
     stock: 5, totalStock: 15,
     image: "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=600&q=80",
-    shop: "HomeElite Appliances", verified: true, hot: true,
+    shop: "HomeElite Appliances", shopId: "vendor-homeelite-004", verified: true, hot: true,
   },
   {
     id: "f6", name: 'iPad Pro M4 12.9" Wi-Fi 256GB',
@@ -77,7 +78,7 @@ const FLASH_PRODUCTS = [
     installment: 20833, rating: 4.8, reviews: 621,
     stock: 9, totalStock: 25,
     image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80",
-    shop: "DigiWorld Electronics", verified: true, hot: false,
+    shop: "DigiWorld Electronics", shopId: "vendor-digiworld-002", verified: true, hot: false,
   },
   {
     id: "f7", name: "Honda CD 70 2025 Model",
@@ -86,7 +87,7 @@ const FLASH_PRODUCTS = [
     installment: 14999, rating: 4.5, reviews: 1890,
     stock: 4, totalStock: 8,
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-    shop: "SpeedRiders Pk", verified: true, hot: true,
+    shop: "SpeedRiders Pk", shopId: "vendor-speedriders-003", verified: true, hot: true,
   },
   {
     id: "f8", name: "Dell XPS 15 Intel i9 RTX 4060",
@@ -95,7 +96,7 @@ const FLASH_PRODUCTS = [
     installment: 39166, rating: 4.7, reviews: 389,
     stock: 6, totalStock: 12,
     image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",
-    shop: "DigiWorld Electronics", verified: true, hot: false,
+    shop: "DigiWorld Electronics", shopId: "vendor-digiworld-002", verified: true, hot: false,
   },
   {
     id: "f9", name: "Haier Inverter AC 1.5 Ton",
@@ -104,7 +105,7 @@ const FLASH_PRODUCTS = [
     installment: 9999, rating: 4.4, reviews: 2140,
     stock: 11, totalStock: 20,
     image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",
-    shop: "HomeElite Appliances", verified: false, hot: false,
+    shop: "HomeElite Appliances", shopId: "vendor-homeelite-004", verified: false, hot: false,
   },
 ];
 
@@ -172,8 +173,18 @@ function FlashCard({ product, index }: { product: typeof FLASH_PRODUCTS[0]; inde
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
+  const { addToCart } = useCart();
 
   const handleCart = () => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.original,
+      image: product.image,
+      shopId: product.shopId,
+      shopName: product.shop,
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -307,7 +318,6 @@ function FlashCard({ product, index }: { product: typeof FLASH_PRODUCTS[0]; inde
 const FlashSalePage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeSort, setActiveSort] = useState("discount");
-  const [showFilters, setShowFilters] = useState(false);
 
   // End time: 6 hours from now
   const [endTime] = useState(() => Date.now() + 6 * 3_600_000);
@@ -494,7 +504,7 @@ const FlashSalePage = () => {
             {/* Count */}
             <div style={{
               padding: "6px 12px", borderRadius: 10, fontSize: 12, fontWeight: 700,
-              background: "rgba(239,68,68,0.08)", color: "#ef4444", shrink: 0,
+              background: "rgba(239,68,68,0.08)", color: "#ef4444",
             }}>
               {filtered.length} deals
             </div>
@@ -536,9 +546,7 @@ const FlashSalePage = () => {
         </div>
 
         <AnimatePresence mode="popLayout">
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((product, i) => (
               <FlashCard key={product.id} product={product} index={i} />
             ))}
