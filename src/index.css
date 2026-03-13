@@ -1,8 +1,10 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
 
 @layer base {
   :root {
@@ -88,6 +90,7 @@
     --gradient-hero-r:
       linear-gradient(225deg, hsl(263 72% 58%) 0%, hsl(250 75% 56%) 50%, hsl(221 83% 53%) 100%);
 
+      
     --gradient-aurora:
       radial-gradient(ellipse at 20% 50%, hsl(221 83% 53% / 0.15) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 20%, hsl(263 72% 58% / 0.18) 0%, transparent 55%),
@@ -850,4 +853,58 @@
     background-size: 300% 300%;
     animation: aurora-drift 12s ease infinite;
   }
+  /* =====================================================
+   ADMIN PANEL THEME (Scoped)
+   ===================================================== */
+
+.admin-theme {
+
+  --background: 228 33% 97%;
+  --foreground: 224 47% 11%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 224 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 47% 11%;
+
+  --primary: 177 100% 35%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 177 100% 29%;
+
+  --secondary: 228 33% 95%;
+  --secondary-foreground: 224 47% 11%;
+
+  --muted: 228 33% 95%;
+  --muted-foreground: 225 15% 42%;
+
+  --accent: 228 33% 95%;
+  --accent-foreground: 224 47% 11%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 27% 93%;
+  --border2: 221 28% 84%;
+  --input: 220 27% 93%;
+  --ring: 177 100% 35%;
+
+  /* Admin specific colors */
+
+  --teal: 177 100% 35%;
+  --teal-hover: 177 100% 29%;
+  --teal-bg: 174 85% 94%;
+
+  --fb-blue: 217 91% 60%;
+  --fb-purple: 258 90% 66%;
+  --fb-amber: 38 92% 50%;
+  --fb-red: 0 84% 60%;
+  --fb-green: 160 84% 39%;
+
+  --sidebar-background: 224 47% 11%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 177 100% 35%;
+  --sidebar-primary-foreground: 0 0% 100%;
+
+}
 }
