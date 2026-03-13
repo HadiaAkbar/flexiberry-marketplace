@@ -1,0 +1,253 @@
+import { useState } from "react";
+import {
+  CreditCard, Search, TrendingUp, DollarSign,
+  CheckCircle, AlertCircle, XCircle, Clock,
+  ChevronRight, Eye, Download, Filter,
+  Calendar, User, Package, BarChart2,
+} from "lucide-react";
+
+const INSTALLMENTS = [
+  { id: "INS-2026-0041", buyer: "Ahmad Bilal",   product: "Samsung Galaxy S24 Ultra", totalAmount: 89999,  monthlyAmount: 7500,  plan: 12, paid: 3,  status: "active",    nextDue: "Apr 13, 2026", avatar: "AB", color: "#3b82f6" },
+  { id: "INS-2026-0040", buyer: "Hina Butt",     product: "iPhone 15 Pro Max 256GB",  totalAmount: 259999, monthlyAmount: 43333, plan: 6,  paid: 2,  status: "active",    nextDue: "Apr 12, 2026", avatar: "HB", color: "#8b5cf6" },
+  { id: "INS-2026-0039", buyer: "Murad Khan",    product: "Sony PlayStation 5 Slim",  totalAmount: 79999,  monthlyAmount: 13333, plan: 6,  paid: 6,  status: "completed", nextDue: "—",            avatar: "MK", color: "#10b981" },
+  { id: "INS-2026-0038", buyer: "Sara Anwar",    product: "MacBook Pro M3 14-inch",   totalAmount: 349999, monthlyAmount: 29167, plan: 12, paid: 1,  status: "active",    nextDue: "Apr 11, 2026", avatar: "SA", color: "#f59e0b" },
+  { id: "INS-2026-0037", buyer: "Faisal Mir",    product: "LG OLED 65\" C3 Series",  totalAmount: 189999, monthlyAmount: 10556, plan: 18, paid: 0,  status: "overdue",   nextDue: "Mar 10, 2026", avatar: "FM", color: "#ef4444" },
+  { id: "INS-2026-0036", buyer: "Zara Hussain",  product: "iPad Pro M2 12.9-inch",   totalAmount: 179999, monthlyAmount: 29999, plan: 6,  paid: 4,  status: "active",    nextDue: "Apr 09, 2026", avatar: "ZH", color: "#06b6d4" },
+  { id: "INS-2026-0035", buyer: "Ali Hassan",    product: "Dyson V15 Detect",         totalAmount: 89999,  monthlyAmount: 29999, plan: 3,  paid: 3,  status: "completed", nextDue: "—",            avatar: "AH", color: "#d946ef" },
+  { id: "INS-2026-0034", buyer: "Nadia Iqbal",   product: "Google Pixel 8 Pro",       totalAmount: 199999, monthlyAmount: 16667, plan: 12, paid: 2,  status: "active",    nextDue: "Apr 07, 2026", avatar: "NI", color: "#22c55e" },
+  { id: "INS-2026-0033", buyer: "Bilal Ahmed",   product: "Sony WH-1000XM5",          totalAmount: 89999,  monthlyAmount: 7500,  plan: 12, paid: 0,  status: "overdue",   nextDue: "Mar 06, 2026", avatar: "BA", color: "#f97316" },
+  { id: "INS-2026-0032", buyer: "Maryam Khan",   product: "Samsung 65\" QLED 4K",     totalAmount: 329999, monthlyAmount: 27500, plan: 12, paid: 12, status: "completed", nextDue: "—",            avatar: "MK", color: "#0ea5e9" },
+];
+
+const STATUS_CONFIG = {
+  active:    { label: "Active",    bg: "#dbeafe", color: "#1e40af", border: "#93c5fd", icon: CheckCircle  },
+  completed: { label: "Completed", bg: "#d1fae5", color: "#065f46", border: "#6ee7b7", icon: CheckCircle  },
+  overdue:   { label: "Overdue",   bg: "#fee2e2", color: "#991b1b", border: "#fecaca", icon: AlertCircle  },
+  paused:    { label: "Paused",    bg: "#fef3c7", color: "#92400e", border: "#fde68a", icon: Clock        },
+};
+
+type InstStatus = keyof typeof STATUS_CONFIG;
+
+const VendorInstallmentsPage = () => {
+  const [search, setSearch]       = useState("");
+  const [statusFilter, setStatus] = useState("all");
+  const [planFilter, setPlan]     = useState("all");
+  const [detail, setDetail]       = useState<typeof INSTALLMENTS[0] | null>(null);
+
+  const F = { fontFamily: "'DM Sans', system-ui, sans-serif" };
+
+  const filtered = INSTALLMENTS.filter((ins) => {
+    const matchSearch = ins.buyer.toLowerCase().includes(search.toLowerCase()) || ins.product.toLowerCase().includes(search.toLowerCase()) || ins.id.includes(search);
+    const matchStatus = statusFilter === "all" || ins.status === statusFilter;
+    const matchPlan   = planFilter === "all" || ins.plan.toString() === planFilter;
+    return matchSearch && matchStatus && matchPlan;
+  });
+
+  const totalPortfolio  = INSTALLMENTS.reduce((acc, i) => acc + i.totalAmount, 0);
+  const totalCollected  = INSTALLMENTS.reduce((acc, i) => acc + i.monthlyAmount * i.paid, 0);
+  const overdueCount    = INSTALLMENTS.filter((i) => i.status === "overdue").length;
+  const completedCount  = INSTALLMENTS.filter((i) => i.status === "completed").length;
+
+  const stats = [
+    { label: "Total Portfolio",    val: `Rs ${(totalPortfolio / 1000).toFixed(0)}K`,  icon: DollarSign, color: "#2563eb", bg: "#eff6ff" },
+    { label: "Collected",          val: `Rs ${(totalCollected / 1000).toFixed(0)}K`,  icon: TrendingUp, color: "#10b981", bg: "#ecfdf5" },
+    { label: "Overdue Accounts",   val: overdueCount,                                  icon: AlertCircle,color: "#ef4444", bg: "#fee2e2" },
+    { label: "Completed Plans",    val: completedCount,                                icon: CheckCircle,color: "#8b5cf6", bg: "#f5f3ff" },
+  ];
+
+  return (
+    <div style={{ ...F, minHeight: "100%" }}>
+
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+        <div>
+          <h1 style={{ fontSize: "22px", fontWeight: 900, color: "#0f172a", margin: "0 0 4px", letterSpacing: "-0.02em" }}>Installments</h1>
+          <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0 }}>Track all active installment plans and collections</p>
+        </div>
+        <button style={{ height: "40px", paddingInline: "16px", borderRadius: "11px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", border: "none", cursor: "pointer", color: "white", fontSize: "12px", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px", boxShadow: "0 4px 14px rgba(37,99,235,0.35)", ...F }}>
+          <Download size={14} /> Export Report
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "14px", marginBottom: "22px" }}>
+        {stats.map((s) => (
+          <div key={s.label} style={{ background: "white", borderRadius: "16px", border: "1.5px solid rgba(37,99,235,0.07)", padding: "16px 18px", display: "flex", alignItems: "center", gap: "14px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "11px", background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <s.icon size={18} color={s.color} />
+            </div>
+            <div>
+              <div style={{ fontSize: "20px", fontWeight: 900, color: "#0f172a", lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "3px" }}>{s.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Collection progress */}
+      <div style={{ background: "white", borderRadius: "16px", border: "1.5px solid rgba(37,99,235,0.07)", padding: "20px", marginBottom: "18px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+          <p style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a", margin: 0 }}>Collection Progress</p>
+          <span style={{ fontSize: "12px", fontWeight: 700, color: "#2563eb" }}>{Math.round((totalCollected / totalPortfolio) * 100)}% collected</span>
+        </div>
+        <div style={{ height: "10px", background: "#f1f5f9", borderRadius: "10px", overflow: "hidden" }}>
+          <div style={{ height: "100%", background: "linear-gradient(90deg,#2563eb,#7c3aed)", borderRadius: "10px", width: `${(totalCollected / totalPortfolio) * 100}%`, transition: "width 1.2s ease" }} />
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
+          <span style={{ fontSize: "11px", color: "#94a3b8" }}>Collected: Rs {(totalCollected / 1000).toFixed(0)}K</span>
+          <span style={{ fontSize: "11px", color: "#94a3b8" }}>Total: Rs {(totalPortfolio / 1000).toFixed(0)}K</span>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div style={{ background: "white", borderRadius: "16px", border: "1.5px solid rgba(37,99,235,0.07)", padding: "14px 18px", marginBottom: "16px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+        <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+          <Search size={14} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+          <input placeholder="Search buyer or product…" value={search} onChange={(e) => setSearch(e.target.value)}
+            style={{ width: "100%", height: "38px", paddingLeft: "34px", borderRadius: "10px", border: "1.5px solid #e2e8f0", fontSize: "13px", outline: "none", boxSizing: "border-box", ...F, background: "#f8fafc", color: "#0f172a" }} />
+        </div>
+        {(["all", "active", "completed", "overdue"] as const).map((s) => (
+          <button key={s} onClick={() => setStatus(s)}
+            style={{ height: "36px", paddingInline: "12px", borderRadius: "9px", border: "none", cursor: "pointer", fontSize: "11px", fontWeight: 700, transition: "all 0.18s", ...F, textTransform: "capitalize",
+              background: statusFilter === s ? "linear-gradient(135deg,#2563eb,#7c3aed)" : "#f1f5f9",
+              color: statusFilter === s ? "white" : "#64748b",
+              boxShadow: statusFilter === s ? "0 4px 12px rgba(37,99,235,0.3)" : "none",
+            }}>
+            {s === "all" ? "All Plans" : s}
+          </button>
+        ))}
+        <div style={{ position: "relative" }}>
+          <select value={planFilter} onChange={(e) => setPlan(e.target.value)}
+            style={{ height: "36px", paddingInline: "12px 28px", borderRadius: "9px", border: "1.5px solid #e2e8f0", fontSize: "11px", fontWeight: 600, color: "#475569", background: "#f8fafc", outline: "none", cursor: "pointer", appearance: "none", ...F }}>
+            <option value="all">All Plans</option>
+            <option value="3">3 Months</option>
+            <option value="6">6 Months</option>
+            <option value="12">12 Months</option>
+            <option value="18">18 Months</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div style={{ background: "white", borderRadius: "18px", border: "1.5px solid rgba(37,99,235,0.07)", overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "160px 1fr 120px 140px 120px 120px 60px", padding: "12px 20px", background: "#fafbff", borderBottom: "1px solid #f1f5f9", gap: "12px" }}>
+          {["Plan ID", "Buyer / Product", "Monthly", "Progress", "Next Due", "Status", ""].map((h) => (
+            <span key={h} style={{ fontSize: "10px", fontWeight: 800, color: "#94a3b8", letterSpacing: "0.06em", textTransform: "uppercase" }}>{h}</span>
+          ))}
+        </div>
+
+        {filtered.map((ins) => {
+          const sc      = STATUS_CONFIG[ins.status as InstStatus];
+          const pct     = Math.round((ins.paid / ins.plan) * 100);
+          const remaining = ins.plan - ins.paid;
+          return (
+            <div key={ins.id}
+              style={{ display: "grid", gridTemplateColumns: "160px 1fr 120px 140px 120px 120px 60px", padding: "14px 20px", borderBottom: "1px solid #f8fafc", gap: "12px", alignItems: "center", transition: "background 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#fafbff")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              {/* ID */}
+              <p style={{ fontSize: "11px", fontWeight: 800, color: "#2563eb", margin: 0, fontFamily: "monospace" }}>{ins.id}</p>
+
+              {/* Buyer + Product */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: `linear-gradient(135deg,${ins.color},${ins.color}bb)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 900, color: "white", flexShrink: 0 }}>
+                  {ins.avatar}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", margin: "0 0 2px" }}>{ins.buyer}</p>
+                  <p style={{ fontSize: "11px", color: "#94a3b8", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ins.product}</p>
+                </div>
+              </div>
+
+              {/* Monthly */}
+              <div>
+                <p style={{ fontSize: "13px", fontWeight: 900, color: "#0f172a", margin: 0 }}>Rs {ins.monthlyAmount.toLocaleString()}</p>
+                <p style={{ fontSize: "10px", color: "#94a3b8", margin: 0 }}>{ins.plan}-month plan</p>
+              </div>
+
+              {/* Progress */}
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "#374151" }}>{ins.paid}/{ins.plan} paid</span>
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "#2563eb" }}>{pct}%</span>
+                </div>
+                <div style={{ height: "6px", background: "#f1f5f9", borderRadius: "6px", overflow: "hidden" }}>
+                  <div style={{ height: "100%", borderRadius: "6px", width: `${pct}%`, background: ins.status === "overdue" ? "#ef4444" : ins.status === "completed" ? "#10b981" : "linear-gradient(90deg,#2563eb,#7c3aed)", transition: "width 1s ease" }} />
+                </div>
+                {remaining > 0 && <p style={{ fontSize: "9px", color: "#94a3b8", margin: "3px 0 0" }}>{remaining} payments left</p>}
+              </div>
+
+              {/* Next due */}
+              <p style={{ fontSize: "12px", color: ins.status === "overdue" ? "#ef4444" : "#475569", fontWeight: ins.status === "overdue" ? 700 : 500, margin: 0 }}>
+                {ins.nextDue}
+              </p>
+
+              {/* Status */}
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "10px", fontWeight: 700, padding: "4px 9px", borderRadius: "20px", background: sc.bg, color: sc.color, border: `1px solid ${sc.border}` }}>
+                <sc.icon size={9} /> {sc.label}
+              </span>
+
+              {/* Action */}
+              <button onClick={() => setDetail(ins)} style={{ width: "30px", height: "30px", borderRadius: "8px", background: "#eff6ff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Eye size={13} color="#2563eb" />
+              </button>
+            </div>
+          );
+        })}
+
+        <div style={{ padding: "14px 20px", background: "#fafbff", borderTop: "1px solid #f1f5f9" }}>
+          <span style={{ fontSize: "12px", color: "#94a3b8" }}>Showing {filtered.length} of {INSTALLMENTS.length} plans</span>
+        </div>
+      </div>
+
+      {/* Detail panel */}
+      {detail && (
+        <>
+          <div onClick={() => setDetail(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(4px)", zIndex: 998 }} />
+          <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(400px,95vw)", background: "white", zIndex: 999, boxShadow: "-20px 0 60px rgba(0,0,0,0.15)", display: "flex", flexDirection: "column", ...F }}>
+            <div style={{ background: "linear-gradient(135deg,#2563eb,#7c3aed)", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "11px", margin: "0 0 2px", fontFamily: "monospace" }}>{detail.id}</p>
+                <h2 style={{ color: "white", fontWeight: 800, fontSize: "16px", margin: 0 }}>Installment Details</h2>
+              </div>
+              <button onClick={() => setDetail(null)} style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,0.2)", border: "none", color: "white", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", justifyContent: "center" }}>×</button>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+              <div style={{ background: "#f8fafc", borderRadius: "14px", padding: "16px", marginBottom: "16px" }}>
+                <p style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", margin: "0 0 4px" }}>{detail.product}</p>
+                <p style={{ fontSize: "20px", fontWeight: 900, color: "#2563eb", margin: "0 0 4px" }}>Rs {detail.totalAmount.toLocaleString()}</p>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>{detail.plan}-month plan · Rs {detail.monthlyAmount.toLocaleString()}/month</p>
+              </div>
+              {/* Payment timeline */}
+              <p style={{ fontSize: "11px", fontWeight: 700, color: "#374151", marginBottom: "10px" }}>PAYMENT TIMELINE</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {Array.from({ length: detail.plan }).map((_, i) => {
+                  const isPaid = i < detail.paid;
+                  const isCurrent = i === detail.paid && detail.status !== "completed";
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", borderRadius: "10px", background: isPaid ? "#ecfdf5" : isCurrent ? "#eff6ff" : "#f8fafc", border: `1px solid ${isPaid ? "#6ee7b7" : isCurrent ? "#93c5fd" : "#e2e8f0"}` }}>
+                      <div style={{ width: "22px", height: "22px", borderRadius: "50%", background: isPaid ? "#10b981" : isCurrent ? "#2563eb" : "#e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        {isPaid ? <CheckCircle size={12} color="white" /> : <span style={{ fontSize: "9px", fontWeight: 800, color: isCurrent ? "white" : "#94a3b8" }}>{i + 1}</span>}
+                      </div>
+                      <span style={{ fontSize: "12px", fontWeight: 600, color: isPaid ? "#065f46" : isCurrent ? "#1e40af" : "#94a3b8", flex: 1 }}>Payment {i + 1}</span>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: isPaid ? "#065f46" : isCurrent ? "#2563eb" : "#94a3b8" }}>Rs {detail.monthlyAmount.toLocaleString()}</span>
+                      {isCurrent && <span style={{ fontSize: "9px", fontWeight: 700, color: "#2563eb", background: "#dbeafe", padding: "2px 6px", borderRadius: "20px" }}>DUE</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{ padding: "16px 20px", borderTop: "1px solid #f1f5f9" }}>
+              <button style={{ width: "100%", height: "42px", borderRadius: "11px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", border: "none", color: "white", fontSize: "13px", fontWeight: 700, cursor: "pointer", ...F }}>
+                Send Payment Reminder
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default VendorInstallmentsPage;
