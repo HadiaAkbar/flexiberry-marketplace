@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CheckCircle2, X, PartyPopper, Mail, ArrowLeft, KeyRound, RefreshCw } from "lucide-react";
 
 /* ── Inline SVG: FlexiBerry Tagged-Cart Logo ── */
@@ -200,6 +200,7 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
 
 /* ── Main Page ── */
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [name, setName] = useState("");
@@ -239,7 +240,7 @@ const LoginPage = () => {
                   <Label htmlFor="password">Password</Label>
                   <Input id="password" type="password" placeholder="••••••••" className="mt-1" />
                 </div>
-                <Button className="w-full gradient-coral border-none text-primary-foreground hover:opacity-90">Login</Button>
+                <Button className="w-full gradient-coral border-none text-primary-foreground hover:opacity-90" onClick={() => navigate("/dashboard")}>Login</Button>
                 <p className="text-center text-xs text-muted-foreground">
                   <button
                     onClick={() => setShowForgot(true)}
