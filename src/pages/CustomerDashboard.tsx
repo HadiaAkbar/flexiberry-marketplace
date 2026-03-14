@@ -1,4 +1,5 @@
 import { useState } from "react";
+import WishlistTab from "@/components/WishlistTab";
 import { Link } from "react-router-dom";
 import {
   User, ShoppingBag, CreditCard, Heart, Bell, Settings,
@@ -616,23 +617,8 @@ const CustomerDashboard = () => {
           )}
 
           {/* ════════ WISHLIST tab ════════ */}
-          {activeTab === "wishlist" && (
-            <div>
-              <h1 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: "0 0 20px" }}>My Wishlist</h1>
-              <div style={{ background: "white", borderRadius: "18px", padding: "32px", border: "1px solid rgba(37,99,235,0.07)", textAlign: "center" }}>
-                <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg,#ffe4e6,#fecdd3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
-                  <Heart size={28} color="#e11d48" fill="#e11d48" />
-                </div>
-                <p style={{ fontSize: "15px", fontWeight: 800, color: "#0f172a", margin: "0 0 6px" }}>You have {wishlistCount} saved items</p>
-                <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 16px" }}>View and manage your wishlist from the main store page</p>
-                <Link to="/wishlist" style={{ textDecoration: "none" }}>
-                  <button style={{ height: "40px", padding: "0 24px", borderRadius: "11px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", border: "none", cursor: "pointer", color: "white", fontSize: "13px", fontWeight: 700, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-                    Go to Wishlist →
-                  </button>
-                </Link>
-              </div>
-            </div>
-          )}
+{/* ════════ WISHLIST tab ════════ */}
+{activeTab === "wishlist" && <WishlistTab />}
 
         </main>
       </div>
