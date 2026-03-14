@@ -147,7 +147,7 @@ const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
 /* ══════════════════════════════════════════════
    SUCCESS POPUP
 ══════════════════════════════════════════════ */
-const SuccessPopup = ({ name, onClose }: { name: string; onClose: () => void }) => {
+const SuccessPopup = ({ name, onClose, onGoHome }: { name: string; onClose: () => void; onGoHome: () => void }) => {
   const F = { fontFamily: "'DM Sans', system-ui, sans-serif" };
   return (
     <>
@@ -179,14 +179,14 @@ const SuccessPopup = ({ name, onClose }: { name: string; onClose: () => void }) 
               <span style={{ fontSize: "13px", color: "#374151", fontWeight: 600 }}>{text}</span>
             </div>
           ))}
-          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-            <button onClick={onClose} style={{ flex: 2, height: "48px", borderRadius: "14px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", border: "none", cursor: "pointer", color: "white", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 8px 24px rgba(37,99,235,0.35)", ...F }}>
-              <PartyPopper size={16}/> Start Shopping
-            </button>
-            <button onClick={onClose} style={{ flex: 1, height: "48px", borderRadius: "14px", background: "transparent", border: "1.5px solid rgba(37,99,235,0.2)", cursor: "pointer", color: "#2563eb", fontSize: "13px", fontWeight: 600, ...F }}>
-              Close
-            </button>
-          </div>
+<div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+  <button onClick={() => { onClose(); onGoHome(); }} style={{ flex: 2, height: "48px", borderRadius: "14px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", border: "none", cursor: "pointer", color: "white", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 8px 24px rgba(37,99,235,0.35)", ...F }}>
+    <PartyPopper size={16}/> Start Shopping
+  </button>
+  <button onClick={onClose} style={{ flex: 1, height: "48px", borderRadius: "14px", background: "transparent", border: "1.5px solid rgba(37,99,235,0.2)", cursor: "pointer", color: "#2563eb", fontSize: "13px", fontWeight: 600, ...F }}>
+    Close
+  </button>
+</div>
         </div>
       </div>
     </>
@@ -250,8 +250,13 @@ const LoginPage = () => {
     <div style={{ minHeight: "100vh", background: "linear-gradient(160deg,#f0f4ff 0%,#faf8ff 50%,#f0fdf4 100%)", display: "flex", flexDirection: "column" as const, ...F }}>
 
       {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)}/>}
-      {showSuccess && <SuccessPopup name={name} onClose={() => { setShowSuccess(false); navigate("/dashboard"); }}/>}
-
+      {showSuccess && (
+  <SuccessPopup
+    name={name}
+    onClose={() => setShowSuccess(false)}
+    onGoHome={() => { setShowSuccess(false); navigate("/"); }}
+  />
+)}
       {/* ── TOPBAR ── */}
       <header style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 32px", background: "rgba(255,255,255,0.8)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(37,99,235,0.08)", position: "sticky", top: 0, zIndex: 50 }}>
         <Link to="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
