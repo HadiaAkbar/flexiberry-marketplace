@@ -5,7 +5,7 @@ export interface ProductCategory {
   id: string;
   name: string;
   slug: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   description: string;
   themeColor: string;
   themeBg: string;
@@ -136,6 +136,6 @@ export const formatPrice = (price: number): string => {
   return `PKR ${price.toLocaleString()}`;
 };
 
-export const getMonthlyInstallment = (price: number, months: 6 | 12): string => {
+export const getMonthlyInstallment = (price: number, months: number): string => {
   return formatPrice(Math.ceil(price / months));
 };

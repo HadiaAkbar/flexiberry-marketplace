@@ -88,7 +88,7 @@ const VendorProductsPage = () => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setForm((f) => ({ ...f, imgPreview: ev.target.result }));
+    reader.onload = (ev) => setForm((f) => ({ ...f, imgPreview: (ev.target?.result as string) || "" }));
     reader.readAsDataURL(file);
   };
 
@@ -109,8 +109,8 @@ const VendorProductsPage = () => {
   // Shared styles
   const inputStyle = { height: "40px", padding: "0 12px", borderRadius: "10px", border: "1.5px solid #e2e8f0", fontSize: "13px", outline: "none", ...F, background: "#f8fafc", color: "#0f172a", width: "100%" };
   const labelStyle = { fontSize: "12px", fontWeight: 700, color: "#64748b", marginBottom: "6px", display: "block" };
-  const modalOverlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.42)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 };
-  const modalBox = { ...F, background: "white", borderRadius: "22px", width: "520px", maxWidth: "95vw", border: "1.5px solid #e2e8f0", maxHeight: "90vh", display: "flex", flexDirection: "column" };
+  const modalOverlay: React.CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.42)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 };
+  const modalBox: React.CSSProperties = { ...F, background: "white", borderRadius: "22px", width: "520px", maxWidth: "95vw", border: "1.5px solid #e2e8f0", maxHeight: "90vh", display: "flex", flexDirection: "column" };
   const modalHead = { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 24px 16px", borderBottom: "1px solid #f1f5f9" };
   const modalFoot = { padding: "16px 24px", borderTop: "1px solid #f1f5f9", display: "flex", gap: "10px", justifyContent: "flex-end" };
   const btnPrimary = { height: "40px", paddingInline: "18px", borderRadius: "10px", background: "linear-gradient(135deg,#2563eb,#7c3aed)", color: "white", border: "none", cursor: "pointer", fontSize: "13px", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "6px", ...F };
@@ -198,7 +198,7 @@ const VendorProductsPage = () => {
   // View modal
   const ViewModal = viewProduct && (
     <div onClick={closeModal} style={modalOverlay}>
-      <div onClick={(e) => e.stopPropagation()} style={{ ...modalBox, width: "440px" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ ...(modalBox as any), width: "440px" }}>
         <div style={modalHead}>
           <span style={{ fontSize: "17px", fontWeight: 900, color: "#0f172a" }}>Product Details</span>
           <button style={closeBtn} onClick={closeModal}><X size={16} color="#64748b" /></button>

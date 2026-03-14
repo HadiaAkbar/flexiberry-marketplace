@@ -333,7 +333,7 @@ const CategoryPage = () => {
       list = list.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
-          (p.shopName && p.shopName.toLowerCase().includes(q))
+          p.description?.toLowerCase().includes(q)
       );
     }
 
@@ -347,7 +347,7 @@ const CategoryPage = () => {
 
     // Installment (assumes products have installmentAvailable or monthlyPrice)
     if (filters.installmentOnly) {
-      list = list.filter((p) => p.monthlyPrice != null || (p as any).installmentAvailable);
+      list = list.filter((p) => p.installmentOptions && p.installmentOptions.length > 0);
     }
 
     // Sort
