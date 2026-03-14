@@ -333,7 +333,7 @@ const CategoryPage = () => {
       list = list.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
-          (p.shopName && p.shopName.toLowerCase().includes(q))
+          p.description?.toLowerCase().includes(q)
       );
     }
 
