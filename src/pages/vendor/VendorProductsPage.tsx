@@ -88,7 +88,7 @@ const VendorProductsPage = () => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setForm((f) => ({ ...f, imgPreview: ev.target.result }));
+    reader.onload = (ev) => setForm((f) => ({ ...f, imgPreview: (ev.target?.result as string) || "" }));
     reader.readAsDataURL(file);
   };
 
