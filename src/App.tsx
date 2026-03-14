@@ -35,16 +35,7 @@ import VendorKYCPage from "./pages/vendor/VendorKYCPage";
 import VendorSettingsPage from "./pages/vendor/VendorSettingsPage";
 
 /* Admin Pages */
-import { AdminLayout } from "./components/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import ProductsPage from "./pages/admin/ProductsPage";
-import CategoriesPage from "./pages/admin/CategoriesPage";
-import OrdersPage from "./pages/admin/OrdersPage";
-import CustomersPage from "./pages/admin/CustomersPage";
-import InstallmentsPage from "./pages/admin/InstallmentsPage";
-import NotificationsPage from "./pages/admin/NotificationsPage";
-import ShopProfilePage from "./pages/admin/ShopProfilePage";
-import SettingsPage from "./pages/admin/SettingsPage";
+
 
 import NotFound from "./pages/NotFound";
 
@@ -108,17 +99,7 @@ const App = () => (
             </Route>
 
             {/* Admin Panel */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="products" element={<ProductsPage />} />
-              <Route path="categories" element={<CategoriesPage />} />
-              <Route path="orders" element={<OrdersPage />} />
-              <Route path="customers" element={<CustomersPage />} />
-              <Route path="installments" element={<InstallmentsPage />} />
-              <Route path="notifications" element={<NotificationsPage />} />
-              <Route path="shop-profile" element={<ShopProfilePage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
+
 
             <Route path="*" element={<NotFound />} />
 
