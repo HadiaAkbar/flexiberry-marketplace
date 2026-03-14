@@ -76,68 +76,68 @@
 
 // export default AdminLayout;
 
-import { Link, Outlet } from "react-router-dom";
+// import { Link, Outlet } from "react-router-dom";
 
-const AdminLayout = () => {
-  return (
-    <div className="admin-theme flex min-h-screen">
+// const AdminLayout = () => {
+//   return (
+//     <div className="admin-theme flex min-h-screen">
 
-      {/* Sidebar */}
-      <aside className="w-60 bg-sidebar-background text-sidebar-foreground p-5">
+//       {/* Sidebar */}
+//       <aside className="w-60 bg-sidebar-background text-sidebar-foreground p-5">
 
-        <h2 className="text-xl font-bold mb-6">
-          FlexiBerry Admin
-        </h2>
+//         <h2 className="text-xl font-bold mb-6">
+//           FlexiBerry Admin
+//         </h2>
 
-        <nav className="flex flex-col gap-3 text-sm">
+//         <nav className="flex flex-col gap-3 text-sm">
 
-          <Link to="/admin" className="hover:text-primary">
-            Dashboard
-          </Link>
+//           <Link to="/admin" className="hover:text-primary">
+//             Dashboard
+//           </Link>
 
-          <Link to="/admin/products" className="hover:text-primary">
-            Products
-          </Link>
+//           <Link to="/admin/products" className="hover:text-primary">
+//             Products
+//           </Link>
 
-          <Link to="/admin/categories" className="hover:text-primary">
-            Categories
-          </Link>
+//           <Link to="/admin/categories" className="hover:text-primary">
+//             Categories
+//           </Link>
 
-          <Link to="/admin/orders" className="hover:text-primary">
-            Orders
-          </Link>
+//           <Link to="/admin/orders" className="hover:text-primary">
+//             Orders
+//           </Link>
 
-          <Link to="/admin/customers" className="hover:text-primary">
-            Customers
-          </Link>
+//           <Link to="/admin/customers" className="hover:text-primary">
+//             Customers
+//           </Link>
 
-          <Link to="/admin/installments" className="hover:text-primary">
-            Installments
-          </Link>
+//           <Link to="/admin/installments" className="hover:text-primary">
+//             Installments
+//           </Link>
 
-          <Link to="/admin/notifications" className="hover:text-primary">
-            Notifications
-          </Link>
+//           <Link to="/admin/notifications" className="hover:text-primary">
+//             Notifications
+//           </Link>
 
-          <Link to="/admin/shop-profile" className="hover:text-primary">
-            Shop Profile
-          </Link>
+//           <Link to="/admin/shop-profile" className="hover:text-primary">
+//             Shop Profile
+//           </Link>
 
-          <Link to="/admin/settings" className="hover:text-primary">
-            Settings
-          </Link>
+//           <Link to="/admin/settings" className="hover:text-primary">
+//             Settings
+//           </Link>
 
-        </nav>
+//         </nav>
 
-      </aside>
+//       </aside>
 
-      {/* Page Content */}
-      <main className="flex-1 p-8 bg-background text-foreground">
-        <Outlet />
-      </main>
+//       {/* Page Content */}
+//       <main className="flex-1 p-8 bg-background text-foreground">
+//         <Outlet />
+//       </main>
 
-    </div>
-  );
-};
+//     </div>
+//   );
+// };
 
-export default AdminLayout;
+// export default AdminLayout;
