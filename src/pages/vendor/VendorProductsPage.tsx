@@ -198,7 +198,7 @@ const VendorProductsPage = () => {
   // View modal
   const ViewModal = viewProduct && (
     <div onClick={closeModal} style={modalOverlay}>
-      <div onClick={(e) => e.stopPropagation()} style={{ ...modalBox, width: "440px" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ ...(modalBox as any), width: "440px" }}>
         <div style={modalHead}>
           <span style={{ fontSize: "17px", fontWeight: 900, color: "#0f172a" }}>Product Details</span>
           <button style={closeBtn} onClick={closeModal}><X size={16} color="#64748b" /></button>
