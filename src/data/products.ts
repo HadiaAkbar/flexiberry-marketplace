@@ -5,7 +5,7 @@ export interface ProductCategory {
   id: string;
   name: string;
   slug: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   description: string;
   themeColor: string;
   themeBg: string;
