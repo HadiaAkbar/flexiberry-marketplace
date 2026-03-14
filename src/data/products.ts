@@ -136,6 +136,6 @@ export const formatPrice = (price: number): string => {
   return `PKR ${price.toLocaleString()}`;
 };
 
-export const getMonthlyInstallment = (price: number, months: 6 | 12): string => {
+export const getMonthlyInstallment = (price: number, months: number): string => {
   return formatPrice(Math.ceil(price / months));
 };
