@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 const FlexiBerryLogo = ({ size = 36 }: { size?: number }) => (
@@ -125,8 +125,8 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/15 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-sm opacity-50">
           <p>© 2026 FlexiBerry. All rights reserved.</p>
           <div className="flex gap-4 mt-2 md:mt-0">
-            <Link to="#" className="hover:opacity-100">Privacy Policy</Link>
-            <Link to="#" className="hover:opacity-100">Terms of Service</Link>
+            <Link href="#" className="hover:opacity-100">Privacy Policy</Link>
+            <Link href="#" className="hover:opacity-100">Terms of Service</Link>
           </div>
         </div>
       </div>

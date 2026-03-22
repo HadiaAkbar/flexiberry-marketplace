@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, TrendingUp, DollarSign, BarChart3, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { categories } from "@/data/products";
-import { useCart } from "@/context/CartContext";
 
 const marqueeItems = [
   { icon: "🔥", text: "0% Commission for first 90 days!" },
@@ -276,7 +275,7 @@ const Header = () => {
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const { cartCount } = useCart();
+  const cartCount = 0;
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {

@@ -1,37 +1,21 @@
-import type { Metadata, Viewport } from "next";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { CartProvider } from "@/context/CartContext";
+import type { ReactNode } from "react";
 import "./globals.css";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Flexiberry Marketplace",
   description: "A modern marketplace platform with products, vendors, and installment options",
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head />
       <body>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </TooltipProvider>
+        {children}
       </body>
     </html>
   );
