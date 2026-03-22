@@ -1,22 +1,20 @@
-import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import "./globals.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Flexiberry Marketplace",
-  description: "A modern marketplace platform with products, vendors, and installment options",
+  description:
+    "Shop premium products with flexible installment options. Flexiberry Marketplace connects buyers and vendors.",
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head />
-      <body>
-        {children}
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <body>{children}</body>
     </html>
   );
 }
