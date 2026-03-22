@@ -1,4 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, User, Menu, ChevronDown, Heart, Store, Zap, Home, X, MapPin, Phone, Mail, Lock, Eye, EyeOff, Package, Shield, TrendingUp, DollarSign, BarChart3, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { categories } from "@/data/products";
@@ -183,7 +186,7 @@ const VendorForm = ({ onClose, onSuccess }: VendorFormProps) => {
         <ChevronRight size={14}/>
       </button>
       <p style={{ fontSize: "10px", color: "#94a3b8", textAlign: "center", margin: 0, ...F }}>
-        By registering you agree to FlexiBerry's <Link to="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link to="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
+        By registering you agree to FlexiBerry's <Link href="#" style={{ color: "#2563eb" }}>Terms</Link> & <Link href="#" style={{ color: "#2563eb" }}>Vendor Policy</Link>. KYC required to activate payouts.
       </p>
     </div>
   );
@@ -271,8 +274,8 @@ const Header = () => {
   const vendorRef    = useRef<HTMLDivElement>(null);
   const vendorBtnRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
-  const location = useLocation();
-  const isHome = location.pathname === "/";
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const { cartCount } = useCart();
 
   useEffect(() => {
